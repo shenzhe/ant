@@ -19,6 +19,7 @@ class Proxy
      */
     public static function onReceive($serv, $fd, $from_id, $data)
     {
+        $startTime = microtime(true);
         common\Log::info([$data, substr($data, 4), $fd], 'proxy_tcp');
         Request::addParams('_recv', 1);
         Request::parse(substr($data, 4));
@@ -35,25 +36,27 @@ class Proxy
                 'data' => ['taskId' => $taskId]
             ]);
             $serv->send($fd, pack('N', strlen($result)) . $result);
-            return;
-        }
+        } else {
 
-        if (empty($params['_recv'])) {
-            //不用等处理结果，立即回复一个空包，表示数据已收到
-            $result = Response::display([
-                'code' => 0,
-                'msg' => '',
-                'data' => null
-            ]);
-            $serv->send($fd, pack('N', strlen($result)) . $result);
-        }
+            if (empty($params['_recv'])) {
+                //不用等处理结果，立即回复一个空包，表示数据已收到
+                $result = Response::display([
+                    'code' => 0,
+                    'msg' => '',
+                    'data' => null
+                ]);
+                $serv->send($fd, pack('N', strlen($result)) . $result);
+            }
 
-        $result = ZRoute::route();
-        common\Log::info([$data, $fd, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
-        if (!empty($params['_recv'])) {
-            //发送处理结果
-            $serv->send($fd, pack('N', strlen($result)) . $result);
+            $result = ZRoute::route();
+            common\Log::info([$data, $fd, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
+            if (!empty($params['_recv'])) {
+                //发送处理结果
+                $serv->send($fd, pack('N', strlen($result)) . $result);
+            }
         }
+        $endTime = microtime(true);
+        //@TODO 执行时间上报，服务提供方时间，不带网络时间
     }
 
     /**

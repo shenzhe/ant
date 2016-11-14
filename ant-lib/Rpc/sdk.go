@@ -40,16 +40,19 @@ func GetClient(host string, port int) *DClient {
     return cli
 }
 
-func (cli *DClient) SetApi(api string) {
+func (cli *DClient) SetApi(api string) *DClient {
     cli.Api = api
+    return cli
 }
 
-func (cli *DClient) NoSync() {
+func (cli *DClient) NoSync() *DClient {
     cli.Sync = false
+    return cli
 }
 
-func (cli *DClient) SetDebug() {
+func (cli *DClient) SetDebug() *DClient {
     cli.Debug = true
+    return cli
 }
 
 func (cli *DClient) Pack(_data string) []byte {

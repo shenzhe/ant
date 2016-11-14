@@ -73,6 +73,7 @@ class Client
 
     public function call($method, $data = [])
     {
+        $startTime = microtime(true);
         $sendArr = [
                 '_recv' => $this->sync,
                 $this->config['ctrl_name'] => $this->api,
@@ -82,12 +83,19 @@ class Client
         $sendLen = $this->client->send(pack($this->config['package_length_type'], strlen($result)) . $result);
         if ($sendLen) {
             $recvData = $this->client->recv();
+            $executeTime = microtime(true) - $startTime;
+            //@TODO 执行时间上报（带网络时间）
             if (is_null($recvData)) {
                 throw new \Exception('receive data error', -1);
             }
             return substr($recvData, $this->config['package_body_offset']);
         }
         throw new \Exception("send error", $this->client->errCode);
+    }
+
+    public function multiCall($urls)
+    {
+
     }
 
     public function __call($name, $arguments)
