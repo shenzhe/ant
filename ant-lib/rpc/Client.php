@@ -6,7 +6,7 @@
  * Time: 11:06
  */
 
-namespace Rpc;
+namespace rpc;
 
 
 class Client

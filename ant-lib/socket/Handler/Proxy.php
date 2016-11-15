@@ -10,6 +10,16 @@ use common;
 class Proxy
 {
     /**
+     * @param $serv
+     * @return string
+     * @desc 返回全局的唯一的请求id
+     */
+    private static function getRequestId($serv)
+    {
+        return sha1(uniqid($serv->worker_pid . '_', true));
+    }
+
+    /**
      * @param $serv //swoole_server对像
      * @param $fd //文件描述符
      * @param $from_id //来自哪个reactor线程, 此参数基本用不上
@@ -21,19 +31,27 @@ class Proxy
     {
         $startTime = microtime(true);
         common\Log::info([$data, substr($data, 4), $fd], 'proxy_tcp');
+        $realData = substr($data, 4);
+        if ('ant-ping' === $realData) {  //ping包，强制硬编码，不允许自定义
+            return $serv->send(pack('N', 8) . 'ant-pong');  //回pong包
+        }
         Request::addParams('_recv', 1);
-        Request::parse(substr($data, 4));
+        Request::parse($realData);
         $params = Request::getParams();
         $params['_fd'] = $fd;
         Request::setParams($params);
 
         if (!empty($params['_task'])) {
             //task任务, 回复task的任务id
-            $taskId = $serv->task($params);
+            $taskId = self::getRequestId($serv);
+            $params['taskId'] = $taskId;
+            $serv->task($params);
             $result = Response::display([
                 'code' => 0,
                 'msg' => '',
-                'data' => ['taskId' => $taskId]
+                'data' => [
+                    'taskId' => $taskId
+                ]
             ]);
             $serv->send($fd, pack('N', strlen($result)) . $result);
         } else {
@@ -55,7 +73,7 @@ class Proxy
                 $serv->send($fd, pack('N', strlen($result)) . $result);
             }
         }
-        $endTime = microtime(true);
+        $endTime = microtime(true) - $startTime;  //获取程序执行时间
         //@TODO 执行时间上报，服务提供方时间，不带网络时间
     }
 
@@ -66,6 +84,7 @@ class Proxy
      */
     public static function onRequest($request, $response)
     {
+        $startTime = microtime(true);
         common\Log::info([$request->get], 'proxy_http');
         $param = [];
         $_GET = $_POST = $_REQUEST = $_COOKIE = $_FILES = null;
@@ -87,7 +106,7 @@ class Proxy
         }
 
         foreach ($request->header as $key => $val) {
-            $_SERVER['HTTP_'.strtoupper(str_replace('-', '_', $key))] = $val;
+            $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $val;
         }
 
         $_REQUEST = $param;
@@ -101,34 +120,41 @@ class Proxy
         if (!empty($params['_task'])) {
             //task任务, 回复task的任务id
             $serv = Request::getSocket();
-            $taskId = $serv->task($params);
+            $taskId = self::getRequestId($serv);
+            $params['taskId'] = $taskId;
+            $serv->task($params);
             $result = Response::display([
                 'code' => 0,
                 'msg' => '',
-                'data' => ['taskId' => $taskId]
+                'data' => [
+                    'taskId' => $taskId
+                ]
             ]);
             $response->end($result);
-            return;
+        } else {
+            if (empty($params['_recv'])) {
+                //不用等处理结果，立即回复一个空包，表示数据已收到
+                $result = Response::display([
+                    'code' => 0,
+                    'msg' => '',
+                    'data' => null
+                ]);
+                $response->end($result);
+            } else {
+                $result = ZRoute::route();
+                if (!empty($params['_recv'])) {
+                    //发送处理结果
+                    $response->end($result);
+                }
+            }
         }
 
-        if (empty($params['_recv'])) {
-            //不用等处理结果，立即回复一个空包，表示数据已收到
-            $result = Response::display([
-                'code' => 0,
-                'msg' => '',
-                'data' => null
-            ]);
-            $response->end($result);
-        }
-        $result = ZRoute::route();
-        if (!empty($params['_recv'])) {
-            //发送处理结果
-            $response->end($result);
-        }
+        $endTime = microtime(true) - $startTime;  //获取程序执行时间
+        //@TODO 执行时间上报，服务提供方时间，不带网络时间
     }
 
     /**
-     * @param $serv //swoole server对像
+     * @param $serv  \swoole_server
      * @param $taskId //任务id
      * @param $fromId //来自哪个worker进程
      * @param $data //数据
@@ -139,7 +165,11 @@ class Proxy
         Request::parse($data);
         $result = ZRoute::route();
         if (!empty($data['_recv'])) { //发送回执
-            $serv->send($data['_fd'], pack('N', strlen($result)) . $result);
+            if (!empty($data['udp'])) { //udp请求
+                $serv->sendto($data['clientInfo']['address'], $data['clientInfo']['port'], $result);
+            } else {
+                $serv->send($data['_fd'], pack('N', strlen($result)) . $result);
+            }
         }
     }
 
@@ -160,11 +190,33 @@ class Proxy
      * @param $clientInfo
      * @desc 收到udp数据的处理
      */
-    public static function onPacket($serv, $data, $clientInfo)
+    public static function onPacket(\swoole_server $serv, $data, $clientInfo)
     {
+        $startTime = microtime(true);
         common\Log::info([$data, $clientInfo], 'proxy_udp');
-        Request::parse($data);
-        ZRoute::route();
+        $params = Request::parse($data);
+        $params['_fd'] = $fd = unpack('L', pack('N', ip2long($clientInfo['address'])))[1];
+        if (!empty($params['_task'])) {
+            //task任务, 回复task的任务id
+            $params['udp'] = 1;
+            $params['clientInfo'] = $clientInfo;
+            $taskId = self::getRequestId($serv);
+            $params['taskId'] = $taskId;
+            $serv->task($params);
+            $result = Response::display([
+                'code' => 0,
+                'msg' => '',
+                'data' => ['taskId' => $taskId]
+            ]);
+            $serv->sendto($clientInfo['ip'], $clientInfo['port'], $result);
+        } else {
+            $result = ZRoute::route();
+            $serv->sendto($clientInfo['ip'], $clientInfo['port'], $result);
+            common\Log::info([$data, $clientInfo, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
+        }
+
+        $endTime = microtime(true) - $startTime;  //获取程序执行时间
+        //@TODO 执行时间上报，服务提供方时间，不带网络时间
     }
 
     /**
@@ -182,8 +234,21 @@ class Proxy
             if (!empty($params['_recv'])) { //发送回执
                 common\Log::info([$params, $result], 'shutdown');
                 $serv->send(Request::getFd(), pack('N', strlen($result)) . $result);
+                //@TODO 异常上报
             }
         });
+
+        $timer = ZConfig::get('timer', []);
+        if(!empty($timer)) {
+            foreach ($timer as $index=>$item) {
+                if(0 === $index % $workerId &&
+                    !empty($item['ms']) &&
+                    !empty($item['callback']) &&
+                    \is_callable($item['callback'])) {
+                    \swoole_timer_tick($item['ms'], $item['callback'], $item['params']);
+                }
+            }
+        }
     }
 
     /**

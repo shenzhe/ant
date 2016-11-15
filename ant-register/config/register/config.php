@@ -43,6 +43,12 @@ $config = array(
         'package_body_offset' => 4,       //第几个字节开始计算长度
         'package_max_length' => 2000000,  //协议最大长度
     ),
+    'timer' => array(
+        array(
+            'ms' => 5000,  //毫秒
+            'callback' => ''
+        ),
+    ),
 );
 $fileList = \ZPHP\Common\Dir::tree(__DIR__ . DS . '..' . DS . 'public', '/\.php$/');
 if (!empty($fileList)) {

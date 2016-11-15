@@ -7,7 +7,7 @@ use ZPHP\Protocol\Response;
 use ZPHP\Common\Formater as ZFormater;
 
 /**
- * 获取class实例的工具类
+ * 异常处理
  *
  * @package service
  *
@@ -30,9 +30,8 @@ class MyException extends \Exception
     }
 
     /**
-     * 获取执行过程中的异常发生次数
-     *
      * @return int
+     * @desc 获取执行过程中的异常发生次数
      */
     public static function getExceptionNum()
     {
@@ -40,24 +39,27 @@ class MyException extends \Exception
     }
 
     /**
-     * 获取执行过程中的发生的最后一次异常
-     *
-     * @return GameException
+     * @return MyException|null
+     * @desc 获取执行过程中的发生的最后一次异常
      */
     public static function getLastException()
     {
         return empty(self::$exceptions) ? null : \end(self::$exceptions);
     }
 
+    /**
+     * @return mixed
+     * @desc 移动最后一个异常
+     */
     public static function removeLast()
     {
         return \array_pop(self::$exceptions);
     }
 
     /**
-     * 异常处理回调函数
-     *
      * @param \Exception $exception
+     * @return mixed
+     * @desc 异常处理
      */
     public static function exceptionHandler(\Exception $exception)
     {
@@ -107,6 +109,15 @@ class MyException extends \Exception
         return self::display($info, $config['debug_mode']);
     }
 
+    /**
+     * @param $errno
+     * @param $errstr
+     * @param $errfile
+     * @param $errline
+     * @param $errcontext
+     * @return mixed
+     * @desc  一般错误处理
+     */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
         $error = [
@@ -126,6 +137,12 @@ class MyException extends \Exception
         return self::display($info, $config['debug_mode']);
     }
 
+    /**
+     * @param $info
+     * @param bool $debug
+     * @return mixed
+     * @desc display输出
+     */
     private static function display($info, $debug = false)
     {
         Response::status('200');

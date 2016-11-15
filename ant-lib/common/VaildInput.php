@@ -9,16 +9,16 @@ namespace common;
 
 class VaildInput
 {
-    const EMAIL = 'e';
-    const MOBILE = 'm';
-    const URL = 'u';
-    const INT = 'i';
-    const FLOAT = 'f';
-    const STRING = 's4-16';
-    const NAME = 'n4-16';
-    const CHINESE = 'c2-4';
-    const IP = 'p';
-    const MAC = 'a';
+    const EMAIL = 'e';              //邮件
+    const MOBILE = 'm';             //手机号
+    const URL = 'u';                //网址
+    const INT = 'i';                //整型数字
+    const FLOAT = 'f';              //浮点数字
+    const STRING = 's4-16';         //字符串,默认长度在 4~16 之间
+    const NAME = 'n4-16';           //字母开头，只包含字母，数字 -_ 默认长度在 4~16 之间
+    const CHINESE = 'c2-4';         //中文，默认长度在 2~4 之间
+    const IP = 'p';                 //ip地址
+    const MAC = 'a';                //mac地址
 
     public static function vaild($str, $type, $errmsg = '')
     {

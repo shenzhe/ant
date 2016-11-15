@@ -15,11 +15,13 @@
 | 模块           | 作用           | 一期目标           |
 | ------------- |:-------------:|:-------------:|
 | ant-register | 统一注册中心|基于mysql实现, 实现基础的配置分发|
-| ant-monitor     | 统一监控中心    |实现调用方的性能监控（包含网络时间），服务提供方的性能监控（不包含网络时间）|
-| ant-lib | 公用库      |提供一些公用包，如： exception， 一些base类, socket handler|
+| ant-monitor     | 统一监控中心    |实现调用方的性能监控（包含网络时间）<br/>服务提供方的性能监控（不包含网络时间）|
+| ant-lib | 公用库      |提供一些公用包<br/>如： exception， 一些base类, socket handler|
 | ant-rpc | 统一rpc协议模块      |只支持 自定义包头+json格式的协议|
+| ant-config | 统一配置模块      |支持配置下发，同步
 
 依赖
 ===
 zphp            <https://github.com/shenzhe/zphp>
+
 swoole          <https://github.com/swoole/swoole-src>
