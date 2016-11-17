@@ -46,7 +46,7 @@ $config = array(
     'timer' => array(
         array(
             'ms' => 5000,  //毫秒
-            'callback' => ''
+            'callback' => 'common\Timer::checkPing'
         ),
     ),
 );

@@ -63,18 +63,4 @@ class Soa
         }
     }
 
-    public static function getService($serviceName)
-    {
-        $soaConfig = ZConfig::get('soa');
-        if (!empty($soaConfig)) {
-            //服务注册
-            $rpcClient = new Tcp($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-            $data =  $rpcClient->setApi('main')->call('getList', [
-                'serviceName' => $serviceName
-            ]);
-            if($data) {
-                return \json_decode($data, true);
-            }
-        }
-    }
 }

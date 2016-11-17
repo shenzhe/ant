@@ -8,7 +8,7 @@
 
 namespace service;
 
-use common\loadClass;
+use common\LoadClass;
 use entity;
 
 class ServiceList
@@ -23,7 +23,7 @@ class ServiceList
      */
     public function register($serviceName, $serviceIp, $servicePort)
     {
-        $dao = loadClass::getDao('ServiceList');
+        $dao = LoadClass::getDao('ServiceList');
         $serviceInfo = $dao->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
@@ -54,7 +54,7 @@ class ServiceList
      */
     public function drop($serviceIp, $servicePort)
     {
-        $dao = loadClass::getDao('ServiceList');
+        $dao = LoadClass::getDao('ServiceList');
         $serviceInfo = $dao->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
@@ -68,9 +68,15 @@ class ServiceList
         return $serviceInfo;
     }
 
+    /**
+     * @param $serviceName
+     * @return int
+     * @desc 移除某服务所有机器
+     */
     public function dropAll($serviceName)
     {
-
+        $dao = LoadClass::getDao('ServiceList');
+        return $dao->update(['status'=>0], ['name='=>$serviceName]);
     }
 
     /**
@@ -80,7 +86,7 @@ class ServiceList
      */
     public function getServiceList($serviceName)
     {
-        $serviceList = loadClass::getDao('ServiceList')->fetchAll([
+        $serviceList = LoadClass::getDao('ServiceList')->fetchAll([
             'name=' => "'{$serviceName}'"
         ]);
         return $serviceList;

@@ -9,7 +9,7 @@
 namespace ctrl;
 
 use ctrl\Base as CBase;
-use common\loadClass;
+use common\LoadClass;
 
 class main extends CBase
 {
@@ -26,7 +26,7 @@ class main extends CBase
         /**
          * @var $service \service\ServiceList
          */
-        $service = loadClass::getService('ServiceList');
+        $service = LoadClass::getService('ServiceList');
         return $this->getView([
             'serviceInfo'=>$service->register($serviceName, $serviceIp, $servicePort)
         ]);
@@ -40,7 +40,7 @@ class main extends CBase
         /**
          * @var $service \service\ServiceList
          */
-        $service = loadClass::getService('ServiceList');
+        $service = LoadClass::getService('ServiceList');
         return $this->getView([
             'serviceInfo'=>$service->drop($serviceIp, $servicePort)
         ]);
@@ -56,7 +56,7 @@ class main extends CBase
         /**
          * @var $service \service\ServiceList
          */
-        $service = loadClass::getService('ServiceList');
+        $service = LoadClass::getService('ServiceList');
         return $this->getView([
             'serviceList'=>$service->getServiceList($serviceName)
         ]);
