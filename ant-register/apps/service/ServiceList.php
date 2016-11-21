@@ -11,8 +11,17 @@ namespace service;
 use common\LoadClass;
 use entity;
 
-class ServiceList
+class ServiceList extends Base
 {
+    /**
+     * @var \dao\Base
+     */
+    protected $dao;
+    
+    public function __construct()
+    {
+        $this->dao = LoadClass::getDao('ServiceList');
+    }
 
     /**
      * @param $serviceName
@@ -23,8 +32,7 @@ class ServiceList
      */
     public function register($serviceName, $serviceIp, $servicePort)
     {
-        $dao = LoadClass::getDao('ServiceList');
-        $serviceInfo = $dao->fetchOne([
+        $serviceInfo = $this->dao->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
@@ -36,10 +44,10 @@ class ServiceList
             $serviceInfo->port = $servicePort;
             $serviceInfo->status = 1;
             $serviceInfo->startTime = time();
-            $id = $dao->add($serviceInfo);
+            $id = $this->dao->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
-            if ($dao->update(['status' => 1], ['id=' => $serviceInfo->id])) {
+            if ($this->dao->update(['status' => 1], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 1;
             }
         }
@@ -54,14 +62,13 @@ class ServiceList
      */
     public function drop($serviceIp, $servicePort)
     {
-        $dao = LoadClass::getDao('ServiceList');
-        $serviceInfo = $dao->fetchOne([
+        $serviceInfo = $this->dao->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
 
         if (!empty($serviceInfo->status)) {
-            if ($dao->update(['status' => 0], ['id=' => $serviceInfo->id])) {
+            if ($this->dao->update(['status' => 0], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 0;
             }
         }
@@ -75,8 +82,7 @@ class ServiceList
      */
     public function dropAll($serviceName)
     {
-        $dao = LoadClass::getDao('ServiceList');
-        return $dao->update(['status'=>0], ['name='=>$serviceName]);
+        return $this->dao->update(['status'=>0], ['name='=>$serviceName]);
     }
 
     /**

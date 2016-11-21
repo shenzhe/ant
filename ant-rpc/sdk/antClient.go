@@ -27,7 +27,7 @@ func GetClient(host string, port int) *DClient {
     cli := &DClient{
         host,
         port,
-        "proxy/proxy",
+        "main",
         true,
         "a",
         "m",

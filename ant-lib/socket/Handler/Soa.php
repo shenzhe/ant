@@ -35,9 +35,7 @@ class Soa
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
             }
-            echo $data.PHP_EOL;
             $data = json_decode($data, true);
-
             if(!empty($data['code'])) {
                 $server->shutdown();
                 throw new MyException($data['msg'], $data['code']);

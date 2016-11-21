@@ -8,7 +8,7 @@
 
 namespace common;
 
-use rpc\Client;
+use ZPHP\Client\Rpc\Tcp;
 
 class Timer
 {
@@ -22,7 +22,7 @@ class Timer
         $allService = $service->fetchAll(['status=' => 1]);
         if (!empty($allService)) {
             foreach ($allService as $item) {
-                $rpc = new Client($item->host, $item->port);
+                $rpc = new Tcp($item->host, $item->port);
                 try {
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
                     if ('ant-pong' == $result) {

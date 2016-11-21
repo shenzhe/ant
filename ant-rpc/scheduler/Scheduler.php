@@ -2,6 +2,8 @@
 
  namespace scheduler;
 
+ use ZPHP\Core\Config as ZConfig;
+
 /**
  * Created by PhpStorm.
  * User: shenzhe

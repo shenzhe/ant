@@ -6,6 +6,7 @@ use ZPHP\Protocol\Request;
 use ZPHP\Core\Route as ZRoute;
 use ZPHP\Core\Config as ZConfig;
 use common;
+use ZPHP\Client\Monitor\Client as MClient;
 
 class Proxy
 {
@@ -73,8 +74,8 @@ class Proxy
                 $serv->send($fd, pack('N', strlen($result)) . $result);
             }
         }
-        $endTime = microtime(true) - $startTime;  //获取程序执行时间
-        //@TODO 执行时间上报，服务提供方时间，不带网络时间
+        $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
     /**
@@ -239,12 +240,13 @@ class Proxy
         });
 
         $timer = ZConfig::get('timer', []);
-        if(!empty($timer)) {
-            foreach ($timer as $index=>$item) {
-                if(0 === $index % $workerId &&
+        if (!empty($timer)) {
+            foreach ($timer as $index => $item) {
+                if (0 === $index % $workerId &&
                     !empty($item['ms']) &&
                     !empty($item['callback']) &&
-                    \is_callable($item['callback'])) {
+                    \is_callable($item['callback'])
+                ) {
                     \swoole_timer_tick($item['ms'], $item['callback'], $item['params']);
                 }
             }
