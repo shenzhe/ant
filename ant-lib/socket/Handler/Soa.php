@@ -9,7 +9,7 @@
 namespace socket\Handler;
 
 use ZPHP\Core\Config as ZConfig;
-use ZPHP\Client\Rpc\Tcp;
+use sdk\TcpClient;
 use common\MyException;
 
 
@@ -25,7 +25,7 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
-            $rpcClient = new Tcp($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $data = $rpcClient->setApi('main')->call('register', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
@@ -52,7 +52,7 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
-            $rpcClient = new Tcp($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $rpcClient->setApi('main')->call('drop', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],

@@ -60,7 +60,7 @@ abstract class Base implements IController
     /**
      * @param $key                          参数名
      * @param null $default 当没有此参数时的默认值
-     * @param array|null $params 数据源（默认$this->parmas）
+     * @param array|null $params 数据源（默认 Request::getParams()）
      * @param bool|false $abs 是否取绝对值
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
@@ -94,7 +94,7 @@ abstract class Base implements IController
     /**
      * @param $key                          参数名
      * @param null $default 当没有此参数时的默认值
-     * @param array|null $params 数据源（默认$this->parmas）
+     * @param array|null $params 数据源（默认 Request::getParams()）
      * @param bool|false $abs 是否取绝对值
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
@@ -128,7 +128,7 @@ abstract class Base implements IController
     /**
      * @param $key                          参数名
      * @param null $default 当没有此参数时的默认值
-     * @param array|null $params 数据源（默认$this->parmas）
+     * @param array|null $params 数据源（默认 Request::getParams()）
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
      * @throws common\MyException
