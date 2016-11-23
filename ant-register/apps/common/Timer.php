@@ -23,8 +23,8 @@ class Timer
         $allService = $service->fetchAll();
         if (!empty($allService)) {
             foreach ($allService as $item) {
-                $rpc = new TcpClient($item->host, $item->port);
                 try {
+                    $rpc = new TcpClient($item->ip, $item->port);
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
                     if ('ant-pong' == $result) {
                         if(0 == $item->status) { //离线状态设置为在线状态
