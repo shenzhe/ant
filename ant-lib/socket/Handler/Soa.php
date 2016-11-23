@@ -24,6 +24,21 @@ class Soa
      */
     public static function register($server)
     {
+        //是否自注册
+        $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
+        if ($isRegisterProject) {
+            $host = ZConfig::getField('socket', 'host');
+            if ('0.0.0.0' == $host) {
+                $host = Utils::getLocalIp();
+            }
+            LoadClass::getService('ServiceList')->register(
+                ZConfig::getField('project', 'project_name'),
+                $host,
+                ZConfig::getField('socket', 'port')
+            );
+            return ;
+        }
+
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
@@ -42,20 +57,6 @@ class Soa
                 $server->shutdown();
                 throw new MyException($data['msg'], $data['code']);
             }
-        } else {
-            //是否自注册
-            $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
-            if (!empty($isRegisterProject)) {
-                $host = ZConfig::getField('socket', 'host');
-                if ('0.0.0.0' == $host) {
-                    $host = Utils::getLocalIp();
-                }
-                LoadClass::getService('ServiceList')->register(
-                    ZConfig::getField('project', 'project_name'),
-                    $host,
-                    ZConfig::getField('socket', 'port')
-                );
-            }
         }
     }
 
@@ -65,6 +66,21 @@ class Soa
      */
     public static function drop($server)
     {
+        //是否自下线
+        $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
+        if ($isRegisterProject) {
+            $host = ZConfig::getField('socket', 'host');
+            if ('0.0.0.0' == $host) {
+                $host = Utils::getLocalIp();
+            }
+            LoadClass::getService('ServiceList')->drop(
+                ZConfig::getField('project', 'project_name'),
+                $host,
+                ZConfig::getField('socket', 'port')
+            );
+            return ;
+        }
+
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务下线
@@ -74,20 +90,6 @@ class Soa
                 'serviceIp' => $soaConfig['serviceIp'],
                 'servicePort' => $soaConfig['servicePort'],
             ]);
-        } else {
-            //是否自下线
-            $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
-            if (!empty($isRegisterProject)) {
-                $host = ZConfig::getField('socket', 'host');
-                if ('0.0.0.0' == $host) {
-                    $host = Utils::getLocalIp();
-                }
-                LoadClass::getService('ServiceList')->drop(
-                    ZConfig::getField('project', 'project_name'),
-                    $host,
-                    ZConfig::getField('socket', 'port')
-                );
-            }
         }
     }
 
