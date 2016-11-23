@@ -23,7 +23,7 @@ class Timer
         $service = LoadClass::getService('ServiceList');
         //@TODO 需要优化，如果机器比较多，检测会比较慢
         $key = Utils::getLocalIp() . ':' . ZConfig::getField('socket', 'port');
-        $allService = $service->fetchAll(['registerKey=' => $key]);
+        $allService = $service->fetchAll(['registerKey=' => "'$key'"]);
         if (!empty($allService)) {
             foreach ($allService as $item) {
                 try {
