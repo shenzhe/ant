@@ -32,7 +32,7 @@ class Soa
                 $host = Utils::getLocalIp();
             }
             LoadClass::getService('ServiceList')->register(
-                ZConfig::getField('project', 'project_name'),
+                ZConfig::get('project_name'),
                 $host,
                 ZConfig::getField('socket', 'port')
             );
@@ -74,7 +74,7 @@ class Soa
                 $host = Utils::getLocalIp();
             }
             LoadClass::getService('ServiceList')->drop(
-                ZConfig::getField('project', 'project_name'),
+                ZConfig::get('project_name'),
                 $host,
                 ZConfig::getField('socket', 'port')
             );
