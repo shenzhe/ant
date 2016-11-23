@@ -21,6 +21,7 @@ class ServiceList extends Base
     public $status = 0;                 //运行状态
     public $rate = 0;                 //权重
     public $startTime;                 //启动时间
+    public $registerKey;                //从哪个注册服务器注册的
 
 
     public function getIpPort()

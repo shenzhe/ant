@@ -9,7 +9,9 @@
 namespace service;
 
 use common\LoadClass;
+use common\Utils;
 use entity;
+use ZPHP\Core\Config as ZConfig;
 
 class ServiceList extends Base
 {
@@ -17,7 +19,7 @@ class ServiceList extends Base
      * @var \dao\Base
      */
     protected $dao;
-    
+
     public function __construct()
     {
         $this->dao = LoadClass::getDao('ServiceList');
@@ -32,22 +34,34 @@ class ServiceList extends Base
      */
     public function register($serviceName, $serviceIp, $servicePort)
     {
+        /**
+         * @var $serviceInfo \entity\ServiceList
+         */
         $serviceInfo = $this->dao->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
-
+        $key = ZConfig::getField('project', 'is_register_project', 0)
+            ? 'self'
+            : Utils::getLocalIp() . ":" . ZConfig::getField('socket', 'port');
         if (empty($serviceInfo)) {
+
             $serviceInfo = new entity\ServiceList();
             $serviceInfo->name = $serviceName;
             $serviceInfo->ip = $serviceIp;
             $serviceInfo->port = $servicePort;
             $serviceInfo->status = 1;
             $serviceInfo->startTime = time();
+            $serviceInfo->registerKey = $key;
             $id = $this->dao->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
-            if ($this->dao->update(['status' => 1], ['id=' => $serviceInfo->id])) {
+            if ($serviceInfo->registerKey == $key) {
+                $ret = $this->dao->update(['status' => 1], ['id=' => $serviceInfo->id]);
+            } else {
+                $ret = $this->dao->update(['status' => 1, 'registerKey' => $key], ['id=' => $serviceInfo->id]);
+            }
+            if ($ret) {
                 $serviceInfo->status = 1;
             }
         }
@@ -82,7 +96,7 @@ class ServiceList extends Base
      */
     public function dropAll($serviceName)
     {
-        return $this->dao->update(['status'=>0], ['name='=>$serviceName]);
+        return $this->dao->update(['status' => 0], ['name=' => $serviceName]);
     }
 
     /**
