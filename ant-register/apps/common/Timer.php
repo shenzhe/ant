@@ -29,6 +29,7 @@ class Timer
                     if ('ant-pong' == $result) {
                         if(0 == $item->status) { //离线状态设置为在线状态
                             //@TODO 可以不单条更新，改为批量更新
+                            //@TODO 服务上线，通知相关的服务调用方
                             $service->update(['status' => 1], ['id=' => $item->id]);
                         }
                         continue;
@@ -37,6 +38,7 @@ class Timer
                     //心跳回复失败,设置离线状态
                     if(1 == $item->status) {
                         //@TODO 可以不单条更新，改为批量更新
+                        //@TODO 服务下线，通知相关的服务调用方
                         $service->update(['status' => 0], ['id=' => $item->id]);
                     }
                 }

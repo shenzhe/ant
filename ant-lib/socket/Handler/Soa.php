@@ -10,7 +10,9 @@ namespace socket\Handler;
 
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
+use common\Utils;
 use common\MyException;
+use common\LoadClass;
 
 
 class Soa
@@ -36,9 +38,23 @@ class Soa
                 $server->shutdown();
             }
             $data = json_decode($data, true);
-            if(!empty($data['code'])) {
+            if (!empty($data['code'])) {
                 $server->shutdown();
                 throw new MyException($data['msg'], $data['code']);
+            }
+        } else {
+            //是否自注册
+            $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
+            if (!empty($isRegisterProject)) {
+                $host = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $host) {
+                    $host = Utils::getLocalIp();
+                }
+                LoadClass::getService('ServiceList')->register(
+                    ZConfig::getField('project', 'project_name'),
+                    $host,
+                    ZConfig::getField('socket', 'port')
+                );
             }
         }
     }
@@ -51,13 +67,27 @@ class Soa
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
-            //服务注册
+            //服务下线
             $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $rpcClient->setApi('main')->call('drop', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
                 'servicePort' => $soaConfig['servicePort'],
             ]);
+        } else {
+            //是否自下线
+            $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
+            if (!empty($isRegisterProject)) {
+                $host = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $host) {
+                    $host = Utils::getLocalIp();
+                }
+                LoadClass::getService('ServiceList')->drop(
+                    ZConfig::getField('project', 'project_name'),
+                    $host,
+                    ZConfig::getField('socket', 'port')
+                );
+            }
         }
     }
 
