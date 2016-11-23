@@ -8,7 +8,7 @@
 
 namespace common;
 
-use ZPHP\Client\Rpc\Tcp;
+use sdk\TcpClient;
 
 class Timer
 {
@@ -16,21 +16,29 @@ class Timer
     {
         /**
          * @var \service\ServiceList
+         * @desc 定时检测在线服务的状态
          */
         $service = LoadClass::getService('ServiceList');
-        //获取所有的在线服务器
-        $allService = $service->fetchAll(['status=' => 1]);
+        //@TODO 需要优化，如果机器比较多，检测会比较慢
+        $allService = $service->fetchAll();
         if (!empty($allService)) {
             foreach ($allService as $item) {
-                $rpc = new Tcp($item->host, $item->port);
+                $rpc = new TcpClient($item->host, $item->port);
                 try {
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
                     if ('ant-pong' == $result) {
+                        if(0 == $item->status) { //离线状态设置为在线状态
+                            //@TODO 可以不单条更新，改为批量更新
+                            $service->update(['status' => 1], ['id=' => $item->id]);
+                        }
                         continue;
                     }
                 } catch (\Exception $e) {
                     //心跳回复失败,设置离线状态
-                    $service->update(['status' => 0], ['id=' => $item->id]);
+                    if(1 == $item->status) {
+                        //@TODO 可以不单条更新，改为批量更新
+                        $service->update(['status' => 0], ['id=' => $item->id]);
+                    }
                 }
             }
         }

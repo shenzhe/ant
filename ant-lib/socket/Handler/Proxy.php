@@ -46,6 +46,7 @@ class Proxy
             //task任务, 回复task的任务id
             $taskId = self::getRequestId($serv);
             $params['taskId'] = $taskId;
+            $params['requestId'] = Request::getRequestId();
             $serv->task($params);
             $result = Response::display([
                 'code' => 0,
@@ -123,6 +124,7 @@ class Proxy
             $serv = Request::getSocket();
             $taskId = self::getRequestId($serv);
             $params['taskId'] = $taskId;
+            $params['requestId'] = Request::getRequestId();
             $serv->task($params);
             $result = Response::display([
                 'code' => 0,
@@ -150,8 +152,8 @@ class Proxy
             }
         }
 
-        $endTime = microtime(true) - $startTime;  //获取程序执行时间
-        //@TODO 执行时间上报，服务提供方时间，不带网络时间
+        $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
     /**
@@ -163,6 +165,8 @@ class Proxy
      */
     public static function onTask($serv, $taskId, $fromId, $data)
     {
+        $startTime = microtime(true);
+        Request::setRequestId($data['requestId']);
         Request::parse($data);
         $result = ZRoute::route();
         if (!empty($data['_recv'])) { //发送回执
@@ -172,6 +176,8 @@ class Proxy
                 $serv->send($data['_fd'], pack('N', strlen($result)) . $result);
             }
         }
+        $executeTime = microtime(true) - $startTime;
+        MClient::taskDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
     /**
@@ -203,6 +209,7 @@ class Proxy
             $params['clientInfo'] = $clientInfo;
             $taskId = self::getRequestId($serv);
             $params['taskId'] = $taskId;
+            $params['requestId'] = Request::getRequestId();
             $serv->task($params);
             $result = Response::display([
                 'code' => 0,
@@ -216,8 +223,8 @@ class Proxy
             common\Log::info([$data, $clientInfo, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
         }
 
-        $endTime = microtime(true) - $startTime;  //获取程序执行时间
-        //@TODO 执行时间上报，服务提供方时间，不带网络时间
+        $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
     /**

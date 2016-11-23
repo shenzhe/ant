@@ -3,6 +3,7 @@
  namespace scheduler;
 
  use ZPHP\Core\Config as ZConfig;
+ use sdk\TcpClient;
 
 /**
  * Created by PhpStorm.
@@ -23,7 +24,7 @@ class Scheduler
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //@TODO 配合ant-config, 不走网络请求
-            $rpcClient = new Tcp($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $data = $rpcClient->setApi('main')->call('getList', [
                 'serviceName' => $serviceName
             ]);

@@ -10,7 +10,8 @@ $config = array(
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'lib_path' => array(
-        ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib'
+        ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib',
+        ZPHP::getRootPath() . DS . '..' . DS . 'ant-rpc',
     ),
     'project' => [
         'default_ctrl_name' => 'main',                      //默认入口控制器
