@@ -51,6 +51,10 @@ $config = array(
             'callback' => 'common\Timer::checkPing'
         ),
     ),
+    'soa' => array(
+        'register_callback' => 'socket\Handler\Soa::register',
+        'drop_callback' => 'socket\Handler\Soa::drop',
+    ),
 );
 $fileList = \ZPHP\Common\Dir::tree(__DIR__ . DS . '..' . DS . 'public', '/\.php$/');
 if (!empty($fileList)) {
