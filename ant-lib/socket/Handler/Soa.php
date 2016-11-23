@@ -27,16 +27,21 @@ class Soa
         //是否自注册
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
-            $host = ZConfig::getField('socket', 'host');
-            if ('0.0.0.0' == $host) {
-                $host = Utils::getLocalIp();
+            try {
+                $host = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $host) {
+                    $host = Utils::getLocalIp();
+                }
+                LoadClass::getService('ServiceList')->register(
+                    ZConfig::get('project_name'),
+                    $host,
+                    ZConfig::getField('socket', 'port')
+                );
+                return;
+            } catch (\Exception $e) {
+                $server->shutdown();
+                return;
             }
-            LoadClass::getService('ServiceList')->register(
-                ZConfig::get('project_name'),
-                $host,
-                ZConfig::getField('socket', 'port')
-            );
-            return ;
         }
 
         $soaConfig = ZConfig::get('soa');
@@ -69,16 +74,21 @@ class Soa
         //是否自下线
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
-            $host = ZConfig::getField('socket', 'host');
-            if ('0.0.0.0' == $host) {
-                $host = Utils::getLocalIp();
+            try {
+                $host = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $host) {
+                    $host = Utils::getLocalIp();
+                }
+                LoadClass::getService('ServiceList')->drop(
+                    ZConfig::get('project_name'),
+                    $host,
+                    ZConfig::getField('socket', 'port')
+                );
+                return;
+            } catch (\Exception $e) {
+                $server->shutdown();
+                return;
             }
-            LoadClass::getService('ServiceList')->drop(
-                ZConfig::get('project_name'),
-                $host,
-                ZConfig::getField('socket', 'port')
-            );
-            return ;
         }
 
         $soaConfig = ZConfig::get('soa');
