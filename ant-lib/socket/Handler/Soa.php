@@ -80,7 +80,6 @@ class Soa
                     $host = Utils::getLocalIp();
                 }
                 LoadClass::getService('ServiceList')->drop(
-                    ZConfig::get('project_name'),
                     $host,
                     ZConfig::getField('socket', 'port')
                 );
