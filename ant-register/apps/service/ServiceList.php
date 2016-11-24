@@ -51,15 +51,17 @@ class ServiceList extends Base
             $serviceInfo->ip = $serviceIp;
             $serviceInfo->port = $servicePort;
             $serviceInfo->status = 1;
+            $serviceInfo->registerTime = time();
             $serviceInfo->startTime = time();
+            $serviceInfo->dropTime = 0;
             $serviceInfo->registerKey = $key;
             $id = $this->dao->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
             if ($serviceInfo->registerKey == $key) {
-                $ret = $this->dao->update(['status' => 1], ['id=' => $serviceInfo->id]);
+                $ret = $this->dao->update(['status' => 1, 'startTime' => time()], ['id=' => $serviceInfo->id]);
             } else {
-                $ret = $this->dao->update(['status' => 1, 'registerKey' => $key], ['id=' => $serviceInfo->id]);
+                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key], ['id=' => $serviceInfo->id]);
             }
             if ($ret) {
                 $serviceInfo->status = 1;
@@ -82,7 +84,7 @@ class ServiceList extends Base
         ]);
 
         if (!empty($serviceInfo->status)) {
-            if ($this->dao->update(['status' => 0], ['id=' => $serviceInfo->id])) {
+            if ($this->dao->update(['status' => 0, 'dropTime' => time()], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 0;
             }
         }
@@ -96,7 +98,7 @@ class ServiceList extends Base
      */
     public function dropAll($serviceName)
     {
-        return $this->dao->update(['status' => 0], ['name=' => $serviceName]);
+        return $this->dao->update(['status' => 0, 'dropTime' => time()], ['name=' => $serviceName]);
     }
 
     /**
