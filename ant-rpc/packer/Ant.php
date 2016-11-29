@@ -13,15 +13,16 @@ use ZPHP\Common\MessagePacker;
 
 class Ant
 {
+    /**
+     * @param $data
+     * @return Result
+     */
     public static function unpack($data)
     {
         $message = new MessagePacker($data);
         $header = $message->readString();
         $body = $message->readString();
-        return [
-            json_decode($header, true),
-            json_decode($body, true),
-        ];
+        return new Result($header, $body);
     }
 
     public static function pack($header, $body)

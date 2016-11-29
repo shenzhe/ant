@@ -26,7 +26,7 @@ return array(
     ],
     'socket' => array(
         'host' => '0.0.0.0',                          //socket 监听ip
-        'port' => 9949,                             //socket 监听端口
+        'port' => 8500,                             //socket 监听端口
         'adapter' => 'Swoole',                          //socket 驱动模块
         'server_type' => Swoole::TYPE_TCP,              //socket 业务模型 tcp/udp/http/websocket
         'daemonize' => 0,                             //是否开启守护进程
@@ -38,18 +38,12 @@ return array(
         'max_request' => 0,                            //单个进程最大处理请求数
         'addlisten' => array(                           //开启udp监听
             'ip' => '0.0.0.0',
-            'port' => 10060
+            'port' => 8501
         ),
         'open_length_check' => true,
         'package_length_type' => 'N',
         'package_length_offset' => 0,       //第N个字节是包长度的值
         'package_body_offset' => 4,       //第几个字节开始计算长度
         'package_max_length' => 2000000,  //协议最大长度
-    ),
-    'timer' => array(
-        array(
-            'ms' => 5000,  //毫秒
-            'callback' => 'common\Timer::checkPing'
-        ),
     ),
 );

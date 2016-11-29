@@ -6,7 +6,8 @@ use ZPHP\Protocol\Request;
 use ZPHP\Core\Route as ZRoute;
 use ZPHP\Core\Config as ZConfig;
 use common;
-use ZPHP\Client\Monitor\Client as MClient;
+use sdk\MonitorClient as MClient;
+use ZPHP\ZPHP;
 
 class Proxy
 {
@@ -234,6 +235,7 @@ class Proxy
      */
     public static function onWorkerStart($serv, $workerId)
     {
+        ZConfig::mergePath(ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config');
         \register_shutdown_function(function () use ($serv) {
             $params = Request::getParams();
             Request::setViewMode(ZConfig::getField('project', 'view_mode', 'Json'));
@@ -257,6 +259,13 @@ class Proxy
                 ) {
                     \swoole_timer_tick($item['ms'], $item['callback'], $item['params']);
                 }
+            }
+        }
+
+        $reloadPath = ZConfig::getField('project', 'reload_path');
+        if (is_array($reloadPath)) {
+            foreach ($reloadPath as $path) {
+                ZConfig::mergePath($path);
             }
         }
     }

@@ -8,30 +8,34 @@
 
 namespace sdk;
 
-use ZPHP\Client\Rpc\Tcp;
-use packer\Ant;
-use ZPHP\Protocol\Request;
+use packer\Result;
+use ZPHP\Client\Rpc\Http;
 use scheduler\Scheduler;
 
-class TcpClient extends Tcp
+class HttpClient extends Http
 {
     public static function getService($serviceName, $timeOut = 500, $config = array())
     {
         list($ip, $port) = Scheduler::getService($serviceName);
-        return new TcpClient($ip, $port, $timeOut, $config);
+        return new HttpClient($ip, $port, $timeOut, $config);
     }
 
     public function pack($sendArr)
     {
-        $header = json_encode(Request::getHeaders());
-        $body = json_encode($sendArr);
-        return Ant::pack($header, $body);
+        return $sendArr;
     }
 
     public function unpack($result)
     {
         $executeTime = microtime(true) - $this->startTime;
+        list($header, $body) = explode("\r\n\r\n", $result, 2);
+        $headerArr = explode("\r\n", $header);
+        $headerList = [];
+        foreach ($headerArr as $str) {
+            list($key, $val) = explode(':', $str);
+            $headerList[trim($key)] = trim($val);
+        }
         MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
-        return Ant::unpack($result);
+        return new Result($headerList, json_decode($body, true));
     }
 }
