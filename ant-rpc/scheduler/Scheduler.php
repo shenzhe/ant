@@ -1,9 +1,10 @@
 <?php
 
- namespace scheduler;
+namespace scheduler;
 
- use ZPHP\Core\Config as ZConfig;
- use sdk\TcpClient;
+use ZPHP\Core\Config as ZConfig;
+use sdk\TcpClient;
+use ZPHP\ZPHP;
 
 /**
  * Created by PhpStorm.
@@ -23,21 +24,29 @@ class Scheduler
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
-            //@TODO 配合ant-config, 不走网络请求
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-            $data = $rpcClient->setApi('main')->call('getList', [
-                'serviceName' => $serviceName
-            ]);
-            if ($data) {
-                //@TODO 跟据投票，选出最合理的服务
-                $serverList =  \json_decode($data, true);
-                shuffle($serverList);
-                $current = current($serverList);
-                return [
-                    $current->ip,
-                    $current->port
-                ];
+            $serverList = ZConfig::get($serviceName);
+            if (empty($serverList)) {
+                $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+                $data = $rpcClient->setApi('main')->call('getList', [
+                    'serviceName' => $serviceName
+                ]);
+                if ($data) {
+                    $serverList = \json_decode($data, true);
+                    $path = ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config';
+                    $filename = $path . DS . $serviceName . '.php';
+                    file_put_contents($filename, "<?php\rreturn array(
+                        '$serviceName'=>" . var_export($serverList, true) . "
+                    );");
+                    ZConfig::mergeFile($filename);
+                }
             }
+            //@TODO 跟据投票，选出最合理的服务
+            shuffle($serverList);
+            $current = current($serverList);
+            return [
+                $current['ip'],
+                $current['port']
+            ];
         }
     }
 

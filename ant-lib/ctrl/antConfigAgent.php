@@ -8,7 +8,7 @@
 
 namespace ctrl;
 
-class config extends Base
+class antConfigAgent extends Base
 {
     /**
      * @desc 配置下发
