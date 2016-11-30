@@ -28,14 +28,10 @@ class Soa
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
             try {
-                $host = ZConfig::getField('socket', 'host');
-                if ('0.0.0.0' == $host) {
-                    $host = Utils::getLocalIp();
-                }
                 LoadClass::getService('ServiceList')->register(
                     ZConfig::get('project_name'),
-                    $host,
-                    ZConfig::getField('socket', 'port')
+                    ZConfig::getField('soa', 'ip'),
+                    ZConfig::getField('soa', 'port')
                 );
                 return;
             } catch (\Exception $e) {
