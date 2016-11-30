@@ -9,8 +9,8 @@ return array(
     'soa' => array(
         'register_callback' => 'socket\Handler\Soa::register',
         'drop_callback' => 'socket\Handler\Soa::drop',
-        'ip'=>'',
-        'port'=>'',
-        'timeOut'=>5000
+        'ip' => '10.94.107.22',
+        'port' => 9949,
+        'timeOut' => 5000
     ),
 );

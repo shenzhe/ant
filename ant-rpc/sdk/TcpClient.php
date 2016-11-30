@@ -28,6 +28,10 @@ class TcpClient extends Tcp
         return Ant::pack($header, $body);
     }
 
+    /**
+     * @param $result
+     * @return \packer\Result
+     */
     public function unpack($result)
     {
         $executeTime = microtime(true) - $this->startTime;
