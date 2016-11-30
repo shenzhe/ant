@@ -17,7 +17,7 @@
 | ant-register | 统一注册中心|基于mysql实现, 实现服务注册/发现/故障摘除等基础功能|
 | ant-monitor     | 统一监控中心    |实现调用方的性能监控（包含网络时间）<br/>服务提供方的性能监控（不包含网络时间）|
 | ant-lib | 公用库      |提供一些公用包<br/>如： exception， 一些base类, socket handler|
-| ant-rpc | 统一rpc协议模块      |只支持 自定义包头+包体的协议，包头，包体都是json串，实现全局的RequestId|
+| ant-rpc | 统一rpc协议模块      |只支持 自定义包头+包体的协议，包头，包体都是json串<br/>实现全局的RequestId<br/>服务的基础调用<br/>tcp/http sdk支持|
 | ant-config | 统一配置模块      |按服务名粒度，支持配置更新、下发、热加载，
 
 依赖
