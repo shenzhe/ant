@@ -28,7 +28,8 @@ class Scheduler
             if (empty($serverList)) {
                 $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
                 $data = $rpcClient->setApi('main')->call('getList', [
-                    'serviceName' => $serviceName
+                    'serviceName' => $serviceName,
+                    'subscriber' => ZConfig::get('project_name'),
                 ]);
                 if ($data) {
                     $serverList = \json_decode($data, true);

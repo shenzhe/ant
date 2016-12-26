@@ -14,9 +14,11 @@ use common\LoadClass;
 class main extends CBase
 {
 
+
     /**
      * @return array
      * @desc 服务注册
+     * @method *
      */
     public function register()
     {
@@ -28,7 +30,7 @@ class main extends CBase
          */
         $service = LoadClass::getService('ServiceList');
         return $this->getView([
-            'serviceInfo'=>$service->register($serviceName, $serviceIp, $servicePort)
+            'serviceInfo' => $service->register($serviceName, $serviceIp, $servicePort)
         ]);
     }
 
@@ -42,7 +44,7 @@ class main extends CBase
          */
         $service = LoadClass::getService('ServiceList');
         return $this->getView([
-            'serviceInfo'=>$service->drop($serviceIp, $servicePort)
+            'serviceInfo' => $service->drop($serviceIp, $servicePort)
         ]);
     }
 
@@ -53,12 +55,16 @@ class main extends CBase
     public function getList()
     {
         $serviceName = $this->getString('serviceName');
+        $subscriber = $this->getString('subscriber', '');
+        if (!empty($subscriber)) { //添加订阅者
+            LoadClass::getService('Subscriber')->subscriber($serviceName, $subscriber);
+        }
         /**
          * @var $service \service\ServiceList
          */
         $service = LoadClass::getService('ServiceList');
         return $this->getView([
-            'serviceList'=>$service->getServiceList($serviceName)
+            'serviceList' => $service->getServiceList($serviceName)
         ]);
     }
 }
