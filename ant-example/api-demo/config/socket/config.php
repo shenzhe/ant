@@ -21,7 +21,7 @@ return array(
         'error_handler' => 'common\MyException::errorHandler',
         'reload_path' => array(
             __DIR__ . DS . '..' . DS . 'public',
-            ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config',
+            ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib' . DS . 'config',
         ),
     ],
     'socket' => array(
