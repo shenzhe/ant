@@ -2,6 +2,7 @@
 
 namespace scheduler;
 
+use common\MyException;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
 use ZPHP\ZPHP;
@@ -24,26 +25,8 @@ class Scheduler
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
-            $serverList = ZConfig::get($serviceName);
-            if (empty($serverList)) {
-                $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-                $data = $rpcClient->setApi('main')->call('getList', [
-                    'serviceName' => $serviceName,
-                    'subscriber' => ZConfig::get('project_name'),
-                ]);
-                if ($data) {
-                    $serverList = \json_decode($data, true);
-                    $path = ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config';
-                    $filename = $path . DS . $serviceName . '.php';
-                    file_put_contents($filename, "<?php\rreturn array(
-                        '$serviceName'=>" . var_export($serverList, true) . "
-                    );");
-                    ZConfig::mergeFile($filename);
-                }
-            }
-            //@TODO 跟据投票，选出最合理的服务
-            shuffle($serverList);
-            $current = current($serverList);
+            $serverList = self::getList($serviceName);
+            $current = self::getOne($serviceName, $serverList);
             return [
                 $current['ip'],
                 $current['port']
@@ -51,23 +34,94 @@ class Scheduler
         }
     }
 
+    public static function getOne($serviceName, $serverList)
+    {
+        $goodList = [];
+        foreach ($serverList as $server) {
+            if ($server['vote'] < 0) {
+                continue;
+            }
+            $goodList[] = $server;
+        }
+        if (empty($goodList)) {
+            throw new MyException($serviceName . "serverlist empty", -1);
+        }
+        shuffle($goodList);
+        return current($serverList);
+
+    }
+
+    public static function getList($serviceName, $soaConfig)
+    {
+        $serverList = ZConfig::get($serviceName);
+        if (empty($serverList)) {
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $data = $rpcClient->setApi('main')->call('getList', [
+                'serviceName' => $serviceName,
+                'subscriber' => ZConfig::get('project_name'),
+            ]);
+            if ($data) {
+                $serverList = \json_decode($data, true);
+                self::reload($serviceName, $serverList);
+            }
+        }
+
+        return $serverList;
+    }
+
+    public static function reload($serviceName, $serverList)
+    {
+        $path = ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config';
+        $filename = $path . DS . $serviceName . '.php';
+        file_put_contents($filename, "<?php\rreturn array(
+                        '$serviceName'=>" . var_export($serverList, true) . "
+                    );");
+        ZConfig::mergeFile($filename);
+    }
+
     /**
+     * @param $serviceName
      * @param $ip
      * @param $port
      * @desc rpc调用成功，成功投票+1
      */
-    public static function voteGood($ip, $port)
+    public static function voteGood($serviceName, $ip, $port)
     {
-
+        $soaConfig = ZConfig::get('soa');
+        $serverList = self::getList($serviceName, $soaConfig);
+        if (!empty($serverList)) {
+            foreach ($serverList as $server) {
+                if ($server['ip'] == $ip && $server['port'] == $port) {
+                    $server['vote']++;
+                    self::reload($serviceName, $serverList);
+                    return;
+                }
+            }
+        }
+        return;
     }
 
     /**
+     * @param $serviceName
      * @param $ip
      * @param $port
-     * @desc rpc调用失败，失败投票 +1
+     * @desc rpc调用失败，失败投票 -1
      */
-    public static function voteBad($ip, $port)
+    public static function voteBad($serviceName, $ip, $port)
     {
+        $soaConfig = ZConfig::get('soa');
+        $serverList = self::getList($serviceName, $soaConfig);
+        if (!empty($serverList)) {
+            foreach ($serverList as $server) {
+                if ($server['ip'] == $ip && $server['port'] == $port) {
+                    $server['vote']--;
+                    self::reload($serviceName, $serverList);
+                    return;
+                }
+            }
+        }
+
+        return;
 
     }
 

@@ -22,14 +22,14 @@ class Ant
         $message = new MessagePacker($data);
         $header = $message->readString();
         $body = $message->readString();
-        return new Result($header, $body);
+        return new Result(json_decode($header, true), json_decode($body, true));
     }
 
     public static function pack($header, $body)
     {
         $message = new MessagePacker();
-        $message->writeString($header);
-        $message->writeString($body);
+        $message->writeString(json_encode($header));
+        $message->writeString(json_encode($body));
         return $message->getData();
     }
 }

@@ -15,17 +15,28 @@ use scheduler\Scheduler;
 
 class TcpClient extends Tcp
 {
+    /**
+     * @param $serviceName
+     * @param int $timeOut
+     * @param array $config
+     * @return Tcp
+     */
     public static function getService($serviceName, $timeOut = 500, $config = array())
     {
         list($ip, $port) = Scheduler::getService($serviceName);
-        return new TcpClient($ip, $port, $timeOut, $config);
+        try {
+            $service = new TcpClient($ip, $port, $timeOut, $config);
+            Scheduler::voteGood($serviceName, $ip, $port);
+            return $service;
+        } catch (\Exception $e) {
+            Scheduler::voteBad($serviceName, $ip, $port);
+            return self::getService($serviceName, $timeOut, $config);
+        }
     }
 
     public function pack($sendArr)
     {
-        $header = json_encode(Request::getHeaders());
-        $body = json_encode($sendArr);
-        return Ant::pack($header, $body);
+        return Ant::pack(Request::getHeaders(), $sendArr);
     }
 
     /**
