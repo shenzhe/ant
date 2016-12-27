@@ -25,7 +25,7 @@ class Scheduler
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
-            $serverList = self::getList($serviceName);
+            $serverList = self::getList($serviceName, $soaConfig);
             $current = self::getOne($serviceName, $serverList);
             return [
                 $current['ip'],
