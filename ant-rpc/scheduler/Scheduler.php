@@ -57,8 +57,7 @@ class Scheduler
         if (empty($serverList)) {
             $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $data = $rpcClient->setApi('main')->call('getList', [
-                'serviceName' => $serviceName,
-                'subscriber' => ZConfig::get('project_name'),
+                'serviceName' => $serviceName
             ]);
             if ($data) {
                 $serverList = \json_decode($data, true);
@@ -66,6 +65,9 @@ class Scheduler
             }
         }
 
+        if (empty($serverList)) {
+            throw new MyException($serviceName . "serverlist empty", -1);
+        }
         return $serverList;
     }
 
