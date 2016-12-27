@@ -60,8 +60,9 @@ class Scheduler
                 'serviceName' => $serviceName
             ]);
             $body = $data->getBody();
-            if (!empty($body['code']) && !empty($body['serviceList'])) {
-                self::reload($serviceName, $body['serviceList']);
+            if (empty($body['code']) && !empty($body['serviceList'])) {
+                $serviceList = $body['serviceList'];
+                self::reload($serviceName, $serviceList);
             }
         }
 
