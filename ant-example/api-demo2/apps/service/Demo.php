@@ -12,11 +12,12 @@ class Demo
 {
     public function demo($method)
     {
-        $service = TcpClient::getService('api-demo');
+        $service = TcpClient::getService('api-demo2');
         $result = $service->call($method);
-        if (!empty($result->body['code'])) {
-            throw new \common\MyException($result->body['code'] . ':' . $result->body['msg']);
+        $body = $result->getBody();
+        if (!empty($body['code'])) {
+            throw new \common\MyException($body['code'] . ':' . $body['msg']);
         }
-        return $result->body['data'];
+        return $body['data'];
     }
 }

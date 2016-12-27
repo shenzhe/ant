@@ -54,9 +54,10 @@ class Soa
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
             }
-            if (!empty($data->body['code'])) {
+            $body = $data->getBody();
+            if (!empty($body['code'])) {
                 $server->shutdown();
-                throw new MyException($data['msg'], $data['code']);
+                throw new MyException($body['msg'], $body['code']);
             }
         }
     }

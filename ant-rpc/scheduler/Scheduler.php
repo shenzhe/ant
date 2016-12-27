@@ -59,9 +59,9 @@ class Scheduler
             $data = $rpcClient->setApi('main')->call('getList', [
                 'serviceName' => $serviceName
             ]);
-            if ($data) {
-                $serverList = \json_decode($data, true);
-                self::reload($serviceName, $serverList);
+            $body = $data->getBody();
+            if (!empty($body['code']) && !empty($body['serviceList'])) {
+                self::reload($serviceName, $body['serviceList']);
             }
         }
 
