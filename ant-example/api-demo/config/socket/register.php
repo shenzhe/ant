@@ -10,7 +10,10 @@ return array(
         'register_callback' => 'socket\Handler\Soa::register',
         'drop_callback' => 'socket\Handler\Soa::drop',
         'ip' => '10.94.107.22',
-        'port' => 7101,
-        'timeOut' => 5000
+        'port' => 9949,
+        'timeOut' => 5000,
+        'serviceName' => 'api-demo',
+        'serviceIp' => '10.94.107.22',
+        'servicePort' => 7101,
     ),
 );
