@@ -43,7 +43,8 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+//            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $rpcClient = TcpClient::getService('register_center');
             $data = $rpcClient->setApi('main')->call('register', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
@@ -53,8 +54,7 @@ class Soa
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
             }
-            $data = json_decode($data, true);
-            if (!empty($data['code'])) {
+            if (!empty($data->body['code'])) {
                 $server->shutdown();
                 throw new MyException($data['msg'], $data['code']);
             }
