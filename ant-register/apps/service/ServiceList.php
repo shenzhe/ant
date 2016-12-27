@@ -41,9 +41,7 @@ class ServiceList extends Base
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
-        $key = ZConfig::getField('project', 'is_register_project', 0)
-            ? 'self'
-            : ZConfig::getField('soa', 'ip') . ":" . ZConfig::getField('soa', 'port');
+        $key = ZConfig::getField('soa', 'ip') . ":" . ZConfig::getField('soa', 'port');
         if (empty($serviceInfo)) {
 
             $serviceInfo = new entity\ServiceList();
