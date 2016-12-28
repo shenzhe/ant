@@ -17,6 +17,6 @@ return array(
         'serviceName' => 'api-demo',
         'serviceIp' => '10.94.107.22',
         'servicePort' => 7101,
-        'serverType' => Consts::SERVER_TYPE_TCP | Consts::SERVER_TYPE_UDP,
+        'serverType' => 3,
     ),
 );

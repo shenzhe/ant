@@ -9,6 +9,7 @@ return array(
     'project_name' => 'ant-register_center',
     'loadend_hook' => function () {
         Config::set('project_name', Consts::REGISTER_SERVER_NAME);
+//        Config::setField('soa', 'serverType', Consts::SERVER_TYPE_TCP | Consts::SERVER_TYPE_UDP);
     },
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',

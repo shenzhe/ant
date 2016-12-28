@@ -17,6 +17,6 @@ return array(
         'serviceName' => Consts::MONITOR_SERVER_NAME,
         'serviceIp' => '10.94.107.22',
         'servicePort' => 8891,
-        'serverType' => Consts::SERVER_TYPE_UDP,
+        'serverType' => 2,
     ),
 );

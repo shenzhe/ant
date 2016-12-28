@@ -14,6 +14,6 @@ return array(
         'ip' => '10.94.107.22',
         'port' => 9949,
         'timeOut' => 5000,
-        'serverType' => Consts::SERVER_TYPE_TCP | Consts::SERVER_TYPE_UDP,
+        'serverType' => 3,
     ),
 );
