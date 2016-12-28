@@ -18,10 +18,13 @@ class dot extends Base
      */
     public function client()
     {
-        $api = $this->getString('api');
-        $time = $this->getFloat('time');
-        common\Log::info('service', [
-            $api, $time
+        $serverName = $this->getString('serverName', 'undefined');
+        $serverIp = $this->getString('serverIp', 'undefined');
+        $serverPort = $this->getString('serverPort', 'undefined');
+        $api = $this->getString('api', 'undefined');
+        $time = $this->getFloat('time', 0);
+        common\Log::info('client', [
+            $serverName, $serverIp, $serverPort, $api, $time
         ]);
     }
 
@@ -30,10 +33,13 @@ class dot extends Base
      */
     public function service()
     {
-        $api = $this->getString('api');
-        $time = $this->getFloat('time');
+        $serverName = $this->getString('serverName', 'undefined');
+        $serverIp = $this->getString('serverIp', 'undefined');
+        $serverPort = $this->getString('serverPort', 'undefined');
+        $api = $this->getString('api', 'undefined');
+        $time = $this->getFloat('time', 0);
         common\Log::info('service', [
-            $api, $time
+            $serverName, $serverIp, $serverPort, $api, $time
         ]);
     }
 }

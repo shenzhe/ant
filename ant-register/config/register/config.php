@@ -4,7 +4,7 @@ use ZPHP\Socket\Adapter\Swoole;
 
 return array(
     'server_mode' => 'Socket',
-    'project_name' => 'register_center',
+    'project_name' => common\Consts::REGISTER_SERVER_NAME,
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'lib_path' => array(

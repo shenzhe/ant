@@ -13,6 +13,7 @@ use sdk\TcpClient;
 use common\Utils;
 use common\MyException;
 use common\LoadClass;
+use common\Consts;
 
 
 class Soa
@@ -31,7 +32,8 @@ class Soa
                 LoadClass::getService('ServiceList')->register(
                     ZConfig::get('project_name'),
                     ZConfig::getField('soa', 'ip'),
-                    ZConfig::getField('soa', 'port')
+                    ZConfig::getField('soa', 'port'),
+                    ZConfig::getField('soa', 'serverType')
                 );
                 return;
             } catch (\Exception $e) {
@@ -44,11 +46,12 @@ class Soa
         if (!empty($soaConfig)) {
             //服务注册
 //            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-            $rpcClient = TcpClient::getService('register_center');
+            $rpcClient = TcpClient::getService(Consts::REGISTER_SERVER_NAME);
             $data = $rpcClient->setApi('main')->call('register', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
                 'servicePort' => $soaConfig['servicePort'],
+                'serviceType' => $soaConfig['serviceType'],
             ]);
 
             if (empty($data)) {  //注册失败，服务停止

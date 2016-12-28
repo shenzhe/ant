@@ -9,7 +9,10 @@
 namespace sdk;
 
 use ZPHP\Client\Rpc\Udp;
+use scheduler\Scheduler;
 use ZPHP\Core\Config as ZConfig;
+
+use common\Consts;
 
 
 class MonitorClient
@@ -22,13 +25,16 @@ class MonitorClient
      */
     public static function serviceDot($api, $time)
     {
-        $config = ZConfig::get('monitor');
-        if (empty($config)) {
+        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
-        $client = new Udp($config['host'], $config['port'], $config['timeOut']);
+        list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
+        $client = new Udp($ip, $port, 3000);
         $client->setApi('dot')->call('service',
             [
+                'serviceName' => ZConfig::getField('soa', 'serverName'),
+                'serviceIp' => ZConfig::getField('soa', 'serverIp'),
+                'servicePort' => ZConfig::getField('soa', 'serverPort'),
                 'api' => $api,
                 'time' => $time
             ]
@@ -42,13 +48,16 @@ class MonitorClient
      */
     public static function clientDot($api, $time)
     {
-        $config = ZConfig::get('monitor');
-        if (empty($config)) {
+        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
-        $client = new Udp($config['host'], $config['port'], $config['timeOut']);
+        list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
+        $client = new Udp($ip, $port, 3000);
         $client->setApi('dot')->call('client',
             [
+                'serviceName' => ZConfig::getField('soa', 'serverName'),
+                'serviceIp' => ZConfig::getField('soa', 'serverIp'),
+                'servicePort' => ZConfig::getField('soa', 'serverPort'),
                 'api' => $api,
                 'time' => $time
             ]
@@ -62,13 +71,16 @@ class MonitorClient
      */
     public static function taskDot($api, $time)
     {
-        $config = ZConfig::get('monitor');
-        if (empty($config)) {
+        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
-        $client = new Udp($config['host'], $config['port'], $config['timeOut']);
+        list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
+        $client = new Udp($ip, $port, 3000);
         $client->setApi('dot')->call('task',
             [
+                'serviceName' => ZConfig::getField('soa', 'serverName'),
+                'serviceIp' => ZConfig::getField('soa', 'serverIp'),
+                'servicePort' => ZConfig::getField('soa', 'serverPort'),
                 'api' => $api,
                 'time' => $time
             ]

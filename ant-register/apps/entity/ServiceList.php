@@ -24,6 +24,7 @@ class ServiceList extends Base
     public $startTime;                  //启动时间
     public $dropTime;                   //停止时间
     public $registerKey;                //从哪个注册服务器注册的
+    public $serverType;
 
 
     public function getIpPort()
@@ -33,6 +34,7 @@ class ServiceList extends Base
             'port' => $this->port,
             'status' => $this->status,
             'rate' => $this->rate,
+            'serverType'=>$this->serverType
         ];
     }
 }

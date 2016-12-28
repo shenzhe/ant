@@ -29,10 +29,11 @@ class ServiceList extends Base
      * @param $serviceName
      * @param $serviceIp
      * @param $servicePort
+     * @param $serverType
      * @return entity\ServiceList|mixed
      * @desc 服务注册
      */
-    public function register($serviceName, $serviceIp, $servicePort)
+    public function register($serviceName, $serviceIp, $servicePort, $serverType)
     {
         /**
          * @var $serviceInfo \entity\ServiceList
@@ -53,13 +54,14 @@ class ServiceList extends Base
             $serviceInfo->startTime = time();
             $serviceInfo->dropTime = 0;
             $serviceInfo->registerKey = $key;
+            $serviceInfo->serverType = $serverType;
             $id = $this->dao->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
             if ($serviceInfo->registerKey == $key) {
-                $ret = $this->dao->update(['status' => 1, 'startTime' => time()], ['id=' => $serviceInfo->id]);
+                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'serverType'=>$serverType], ['id=' => $serviceInfo->id]);
             } else {
-                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key], ['id=' => $serviceInfo->id]);
+                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key, 'serverType'=>$serverType], ['id=' => $serviceInfo->id]);
             }
             if ($ret) {
                 $serviceInfo->status = 1;

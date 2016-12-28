@@ -5,7 +5,6 @@
  * Date: 2016/11/29
  * Time: 11:21
  */
-
 use common\Consts;
 
 return array(
@@ -15,9 +14,9 @@ return array(
         'ip' => '10.94.107.22',
         'port' => 9949,
         'timeOut' => 5000,
-        'serviceName' => 'api-demo2',
+        'serviceName' => Consts::MONITOR_SERVER_NAME,
         'serviceIp' => '10.94.107.22',
-        'servicePort' => 7001,
-        'serverType' => Consts::SERVER_TYPE_TCP | Consts::SERVER_TYPE_UDP,
+        'servicePort' => 8891,
+        'serverType' => Consts::SERVER_TYPE_UDP,
     ),
 );
