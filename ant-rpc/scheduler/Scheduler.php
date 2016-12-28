@@ -67,7 +67,7 @@ class Scheduler
         }
 
         if (empty($serverList)) {
-            throw new MyException($serviceName . "serverlist empty", -1);
+            throw new MyException($serviceName . " serverlist empty", -1);
         }
         return $serverList;
     }

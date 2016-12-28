@@ -36,7 +36,7 @@ return array(
         'port' => 9949,                             //socket 监听端口
         'adapter' => 'Swoole',                          //socket 驱动模块
         'server_type' => Swoole::TYPE_TCP,              //socket 业务模型 tcp/udp/http/websocket
-        'daemonize' => 0,                             //是否开启守护进程
+        'daemonize' => 1,                             //是否开启守护进程
         'client_class' => 'socket\\Tcp',            //socket 回调类
         'protocol' => 'Ant',                         //socket通信数据协议
         'work_mode' => 3,                             //工作模式：1：单进程单线程 2：多线程 3： 多进程
