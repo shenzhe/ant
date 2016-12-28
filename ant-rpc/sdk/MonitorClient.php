@@ -25,7 +25,7 @@ class MonitorClient
      */
     public static function serviceDot($api, $time)
     {
-        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
         list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
@@ -48,7 +48,7 @@ class MonitorClient
      */
     public static function clientDot($api, $time)
     {
-        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
         list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
@@ -71,7 +71,7 @@ class MonitorClient
      */
     public static function taskDot($api, $time)
     {
-        if (ZConfig::getField('project', 'name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
             return;
         }
         list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);

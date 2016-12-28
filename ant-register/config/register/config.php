@@ -1,10 +1,11 @@
 <?php
 use ZPHP\ZPHP;
 use ZPHP\Socket\Adapter\Swoole;
+use common\Consts;
 
 return array(
     'server_mode' => 'Socket',
-    'project_name' => common\Consts::REGISTER_SERVER_NAME,
+    'project_name' => Consts::REGISTER_SERVER_NAME,
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'lib_path' => array(

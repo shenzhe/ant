@@ -19,7 +19,7 @@ class main implements IController
 
     public function main()
     {
-        $project = Config::getField('project', 'name', 'zphp');
+        $project = Config::get('project_name', 'zphp');
         $data = $project." runing!\n";
         $params = $this->_server->getParams();
         if(!empty($params)) {

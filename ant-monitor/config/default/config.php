@@ -1,9 +1,11 @@
 <?php
 
 use ZPHP\Socket\Adapter\Swoole;
+use common\Consts;
 
 return array(
     'server_mode' => 'Socket',
+    'project_name' => Consts::MONITOR_SERVER_NAME,
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'project' => array(
