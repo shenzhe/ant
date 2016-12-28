@@ -14,7 +14,7 @@ return array(
         'ip' => '10.94.107.22',
         'port' => 9949,
         'timeOut' => 5000,
-        'serviceName' => Consts::MONITOR_SERVER_NAME,
+        'serviceName' => 'ant-monitor-center',
         'serviceIp' => '10.94.107.22',
         'servicePort' => 8891,
         'serverType' => 2,
