@@ -52,6 +52,17 @@ class Udp extends ZSwoole
     }
 
     /**
+     * @param $serv                             //swoole_server对像
+     * @param $data                             //收到的udp数据
+     * @param $clientInfo                       //udp客户端数组
+     * @desc 收到udp数据的处理
+     */
+    public function doPacket($serv, $data, $clientInfo)
+    {
+        Handler\Proxy::onPacket($serv, $data, $clientInfo);
+    }
+
+    /**
      * @param $serv                                     //swoole_server对像
      * @param $workerId                                   //worker或task id ps: id>worker_num是表示是task进程
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
