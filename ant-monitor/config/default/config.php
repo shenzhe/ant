@@ -9,7 +9,7 @@ return array(
     'server_mode' => 'Socket',
     'project_name' => 'ant-monitor_center',
     'loadend_hook' => function () {
-        Config::set('project_name', Consts::REGISTER_SERVER_NAME);
+        Config::set('project_name', Consts::MONITOR_SERVER_NAME);
     },
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
