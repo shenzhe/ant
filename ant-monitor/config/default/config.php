@@ -3,6 +3,7 @@
 use ZPHP\Socket\Adapter\Swoole;
 use common\Consts;
 use ZPHP\Core\Config;
+use ZPHP\ZPHP;
 
 return array(
     'server_mode' => 'Socket',
@@ -12,6 +13,10 @@ return array(
     },
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
+    'lib_path' => array(
+        ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib',
+        ZPHP::getRootPath() . DS . '..' . DS . 'ant-rpc',
+    ),
     'project' => array(
         'default_ctrl_name' => 'main',                      //默认入口控制器
         'debug_mode' => 0,                                  //打开调试模式
