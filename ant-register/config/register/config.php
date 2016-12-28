@@ -2,10 +2,14 @@
 use ZPHP\ZPHP;
 use ZPHP\Socket\Adapter\Swoole;
 use common\Consts;
+use ZPHP\Core\Config;
 
 return array(
     'server_mode' => 'Socket',
-    'project_name' => Consts::REGISTER_SERVER_NAME,
+    'project_name' => 'ant-register_center',
+    'loadend_hook' => function () {
+        Config::set('project_name', Consts::REGISTER_SERVER_NAME);
+    },
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'lib_path' => array(
