@@ -37,6 +37,7 @@ class Proxy
         if ('ant-ping' === $realData) {  //ping包，强制硬编码，不允许自定义
             return $serv->send(pack('N', 8) . 'ant-pong');  //回pong包
         }
+        Request::setRequestTime($startTime);
         Request::addParams('_recv', 1);
         Request::parse($realData);
         $params = Request::getParams();
@@ -76,7 +77,7 @@ class Proxy
                 $serv->send($fd, pack('N', strlen($result)) . $result);
             }
         }
-        $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        $executeTime = Response::getReponseTime() - $startTime;  //获取程序执行时间
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
