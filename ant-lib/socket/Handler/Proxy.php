@@ -250,11 +250,9 @@ class Proxy
         });
 
         $timer = ZConfig::get('timer', []);
-        if (!empty($timer)) {
-            $workerNum = ZConfig::getField('socket', 'worker_num');
+        if (!empty($timer) && 0 === intval($workerId)) {
             foreach ($timer as $index => $item) {
-                if ($workerId === $index % $workerNum &&
-                    !empty($item['ms']) &&
+                if (!empty($item['ms']) &&
                     !empty($item['callback']) &&
                     \is_callable($item['callback'])
                 ) {

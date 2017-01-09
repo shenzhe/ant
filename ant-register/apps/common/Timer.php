@@ -27,6 +27,9 @@ class Timer
         if (!empty($allService)) {
             foreach ($allService as $item) {
                 try {
+                    if ($item->ip . ':' . $item->port == $key) {
+                        continue;
+                    }
                     $rpc = new TcpClient($item->ip, $item->port);
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
                     if ('ant-pong' == $result) {
