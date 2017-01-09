@@ -256,7 +256,7 @@ class Proxy
                     !empty($item['callback']) &&
                     \is_callable($item['callback'])
                 ) {
-                    \swoole_timer_tick($item['ms'], $item['callback'], $item['params']);
+                    \swoole_timer_tick($item['ms'], $item['callback'], isset($item['params']) ? $item['params'] : null);
                 }
             }
         }
