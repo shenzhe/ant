@@ -77,7 +77,7 @@ class Proxy
                 $serv->send($fd, pack('N', strlen($result)) . $result);
             }
         }
-        $executeTime = Response::getReponseTime() - $startTime;  //获取程序执行时间
+        $executeTime = Response::getResponseTime() - $startTime;  //获取程序执行时间
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
