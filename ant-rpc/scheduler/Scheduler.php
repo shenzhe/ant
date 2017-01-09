@@ -2,6 +2,8 @@
 
 namespace scheduler;
 
+use common\Consts;
+use common\LoadClass;
 use common\MyException;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
@@ -55,14 +57,21 @@ class Scheduler
     {
         $serverList = ZConfig::get($serviceName);
         if (empty($serverList)) {
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-            $data = $rpcClient->setApi('main')->call('getList', [
-                'serviceName' => $serviceName
-            ]);
-            $body = $data->getBody();
-            if (empty($body['code']) && !empty($body['data']['serviceList'])) {
-                $serverList = $body['data']['serviceList'];
-                self::reload($serviceName, $serverList);
+            if (ZConfig::get('project_name') === Consts::REGISTER_SERVER_NAME) {
+                $serverList = LoadClass::getService('ServiceList')->getServiceList($serviceName);
+                if (!empty($serverList)) {
+                    $serverList = json_decode(json_encode($serverList), true);
+                }
+            } else {
+                $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+                $data = $rpcClient->setApi('main')->call('getList', [
+                    'serviceName' => $serviceName
+                ]);
+                $body = $data->getBody();
+                if (empty($body['code']) && !empty($body['data']['serviceList'])) {
+                    $serverList = $body['data']['serviceList'];
+                    self::reload($serviceName, $serverList);
+                }
             }
         }
 
