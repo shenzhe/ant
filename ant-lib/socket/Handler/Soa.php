@@ -51,7 +51,7 @@ class Soa
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
                 'servicePort' => $soaConfig['servicePort'],
-                'serviceType' => $soaConfig['serviceType'],
+                'serviceType' => $soaConfig['serverType'],
             ]);
 
             if (empty($data)) {  //注册失败，服务停止
