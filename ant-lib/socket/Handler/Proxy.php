@@ -203,6 +203,10 @@ class Proxy
     {
         $startTime = microtime(true);
         common\Log::info([$data, $clientInfo], 'proxy_udp');
+        if ('ant-ping' == $data) {
+            $serv->sendto($clientInfo['ip'], $clientInfo['port'], 'ant-pong');
+            return;
+        }
         $params = Request::parse($data);
         $params['_fd'] = $fd = unpack('L', pack('N', ip2long($clientInfo['address'])))[1];
         if (!empty($params['_task'])) {
