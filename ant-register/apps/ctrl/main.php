@@ -25,12 +25,13 @@ class main extends CBase
         $serviceName = $this->getString('serviceName');
         $serviceIp = $this->getString('serviceIp');
         $servicePort = $this->getInteger('servicePort');
+        $serverType = $this->getInteger('serverType');
         /**
          * @var $service \service\ServiceList
          */
         $service = LoadClass::getService('ServiceList');
         return $this->getView([
-            'serviceInfo' => $service->register($serviceName, $serviceIp, $servicePort)
+            'serviceInfo' => $service->register($serviceName, $serviceIp, $servicePort, $serverType)
         ]);
     }
 
