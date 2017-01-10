@@ -240,7 +240,6 @@ class Proxy
      */
     public static function onWorkerStart($serv, $workerId)
     {
-        ZConfig::mergePath(ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config');
         \register_shutdown_function(function () use ($serv) {
             $params = Request::getParams();
             Request::setViewMode(ZConfig::getField('project', 'view_mode', 'Json'));

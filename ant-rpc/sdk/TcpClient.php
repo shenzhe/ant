@@ -19,7 +19,7 @@ class TcpClient extends Tcp
      * @param $serviceName
      * @param int $timeOut
      * @param array $config
-     * @return Tcp
+     * @return TcpClient
      */
     public static function getService($serviceName, $timeOut = 500, $config = array())
     {
@@ -48,5 +48,15 @@ class TcpClient extends Tcp
         $executeTime = microtime(true) - $this->startTime;
         MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         return Ant::unpack($result);
+    }
+
+    /**
+     * @param $method
+     * @param array $params
+     * @return \packer\Result
+     */
+    public function call($method, $params = [])
+    {
+        return parent::call($method, $params);
     }
 }
