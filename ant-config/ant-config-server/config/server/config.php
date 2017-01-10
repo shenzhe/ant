@@ -13,8 +13,8 @@ return array(
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
     'lib_path' => array(
-        ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib',
-        ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-rpc',
+        'ant-lib' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib',
+        'ant-rpc' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-rpc',
     ),
     'project' => [
         'default_ctrl_name' => 'main',                      //默认入口控制器
@@ -25,9 +25,6 @@ return array(
         'exception_handler' => 'common\MyException::exceptionHandler',
         'fatal_handler' => 'common\MyException::fatalHandler',
         'error_handler' => 'common\MyException::errorHandler',
-        'reload_path' => array(
-            __DIR__ . DS . '..' . DS . 'public',
-        ),
     ],
     'socket' => array(
         'host' => '0.0.0.0',                          //socket 监听ip

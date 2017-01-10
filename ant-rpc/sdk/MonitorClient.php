@@ -25,7 +25,9 @@ class MonitorClient
      */
     public static function serviceDot($api, $time)
     {
-        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME ||
+            ZConfig::get('project_name') == Consts::REGISTER_SERVER_NAME
+        ) {
             return;
         }
         try {
@@ -52,7 +54,9 @@ class MonitorClient
      */
     public static function clientDot($api, $time)
     {
-        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME ||
+            ZConfig::get('project_name') == Consts::REGISTER_SERVER_NAME
+        ) {
             return;
         }
         try {
@@ -79,7 +83,9 @@ class MonitorClient
      */
     public static function taskDot($api, $time)
     {
-        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME) {
+        if (ZConfig::get('project_name') == Consts::MONITOR_SERVER_NAME ||
+            ZConfig::get('project_name') == Consts::REGISTER_SERVER_NAME
+        ) {
             return;
         }
         try {

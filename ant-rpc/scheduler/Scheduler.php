@@ -83,8 +83,11 @@ class Scheduler
 
     public static function reload($serviceName, $serverList)
     {
-        $path = ZPHP::getRootPath() . DS . '..' . DS . 'ant-lib' . DS . 'config';
-        $filename = $path . DS . $serviceName . '.php';
+        $path = ZConfig::getField('lib_path', 'ant-lib');
+        if (empty($path)) {
+            return;
+        }
+        $filename = DS . 'config' . DS . $serviceName . '.php';
         file_put_contents($filename, "<?php\rreturn array(
                         '$serviceName'=>" . var_export($serverList, true) . "
                     );");

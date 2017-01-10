@@ -1,3 +1,4 @@
 .idea/
 *.log
 ant-lib/config/*.php
+public/*.php

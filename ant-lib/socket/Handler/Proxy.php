@@ -264,7 +264,11 @@ class Proxy
             }
         }
 
-        $reloadPath = ZConfig::getField('project', 'reload_path');
+        $reloadPath = ZConfig::getField('project', 'reload_path', []);
+        $reloadPath += [
+            ZConfig::getField('lib_path', 'ant-lib'),
+            ZPHP::getConfigPath() . DS . '..' . DS . 'public'
+        ];
         if (is_array($reloadPath)) {
             foreach ($reloadPath as $path) {
                 ZConfig::mergePath($path);
