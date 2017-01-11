@@ -21,7 +21,7 @@ class Timer
          * @desc 定时检测在线服务的状态
          */
 
-        $service = LoadClass::getService('ServiceList');
+        $service = LoadClass::getDao('ServiceList');
         //@TODO 需要优化，如果机器比较多，检测会比较慢
         $key = ZConfig::getField('soa', 'ip') . ':' . ZConfig::getField('soa', 'port');
         Log::info(['start', $key], 'ping');
