@@ -41,7 +41,7 @@ class Timer
                         continue;
                     }
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
-                    Log::info(['success', $item->name, $item->ip, $item->port, $item->status, $result], 'ping');
+                    Log::info(['success', $rpc->isConnected(), $item->name, $item->ip, $item->port, $item->status, $result], 'ping');
                     if ('ant-pong' == $result) {
                         if (0 == $item->status) { //离线状态设置为在线状态
                             //@TODO 可以不单条更新，改为批量更新
