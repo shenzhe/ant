@@ -35,7 +35,7 @@ class Proxy
         common\Log::info([$data, substr($data, 4), $fd], 'proxy_tcp');
         $realData = substr($data, 4);
         if ('ant-ping' === $realData) {  //ping包，强制硬编码，不允许自定义
-            return $serv->send(pack('N', 8) . 'ant-pong');  //回pong包
+            return $serv->send($fd, pack('N', 8) . 'ant-pong');  //回pong包
         }
         Request::setRequestTime($startTime);
         Request::addParams('_recv', 1);
@@ -81,7 +81,7 @@ class Proxy
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
-    /**
+    /**f
      * @param $request \swoole_http_request
      * @param $response \swoole_http_response
      * @desc http请求回调
