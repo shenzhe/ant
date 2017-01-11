@@ -27,7 +27,7 @@ class HttpClient extends Http
 
     public function unpack($result)
     {
-        $executeTime = microtime(true) - $this->startTime;
+
         list($header, $body) = explode("\r\n\r\n", $result, 2);
         $headerArr = explode("\r\n", $header);
         $headerList = [];
@@ -35,6 +35,7 @@ class HttpClient extends Http
             list($key, $val) = explode(':', $str);
             $headerList[trim($key)] = trim($val);
         }
+        $executeTime = microtime(true) - $this->startTime;
         MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         return new Result($headerList, json_decode($body, true));
     }

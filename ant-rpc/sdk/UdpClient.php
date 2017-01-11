@@ -46,8 +46,8 @@ class UdpClient extends Udp
      */
     public function unpack($result)
     {
-        $executeTime = microtime(true) - $this->startTime;
-        MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
+//        $executeTime = microtime(true) - $this->startTime;
+//        MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         return Ant::unpack($result);
     }
 }

@@ -31,9 +31,8 @@ class MonitorClient
             return;
         }
         try {
-            list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
-            $client = new UdpClient($ip, $port, 3000);
-            $client->setApi('dot')->call('service',
+            $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000);
+            $client->setApi('dot')->setDot(0)->call('service',
                 [
                     'serviceName' => ZConfig::getField('soa', 'serverName'),
                     'serviceIp' => ZConfig::getField('soa', 'serverIp'),
@@ -60,9 +59,8 @@ class MonitorClient
             return;
         }
         try {
-            list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
-            $client = new UdpClient($ip, $port, 3000);
-            $client->setApi('dot')->call('client',
+            $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000);
+            $client->setApi('dot')->setDot(0)->call('client',
                 [
                     'serviceName' => ZConfig::getField('soa', 'serverName'),
                     'serviceIp' => ZConfig::getField('soa', 'serverIp'),
@@ -89,9 +87,8 @@ class MonitorClient
             return;
         }
         try {
-            list($ip, $port) = Scheduler::getService(Consts::MONITOR_SERVER_NAME);
-            $client = new UdpClient($ip, $port, 3000);
-            $client->setApi('dot')->call('task',
+            $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000);
+            $client->setApi('dot')->setDot(0)->call('task',
                 [
                     'serviceName' => ZConfig::getField('soa', 'serverName'),
                     'serviceIp' => ZConfig::getField('soa', 'serverIp'),
