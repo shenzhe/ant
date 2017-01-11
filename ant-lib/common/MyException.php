@@ -132,9 +132,10 @@ class MyException extends \Exception
             $info['debug'] = $model;
         }
         Log::info([\var_export($model, true)], 'php_error');
-        $info['msg'] = $model['message'];
-        $info['code'] = $model['code'];
-        return self::display($info, $config['debug_mode']);
+//        $info['msg'] = $model['message'];
+//        $info['code'] = $model['code'];
+//        return self::display($info, $config['debug_mode']);
+        return;
     }
 
     /**
