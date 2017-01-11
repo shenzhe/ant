@@ -1,6 +1,6 @@
 <?php
 use ZPHP\ZPHP;
-
+use ZPHP\Core\Config;
 $config = array(
     'server_mode' => (PHP_SAPI === 'cli') ? 'Cli' : 'Http',
     'app_path' => 'apps',
