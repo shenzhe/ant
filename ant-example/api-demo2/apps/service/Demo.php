@@ -6,6 +6,8 @@
  * Date: 2016/12/27
  * Time: 17:07
  */
+namespace service;
+
 use sdk\TcpClient;
 
 class Demo
