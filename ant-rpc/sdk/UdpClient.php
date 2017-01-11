@@ -8,7 +8,6 @@
 
 namespace sdk;
 
-use ZPHP\Client\Rpc\Tcp;
 use packer\Ant;
 use ZPHP\Client\Rpc\Udp;
 use ZPHP\Protocol\Request;
@@ -57,6 +56,6 @@ class UdpClient extends Udp
             $executeTime = microtime(true) - $this->startTime;
             MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         }
-        return Ant::unpack($result);
+        return Ant::unpack(null);
     }
 }
