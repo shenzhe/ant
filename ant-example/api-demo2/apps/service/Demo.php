@@ -8,7 +8,6 @@
  */
 namespace service;
 
-use common\MyException;
 use sdk\LoadService;
 
 class Demo
@@ -18,9 +17,6 @@ class Demo
         $service = LoadService::getService('api-demo2');
         $result = $service->call($method);
         $body = $result->getBody();
-        if (!empty($body['code'])) {
-            throw new MyException($body['code'] . ':' . $body['msg']);
-        }
         return $body['data'];
     }
 }

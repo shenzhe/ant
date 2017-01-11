@@ -9,6 +9,8 @@
 namespace packer;
 
 
+use common\MyException;
+
 class Result
 {
     private $header;
@@ -25,8 +27,15 @@ class Result
         return $this->header;
     }
 
+    /**
+     * @return null|array
+     * @throws MyException
+     */
     public function getBody()
     {
+        if (!empty($this->body['code'])) {
+            throw new MyException($this->body['code'] . ':' . $this->body['msg']);
+        }
         return $this->body;
     }
 }
