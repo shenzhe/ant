@@ -12,9 +12,9 @@ return array(
         'ip' => '10.94.107.22',
         'port' => 9949,
         'timeOut' => 5000,
-        'serviceName' => 'api-demo',
+        'serviceName' => 'api-demo2',
         'serviceIp' => '10.94.107.22',
-        'servicePort' => 7101,
+        'servicePort' => 7001,
         'serverType' => 1,
     ),
 );
