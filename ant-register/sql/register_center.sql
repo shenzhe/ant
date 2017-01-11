@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: 2016-11-14 15:48:52
+-- Generation Time: 2017-01-11 21:05:02
 -- 服务器版本： 5.6.33-log
--- PHP Version: 7.0.10
+-- PHP Version: 7.0.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -19,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `register_center`
 --
+CREATE DATABASE IF NOT EXISTS `register_center` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `register_center`;
 
 -- --------------------------------------------------------
 
@@ -26,6 +28,7 @@ SET time_zone = "+00:00";
 -- 表的结构 `service_list`
 --
 
+DROP TABLE IF EXISTS `service_list`;
 CREATE TABLE IF NOT EXISTS `service_list` (
   `id` int(11) NOT NULL,
   `name` char(50) NOT NULL COMMENT '服务名称',
@@ -33,15 +36,25 @@ CREATE TABLE IF NOT EXISTS `service_list` (
   `port` mediumint(8) NOT NULL COMMENT '服务端口',
   `status` tinyint(1) NOT NULL COMMENT '运行状态',
   `rate` smallint(4) NOT NULL COMMENT '权重',
-  `startTime` int(10) NOT NULL COMMENT '启动时间'
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='服务表';
+  `registerTime` int(10) NOT NULL COMMENT '注册时间',
+  `startTime` int(10) NOT NULL COMMENT '启动时间',
+  `dropTime` int(10) NOT NULL COMMENT '停止时间',
+  `registerKey` varchar(100) NOT NULL COMMENT '从哪个注册服务器注册的',
+  `serverType` smallint(4) NOT NULL DEFAULT '0' COMMENT '服务类型'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务表';
+
+-- --------------------------------------------------------
 
 --
--- 转存表中的数据 `service_list`
+-- 表的结构 `subscriber`
 --
 
-INSERT INTO `service_list` (`id`, `name`, `ip`, `port`, `status`, `rate`, `startTime`) VALUES
-(1, 'dproxy', '10.94.107.22', 9939, 0, 0, 1477984417);
+DROP TABLE IF EXISTS `subscriber`;
+CREATE TABLE IF NOT EXISTS `subscriber` (
+  `id` int(11) NOT NULL,
+  `serviceName` varchar(100) NOT NULL COMMENT '服务名',
+  `subcriber` varchar(100) NOT NULL COMMENT '订阅者'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
@@ -53,7 +66,16 @@ INSERT INTO `service_list` (`id`, `name`, `ip`, `port`, `status`, `rate`, `start
 ALTER TABLE `service_list`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `idx_ip_port` (`ip`,`port`) USING BTREE,
-  ADD KEY `idx_name` (`name`) USING BTREE;
+  ADD KEY `idx_name` (`name`) USING BTREE,
+  ADD KEY `registerKey` (`registerKey`);
+
+--
+-- Indexes for table `subscriber`
+--
+ALTER TABLE `subscriber`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `serviceName` (`serviceName`),
+  ADD KEY `subcriber` (`subcriber`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -63,7 +85,12 @@ ALTER TABLE `service_list`
 -- AUTO_INCREMENT for table `service_list`
 --
 ALTER TABLE `service_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `subscriber`
+--
+ALTER TABLE `subscriber`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
