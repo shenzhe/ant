@@ -87,7 +87,7 @@ class Scheduler
         if (empty($path)) {
             return;
         }
-        $filename = DS . 'config' . DS . $serviceName . '.php';
+        $filename = $path . DS . 'config' . DS . $serviceName . '.php';
         file_put_contents($filename, "<?php\rreturn array(
                         '$serviceName'=>" . var_export($serverList, true) . "
                     );");
