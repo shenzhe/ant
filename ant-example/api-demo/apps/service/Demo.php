@@ -8,17 +8,18 @@
  */
 namespace service;
 
-use sdk\TcpClient;
+use common\MyException;
+use sdk\LoadService;
 
 class Demo
 {
     public function demo($method)
     {
-        $service = TcpClient::getService('api-demo2');
+        $service = LoadService::getService('api-demo2');
         $result = $service->call($method);
         $body = $result->getBody();
         if (!empty($body['code'])) {
-            throw new \common\MyException($body['code'] . ':' . $body['msg']);
+            throw new MyException($body['code'] . ':' . $body['msg']);
         }
         return $body['data'];
     }
