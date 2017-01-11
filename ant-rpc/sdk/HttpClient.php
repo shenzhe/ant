@@ -36,7 +36,7 @@ class HttpClient extends Http
             }
             Scheduler::voteBad($serviceName, $ip, $port);
             $retry--;
-            return self::getService($serviceName, $timeOut, $config, $retry);
+            return self::getService($serviceName, $timeOut, $config, $isDot, $retry);
         }
     }
 
