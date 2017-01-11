@@ -18,6 +18,6 @@ return array(
         'serviceName' => 'api-demo2',
         'serviceIp' => '10.94.107.22',
         'servicePort' => 7001,
-        'serverType' => 3,
+        'serverType' => 1,
     ),
 );
