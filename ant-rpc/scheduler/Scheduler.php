@@ -20,14 +20,15 @@ class Scheduler
 {
     /**
      * @param $serviceName
+     * @param $isDot
      * @return array [$ip, $port]
      * @desc 根据服务名获名一个可用的ip:port
      */
-    public static function getService($serviceName)
+    public static function getService($serviceName, $isDot = 1)
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
-            $serverList = self::getList($serviceName, $soaConfig);
+            $serverList = self::getList($serviceName, $soaConfig, $isDot);
             $current = self::getOne($serviceName, $serverList);
             return [
                 $current['ip'],
@@ -40,7 +41,7 @@ class Scheduler
     {
         $goodList = [];
         foreach ($serverList as $server) {
-            if ($server['vote'] < 0) {
+            if (isset($server['vote']) && $server['vote'] < 0) {
                 continue;
             }
             $goodList[] = $server;
@@ -53,7 +54,7 @@ class Scheduler
 
     }
 
-    public static function getList($serviceName, $soaConfig)
+    public static function getList($serviceName, $soaConfig, $isDot = 1)
     {
         $serverList = ZConfig::get($serviceName);
         if (empty($serverList)) {
@@ -64,7 +65,7 @@ class Scheduler
                 }
             } else {
                 $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-                $data = $rpcClient->setApi('main')->call('getList', [
+                $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
                     'serviceName' => $serviceName
                 ]);
                 $body = $data->getBody();
@@ -107,7 +108,11 @@ class Scheduler
         if (!empty($serverList)) {
             foreach ($serverList as $server) {
                 if ($server['ip'] == $ip && $server['port'] == $port) {
-                    $server['vote']++;
+                    if (empty($server['vote'])) {
+                        $server['vote'] = 1;
+                    } else {
+                        $server['vote']++;
+                    }
                     self::reload($serviceName, $serverList);
                     return;
                 }
@@ -129,7 +134,11 @@ class Scheduler
         if (!empty($serverList)) {
             foreach ($serverList as $server) {
                 if ($server['ip'] == $ip && $server['port'] == $port) {
-                    $server['vote']--;
+                    if (empty($server['vote'])) {
+                        $server['vote'] = -1;
+                    } else {
+                        $server['vote']--;
+                    }
                     self::reload($serviceName, $serverList);
                     return;
                 }

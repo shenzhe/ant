@@ -59,7 +59,7 @@ class MonitorClient
             return;
         }
         try {
-            $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000);
+            $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000, [], 0);
             $client->setApi('dot')->setDot(0)->call('client',
                 [
                     'serviceName' => ZConfig::getField('soa', 'serverName'),

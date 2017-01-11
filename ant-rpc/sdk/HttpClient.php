@@ -14,10 +14,30 @@ use scheduler\Scheduler;
 
 class HttpClient extends Http
 {
-    public static function getService($serviceName, $timeOut = 500, $config = array())
+    /**
+     * @param $serviceName
+     * @param int $timeOut
+     * @param array $config
+     * @param int $isDot
+     * @param int $retry
+     * @return Http
+     * @throws \Exception
+     */
+    public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot = 1, $retry = 3)
     {
-        list($ip, $port) = Scheduler::getService($serviceName);
-        return new HttpClient($ip, $port, $timeOut, $config);
+        list($ip, $port) = Scheduler::getService($serviceName, $isDot);
+        try {
+            $service = new HttpClient($ip, $port, $timeOut, $config);
+            Scheduler::voteGood($serviceName, $ip, $port);
+            return $service;
+        } catch (\Exception $e) {
+            if ($retry < 1) {
+                throw $e;
+            }
+            Scheduler::voteBad($serviceName, $ip, $port);
+            $retry--;
+            return self::getService($serviceName, $timeOut, $config, $retry);
+        }
     }
 
     public function pack($sendArr)

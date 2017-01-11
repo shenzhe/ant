@@ -20,18 +20,25 @@ class UdpClient extends Udp
      * @param $serviceName
      * @param int $timeOut
      * @param array $config
-     * @return Tcp
+     * @param int $isDot
+     * @param int $retry
+     * @return Udp
+     * @throws \Exception
      */
-    public static function getService($serviceName, $timeOut = 500, $config = array())
+    public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot = 1, $retry = 3)
     {
-        list($ip, $port) = Scheduler::getService($serviceName);
+        list($ip, $port) = Scheduler::getService($serviceName, $isDot);
         try {
             $service = new UdpClient($ip, $port, $timeOut, $config);
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
         } catch (\Exception $e) {
+            if ($retry < 1) {
+                throw $e;
+            }
             Scheduler::voteBad($serviceName, $ip, $port);
-            return self::getService($serviceName, $timeOut, $config);
+            $retry--;
+            return self::getService($serviceName, $timeOut, $config, $isDot, $retry);
         }
     }
 
