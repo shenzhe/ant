@@ -1,7 +1,7 @@
 <?php
 use ZPHP\ZPHP;
 use ZPHP\Core\Config;
-$config = array(
+return array(
     'server_mode' => (PHP_SAPI === 'cli') ? 'Cli' : 'Http',
     'app_path' => 'apps',
     'ctrl_path' => 'ctrl',
