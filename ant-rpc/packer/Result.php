@@ -14,7 +14,7 @@ class Result
     private $header;
     private $body;
 
-    public function __construct($header, $body)
+    public function __construct($header = null, $body = null)
     {
         $this->header = $header;
         $this->body = $body;

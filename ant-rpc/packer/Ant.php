@@ -19,6 +19,9 @@ class Ant
      */
     public static function unpack($data)
     {
+        if (empty($data)) {
+            return new Result();
+        }
         $message = new MessagePacker($data);
         $header = $message->readString();
         $body = $message->readString();
