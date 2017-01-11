@@ -8,6 +8,7 @@
 
 namespace sdk;
 
+use common\MyException;
 use ZPHP\Client\Rpc\Tcp;
 use packer\Ant;
 use ZPHP\Protocol\Request;
@@ -26,14 +27,14 @@ class TcpClient extends Tcp
      */
     public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot=1, $retry = 3)
     {
-        list($ip, $port) = Scheduler::getService($serviceName, $isDot);
         try {
+            list($ip, $port) = Scheduler::getService($serviceName, $isDot);
             $service = new TcpClient($ip, $port, $timeOut, $config);
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
         } catch (\Exception $e) {
             if($retry < 1) {
-                throw $e;
+                throw new MyException($serviceName.' get error. ['.$e->getMessage().']', $e->getCode());
             }
             Scheduler::voteBad($serviceName, $ip, $port);
             $retry--;
