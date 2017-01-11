@@ -35,8 +35,10 @@ class HttpClient extends Http
             list($key, $val) = explode(':', $str);
             $headerList[trim($key)] = trim($val);
         }
-        $executeTime = microtime(true) - $this->startTime;
-        MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
+        if ($this->isDot) {
+            $executeTime = microtime(true) - $this->startTime;
+            MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
+        }
         return new Result($headerList, json_decode($body, true));
     }
 }

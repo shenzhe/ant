@@ -40,6 +40,7 @@ class Timer
                         continue;
                     }
                     $result = $rpc->rawCall('ant-ping'); //发送ping包
+                    Log::info(['success', $item->name, $item->ip, $item->port, $item->status, $result], 'ping');
                     if ('ant-pong' == $result) {
                         if (0 == $item->status) { //离线状态设置为在线状态
                             //@TODO 可以不单条更新，改为批量更新
@@ -50,6 +51,7 @@ class Timer
                     }
                 } catch (\Exception $e) {
                     //心跳回复失败,设置离线状态
+                    Log::info(['fail', $item->name, $item->ip, $item->port, $item->status], 'ping');
                     if (1 == $item->status) {
                         //@TODO 可以不单条更新，改为批量更新
                         //@TODO 服务下线，通知相关的服务调用方
