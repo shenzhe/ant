@@ -251,14 +251,16 @@ class Proxy
                 //@TODO 异常上报
             }
         });
-
+        common\Log::info([$workerId], 'info');
         $timer = ZConfig::get('timer', []);
         if (!empty($timer) && 0 === intval($workerId)) {
+            common\Log::info(['timer', $workerId], 'info');
             foreach ($timer as $index => $item) {
                 if (!empty($item['ms']) &&
                     !empty($item['callback']) &&
                     \is_callable($item['callback'])
                 ) {
+                    common\Log::info([$item, $workerId], 'info');
                     \swoole_timer_tick($item['ms'], $item['callback'], isset($item['params']) ? $item['params'] : null);
                 }
             }
