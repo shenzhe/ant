@@ -10,8 +10,8 @@ return array(
         'ant-rpc' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-rpc',
     ),
     'loadend_hook' => function () {
-        Config::mergePath(ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib' . DS . 'Config');
-        Config::mergePath(dirname(__DIR__) . DS . 'public' . DS . 'Config');
+        Config::mergePath(ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib' . DS . 'config');
+        Config::mergePath(dirname(__DIR__) . DS . 'public' . DS . 'config');
     },
     'project' => [
         'default_ctrl_name' => 'main',                      //默认入口控制器
