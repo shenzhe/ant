@@ -66,7 +66,8 @@ class Scheduler
             } else {
                 $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
                 $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
-                    'serviceName' => $serviceName
+                    'serviceName' => $serviceName,
+                    'subscriber' => ZConfig::getField('soa', 'serviceName', ''),
                 ]);
                 $body = $data->getBody();
                 if (empty($body['code']) && !empty($body['data']['serviceList'])) {

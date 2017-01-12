@@ -14,7 +14,7 @@ class Demo
 {
     public function demo($method)
     {
-        $service = LoadService::getService('api-demo2');
+        $service = LoadService::getService('api-demo');
         $result = $service->call($method);
         $body = $result->getBody();
         return $body['data'];

@@ -57,7 +57,7 @@ class main extends CBase
     {
         $serviceName = $this->getString('serviceName');
         $subscriber = $this->getString('subscriber', '');
-        if (!empty($subscriber)) { //添加订阅者
+        if (!empty($subscriber) && $subscriber != $serviceName) { //添加订阅者
             LoadClass::getService('Subscriber')->subscriber($serviceName, $subscriber);
         }
         /**
