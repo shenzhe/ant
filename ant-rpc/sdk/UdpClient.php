@@ -34,9 +34,11 @@ class UdpClient extends Udp
             return $service;
         } catch (\Exception $e) {
             if ($retry < 1) {
-                throw new MyException($serviceName.' get error. ['.$e->getMessage().']', $e->getCode());
+                throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
-            Scheduler::voteBad($serviceName, $ip, $port);
+            if (isset($ip)) {
+                Scheduler::voteBad($serviceName, $ip, $port);
+            }
             $retry--;
             return self::getService($serviceName, $timeOut, $config, $isDot, $retry);
         }

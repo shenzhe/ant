@@ -23,9 +23,9 @@ class dot extends Base
         $serverPort = $this->getString('serverPort', 'undefined');
         $api = $this->getString('api', 'undefined');
         $time = $this->getFloat('time', 0);
-        common\Log::info('client', [
+        common\Log::info([
             $serverName, $serverIp, $serverPort, $api, $time
-        ]);
+        ], 'client');
     }
 
     /**
@@ -38,8 +38,8 @@ class dot extends Base
         $serverPort = $this->getString('serverPort', 'undefined');
         $api = $this->getString('api', 'undefined');
         $time = $this->getFloat('time', 0);
-        common\Log::info('service', [
+        common\Log::info( [
             $serverName, $serverIp, $serverPort, $api, $time
-        ]);
+        ], 'service');
     }
 }
