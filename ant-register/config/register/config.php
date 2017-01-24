@@ -20,7 +20,7 @@ return array(
     'project' => [
         'default_ctrl_name' => 'main',                      //默认入口控制器
         'is_register_project' => 1,
-        'debug_mode' => 0,                                  //打开调试模式
+        'debug_mode' => 1,                                  //打开调试模式
         'protocol' => 'Ant',
         'view_mode' => 'Ant',
         'exception_handler' => 'common\MyException::exceptionHandler',

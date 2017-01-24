@@ -50,7 +50,7 @@ class Scheduler
             throw new MyException($serviceName . "serverlist empty", -1);
         }
         shuffle($goodList);
-        return current($serverList);
+        return current($goodList);
 
     }
 
