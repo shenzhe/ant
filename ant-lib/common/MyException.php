@@ -120,6 +120,9 @@ class MyException extends \Exception
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        if (!in_array($errno, [E_RECOVERABLE_ERROR, E_USER_ERROR])) {
+            return;
+        }
         $error = [
             'type' => $errno,
             'message' => $errstr,
@@ -135,7 +138,7 @@ class MyException extends \Exception
 //        $info['msg'] = $model['message'];
 //        $info['code'] = $model['code'];
 //        return self::display($info, $config['debug_mode']);
-        return;
+        return E_USER_ERROR;
     }
 
     /**
