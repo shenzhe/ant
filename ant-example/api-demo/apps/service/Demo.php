@@ -20,7 +20,7 @@ class Demo
         $result = $service->call($method, $params);
         //也可以这么执行
         //$result = $service->{$method}($params);
-        //$result = $service->main($params);
+        //ex:$result = $service->main($params);
         //获取结果
         $body = $result->getBody();
         return $body['data'];
