@@ -40,11 +40,11 @@ abstract class Base
         if (empty(self::$_dbs[$tag])) {
             $config = ZConfig::getField('pdo', $tag);
             self::$_dbs[$tag] = new ZPdo($config, $this->entity, $config['dbname']);
-            self::$_dbs[$tag]->setClassName($this->entity);
         } else {
             self::$_dbs[$tag]->checkPing();
         }
         $this->_db = self::$_dbs[$tag];
+        $this->_db->setClassName($this->entity);
         $this->_dbTag = $tag;
         $this->_db->checkPing();
         return $this->_db;
@@ -300,7 +300,7 @@ abstract class Base
 
     public function checkPing()
     {
-        if(!empty(self::$_dbs)) {
+        if (!empty(self::$_dbs)) {
             foreach (self::$_dbs as $db) {
                 $db->checkPing();
             }
