@@ -9,10 +9,11 @@
 namespace sdk;
 
 use common\MyException;
-use packer\Ant;
+use packer;
 use ZPHP\Client\Rpc\Udp;
 use ZPHP\Protocol\Request;
 use scheduler\Scheduler;
+use ZPHP\Core\Config as ZConfig;
 
 class UdpClient extends Udp
 {
@@ -44,7 +45,7 @@ class UdpClient extends Udp
 
     public function pack($sendArr)
     {
-        return Ant::pack(Request::getHeaders(), $sendArr);
+        return packer\Factory::getInstance(ZConfig::getField('project', 'packer', 'Ant'))->pack(Request::getHeaders(), $sendArr);
     }
 
     /**
@@ -57,6 +58,6 @@ class UdpClient extends Udp
             $executeTime = microtime(true) - $this->startTime;
             MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         }
-        return Ant::unpack(null);
+        return packer\Factory::getInstance(ZConfig::getField('project', 'packer', 'Ant'))->unpack(null);
     }
 }
