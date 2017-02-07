@@ -45,8 +45,7 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
-//            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-            $rpcClient = TcpClient::getService(Consts::REGISTER_SERVER_NAME);
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
             $data = $rpcClient->setApi('main')->call('register', [
                 'serviceName' => $soaConfig['serviceName'],
                 'serviceIp' => $soaConfig['serviceIp'],
