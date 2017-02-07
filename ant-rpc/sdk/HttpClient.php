@@ -32,7 +32,7 @@ class HttpClient extends Http
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
         } catch (\Exception $e) {
-            if ($retry < 1) {
+            if (!isset($ip, $port) || $retry < 1) {
                 throw new MyException($serviceName.' get error. ['.$e->getMessage().']', $e->getCode());
             }
             Scheduler::voteBad($serviceName, $ip, $port);

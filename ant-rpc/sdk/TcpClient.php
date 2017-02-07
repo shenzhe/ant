@@ -34,12 +34,10 @@ class TcpClient extends Tcp
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
         } catch (\Exception $e) {
-            if ($retry < 1) {
+            if (!isset($ip, $port) || $retry < 1) {
                 throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
-            if (isset($ip)) {
-                Scheduler::voteBad($serviceName, $ip, $port);
-            }
+            Scheduler::voteBad($serviceName, $ip, $port);
             $retry--;
             return self::getService($serviceName, $timeOut, $config, $isDot, $retry);
         }

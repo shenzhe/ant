@@ -22,12 +22,19 @@ class Scheduler
      * @param $serviceName
      * @param $isDot
      * @return array [$ip, $port]
+     * @throws MyException
      * @desc 根据服务名获名一个可用的ip:port
      */
     public static function getService($serviceName, $isDot = 1)
     {
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
+            if (Consts::REGISTER_SERVER_NAME == $serviceName) {
+                return [
+                    $soaConfig['ip'],
+                    $soaConfig['port']
+                ];
+            }
             $serverList = self::getList($serviceName, $soaConfig, $isDot);
             $current = self::getOne($serviceName, $serverList);
             return [
@@ -35,6 +42,7 @@ class Scheduler
                 $current['port']
             ];
         }
+        throw new MyException('soa config empty');
     }
 
     public static function getOne($serviceName, $serverList)
