@@ -6,18 +6,20 @@
  * Time: 16:04
  */
 
-namespace packer;
+namespace packer\Adapter;
 
 use ZPHP\Common\MessagePacker;
+use packer\Result;
+use packer\IPacker;
 
 
-class Ant
+class Ant implements IPacker
 {
     /**
      * @param $data
      * @return Result
      */
-    public static function unpack($data)
+    public function unpack($data)
     {
         if (empty($data)) {
             return new Result();
@@ -28,7 +30,7 @@ class Ant
         return new Result(json_decode($header, true), json_decode($body, true));
     }
 
-    public static function pack($header, $body)
+    public function pack($header, $body)
     {
         $message = new MessagePacker();
         $message->writeString(json_encode($header));

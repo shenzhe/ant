@@ -10,9 +10,10 @@ namespace sdk;
 
 use common\MyException;
 use ZPHP\Client\Rpc\Tcp;
-use packer\Ant;
+use packer;
 use ZPHP\Protocol\Request;
 use scheduler\Scheduler;
+use ZPHP\Core\Config as ZConfig;
 
 class TcpClient extends Tcp
 {
@@ -25,7 +26,7 @@ class TcpClient extends Tcp
      * @return TcpClient
      * @throws \Exception
      */
-    public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot=1, $retry = 3)
+    public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot = 1, $retry = 3)
     {
         try {
             list($ip, $port) = Scheduler::getService($serviceName, $isDot);
@@ -33,10 +34,10 @@ class TcpClient extends Tcp
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
         } catch (\Exception $e) {
-            if($retry < 1) {
-                throw new MyException($serviceName.' get error. ['.$e->getMessage().']', $e->getCode());
+            if ($retry < 1) {
+                throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
-            if(isset($ip)) {
+            if (isset($ip)) {
                 Scheduler::voteBad($serviceName, $ip, $port);
             }
             $retry--;
@@ -46,7 +47,7 @@ class TcpClient extends Tcp
 
     public function pack($sendArr)
     {
-        return Ant::pack(Request::getHeaders(), $sendArr);
+        return packer\Factory::getInstance(ZConfig::getField('project', 'packer', 'Ant'))->pack(Request::getHeaders(), $sendArr);
     }
 
     /**
@@ -59,7 +60,7 @@ class TcpClient extends Tcp
             $executeTime = microtime(true) - $this->startTime;
             MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         }
-        return Ant::unpack($result);
+        return packer\Factory::getInstance(ZConfig::getField('project', 'packer', 'Ant'))->unpack($result);
     }
 
     /**
