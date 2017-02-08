@@ -12,7 +12,7 @@ use sdk\LoadService;
 
 class Demo
 {
-    public function demo($method, $params=[])
+    public function demo($method, $params = [])
     {
         //获取服务名为 api-demo2 的一个远程服务,
         $service = LoadService::getService('api-demo2');
@@ -24,5 +24,32 @@ class Demo
         //获取结果
         $body = $result->getBody();
         return $body['data'];
+    }
+
+    /**
+     * @desc 并行调用示例，
+     */
+    public function multi()
+    {
+
+        $senders = [];
+
+        //执行api1远程调用，返回一个唯一的请求Id
+        $service2 = LoadService::getService('api-demo2');
+        $requestId = $service2->multiCall('api1');
+        $senders[$requestId] = null;
+
+        $service3 = LoadService::getService('api-demo3');
+        $requestId = $service3->multiCall('api1');
+        $senders[$requestId] = null;
+
+        $service4 = LoadService::getService('api-demo4');
+        $requestId = $service4->multiCall('api1');
+        $senders[$requestId] = null;
+
+        //获取执行结果
+        $results = $service4->multiReceive();
+        $results += $senders;
+        return $results;
     }
 }

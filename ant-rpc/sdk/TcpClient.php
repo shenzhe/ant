@@ -8,6 +8,7 @@
 
 namespace sdk;
 
+use common\Log;
 use common\MyException;
 use ZPHP\Client\Rpc\Tcp;
 use packer;
@@ -68,6 +69,8 @@ class TcpClient extends Tcp
      */
     public function call($method, $params = [])
     {
-        return parent::call($method, $params);
+        $result = parent::call($method, $params);
+        Log::info([$method, $params, $result], 'call');
+        return $result;
     }
 }
