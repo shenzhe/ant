@@ -22,7 +22,7 @@ class Ant implements IPacker
     public function unpack($data)
     {
         if (empty($data)) {
-            return new Result();
+            return null;
         }
         $message = new MessagePacker($data);
         $header = $message->readString();

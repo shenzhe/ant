@@ -22,32 +22,47 @@ class ConfigList extends Base
 
     public function add($serviceName, $item, $value)
     {
-        return $this->dao->add([
+        $id = $this->dao->add([
             'serviceName' => $serviceName,
             'item' => $item,
             'value' => $value,
         ]);
+        if ($id) {
+            LoadClass::getService('Sync')->syncId($id);
+        }
     }
 
     public function update($id, $item, $value)
     {
-        return $this->dao->update([
+        $ret = $this->dao->update([
             'item' => $item,
             'value' => $value
         ], ['id=' => $id]);
+        if ($ret) {
+            LoadClass::getService('Sync')->syncId($id);
+        }
     }
 
     public function remove($id)
     {
-        return $this->dao->remove([
-            'id=' => $id
-        ]);
+        $record = $this->dao->fetchById($id);
+        if ($record) {
+            $ret = $this->dao->remove([
+                'id=' => $id
+            ]);
+            if ($ret) {
+                LoadClass::getService('Sync')->removeKey($record->serviceName, $record->item);
+            }
+        }
     }
 
     public function removeService($serviceName)
     {
-        return $this->dao->remove([
-            'serviceName=' => $serviceName
+        $ret = $this->dao->remove([
+            'serviceName=' => "'{$serviceName}'"
         ]);
+        if ($ret) {
+            LoadClass::getService('Sync')->removeAll($serviceName);
+        }
     }
 }

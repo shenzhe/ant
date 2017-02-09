@@ -38,4 +38,19 @@ class Result
         }
         return $this->body;
     }
+
+    public function getCode()
+    {
+        return $this->body['code'];
+    }
+
+    public function getMsg()
+    {
+        return $this->body['msg'];
+    }
+
+    public function getData()
+    {
+        return $this->body['data'];
+    }
 }

@@ -11,15 +11,19 @@ namespace common;
 
 class Utils
 {
-    public static function getLocalIp()
+    public static function getLocalIp($interface = ['eth0', 'en0'])
     {
         $localIps = \swoole_get_local_ip();
-        $interface = ['eth0', 'en0'];
-        foreach($interface as $key) {
+        foreach ($interface as $key) {
             if (!empty($localIps[$key])) {
                 return $localIps[$key];
             }
         }
         return null;
+    }
+
+    public static function getServiceConfigNamespace($serviceName)
+    {
+        return '_'.$serviceName.'_config_';
     }
 }

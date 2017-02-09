@@ -8,6 +8,9 @@
 
 namespace ctrl;
 
+use common\LoadClass;
+use ZPHP\Core\Config as ZConfig;
+
 class antConfigAgent extends Base
 {
     /**
@@ -23,6 +26,6 @@ class antConfigAgent extends Base
      */
     public function syncAll()
     {
-
+        LoadClass::getService('AntConfigAgent')->syncAll(ZConfig::getField('soa', 'serviceName'));
     }
 }

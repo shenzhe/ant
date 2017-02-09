@@ -55,12 +55,19 @@ class Soa
 
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
+                throw new MyException($soaConfig['serviceName'] . " register error", -1);
+            } else {
+                try {
+                    $data->getBody();
+                    //配置同步
+                    LoadClass::getService('AntConfigAgent')->syncAll($soaConfig['serviceName']);
+                } catch (\Exception $e) {
+                    $server->shutdown();
+                    throw new $e;
+                }
             }
-            $body = $data->getBody();
-            if (!empty($body['code'])) {
-                $server->shutdown();
-                throw new MyException($body['msg'], $body['code']);
-            }
+
+
         }
     }
 

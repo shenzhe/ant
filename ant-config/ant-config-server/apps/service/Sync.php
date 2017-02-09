@@ -38,8 +38,6 @@ class Sync
         }
 
         return $this->syncToClient($serviceName, 'sync', $record);
-
-
     }
 
     /**
@@ -53,12 +51,12 @@ class Sync
 
     /**
      * @param $serviceName
-     * @param $id
+     * @param $key
      * @desc 删除某个配置
      */
-    public function removeId($serviceName, $id)
+    public function removeKey($serviceName, $key)
     {
-        $this->syncToClient($serviceName, 'remove', ['id' => $id]);
+        $this->syncToClient($serviceName, 'remove', ['key' => $key]);
     }
 
     /**
@@ -77,9 +75,9 @@ class Sync
         $data = $rpcClient->setApi('main')->setDot(0)->call('getList', [
             'serviceName' => $serviceName,
         ]);
-        $body = $data->getBody();
-        if (empty($body['code']) && !empty($body['data']['serviceList'])) {
-            $serverList = $body['data']['serviceList'];
+        $data = $data->getData();
+        if (!empty($data['serviceList'])) {
+            $serverList = $data['serviceList'];
             foreach ($serverList as $sub) {
                 if ($sub['type'] == Consts::SERVER_TYPE_TCP) {
                     $service = new TcpClient($sub['ip'], $sub['port']);
@@ -88,10 +86,9 @@ class Sync
                 } else {
                     continue;
                 }
-                $service->setApi('config')->call($method, $record);
+                $service->setApi('antConfigAgent')->call($method, $record);
             }
         }
-
         return;
     }
 }
