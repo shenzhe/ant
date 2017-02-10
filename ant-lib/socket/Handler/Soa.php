@@ -36,13 +36,13 @@ class Soa
                 LoadClass::getService('ServiceList')->register(
                     ZConfig::get('project_name'),
                     $ip,
-                    ZConfig::getField('soa', 'port', ZConfig::get('socket', 'port')),
+                    ZConfig::getField('soa', 'port', ZConfig::getField('socket', 'port')),
                     ZConfig::getField('soa', 'serverType', ZConfig::get('project_name'))
                 );
                 return;
             } catch (\Exception $e) {
                 $server->shutdown();
-                return;
+                throw $e;
             }
         }
 
@@ -80,7 +80,7 @@ class Soa
                     LoadClass::getService('AntConfigAgent')->syncAll($serverName);
                 } catch (\Exception $e) {
                     $server->shutdown();
-                    throw new $e;
+                    throw $e;
                 }
             }
 
@@ -89,7 +89,8 @@ class Soa
     }
 
     /**
-     * @param $server \swoole_server
+     * @param $server
+     * @throws \Exception
      * @desc  服务下线回调
      */
     public static function drop($server)
@@ -109,7 +110,7 @@ class Soa
                 return;
             } catch (\Exception $e) {
                 $server->shutdown();
-                return;
+                throw $e;
             }
         }
 
