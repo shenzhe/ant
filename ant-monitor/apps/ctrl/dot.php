@@ -18,9 +18,9 @@ class dot extends Base
      */
     public function client()
     {
-        $serverName = $this->getString('serverName', 'undefined');
-        $serverIp = $this->getString('serverIp', 'undefined');
-        $serverPort = $this->getString('serverPort', 'undefined');
+        $serverName = $this->getString('serviceName', 'undefined');
+        $serverIp = $this->getString('serviceIp', 'undefined');
+        $serverPort = $this->getString('servicePort', 'undefined');
         $api = $this->getString('api', 'undefined');
         $time = $this->getFloat('time', 0);
         common\Log::info([
