@@ -27,22 +27,26 @@ class Scheduler
      */
     public static function getService($serviceName, $isDot = 1)
     {
-        $soaConfig = ZConfig::get('soa');
-        if (!empty($soaConfig)) {
-            if (Consts::REGISTER_SERVER_NAME == $serviceName) {
-                return [
-                    $soaConfig['ip'],
-                    $soaConfig['port']
-                ];
-            }
-            $serverList = self::getList($serviceName, $soaConfig, $isDot);
-            $current = self::getOne($serviceName, $serverList);
+
+        if (Consts::REGISTER_SERVER_NAME == $serviceName) {
             return [
-                $current['ip'],
-                $current['port']
+                ZConfig::getField('socket', 'host'),
+                ZConfig::getField('socket', 'port'),
             ];
         }
-        throw new MyException('soa config empty');
+
+        $soaConfig = ZConfig::get('soa');
+        if (empty($soaConfig)) {
+            throw new MyException('soa config empty');
+        }
+
+        $serverList = self::getList($serviceName, $soaConfig, $isDot);
+        $current = self::getOne($serviceName, $serverList);
+        return [
+            $current['ip'],
+            $current['port']
+        ];
+
     }
 
     public static function getOne($serviceName, $serverList)

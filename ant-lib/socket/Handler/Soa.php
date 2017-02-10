@@ -19,8 +19,9 @@ use common\Consts;
 class Soa
 {
     /**
-     * @param $server \swoole_server
+     * @param $server
      * @throws MyException
+     * @throws \Exception
      * @desc 服务自注册回调
      */
     public static function register($server)
@@ -29,7 +30,7 @@ class Soa
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
             try {
-                $ip = ZConfig::getField('soa', 'ip', ZConfig::get('socket', 'host'));
+                $ip = ZConfig::getField('soa', 'ip', ZConfig::getField('socket', 'host'));
                 if ('0.0.0.0' == $ip) {
                     $ip = Utils::getLocalIp();
                 }
