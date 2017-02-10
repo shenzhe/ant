@@ -25,7 +25,7 @@ class main extends CBase
         $serviceName = $this->getString('serviceName');
         $serviceIp = $this->getString('serviceIp');
         $servicePort = $this->getInteger('servicePort');
-        $serverType = $this->getInteger('serverType');
+        $serverType = $this->getString('serverType');
         /**
          * @var $service \service\ServiceList
          */
