@@ -29,11 +29,15 @@ class Soa
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
             try {
+                $ip = ZConfig::getField('soa', 'ip', ZConfig::get('socket', 'host'));
+                if ('0.0.0.0' == $ip) {
+                    $ip = Utils::getLocalIp();
+                }
                 LoadClass::getService('ServiceList')->register(
                     ZConfig::get('project_name'),
-                    ZConfig::getField('soa', 'ip'),
-                    ZConfig::getField('soa', 'port'),
-                    ZConfig::getField('soa', 'serverType')
+                    $ip,
+                    ZConfig::getField('soa', 'port', ZConfig::get('socket', 'port')),
+                    ZConfig::getField('soa', 'serverType', ZConfig::get('project_name'))
                 );
                 return;
             } catch (\Exception $e) {
@@ -45,22 +49,35 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务注册
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            if (isset($soaConfig['serviceIp'])) {
+                $serverIp = $soaConfig['serviceIp'];
+            } else {
+                $serverIp = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $serverIp) {
+                    $serverIp = Utils::getLocalIp();
+                }
+            }
+            $rpcClient = new TcpClient(
+                ZConfig::getField('soa', 'ip', null, true),
+                ZConfig::getField('soa', 'port', null, true),
+                ZConfig::getField('soa', 'timeOut', 3000)
+            );
+            $serverName = ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name'));
             $data = $rpcClient->setApi('main')->call('register', [
-                'serviceName' => $soaConfig['serviceName'],
-                'serviceIp' => $soaConfig['serviceIp'],
-                'servicePort' => $soaConfig['servicePort'],
-                'serverType' => $soaConfig['serverType'],
+                'serviceName' => $serverName,
+                'serviceIp' => $serverIp,
+                'servicePort' => ZConfig::getField('soa', 'servicePort', ZConfig::getField('socket', 'port')),
+                'serverType' => ZConfig::getField('soa', 'serverType', ZConfig::getField('socket', 'server_type')),
             ]);
 
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
-                throw new MyException($soaConfig['serviceName'] . " register error", -1);
+                throw new MyException($serverName . " register error", -1);
             } else {
                 try {
                     $data->getBody();
                     //配置同步
-                    LoadClass::getService('AntConfigAgent')->syncAll($soaConfig['serviceName']);
+                    LoadClass::getService('AntConfigAgent')->syncAll($serverName);
                 } catch (\Exception $e) {
                     $server->shutdown();
                     throw new $e;
@@ -99,11 +116,24 @@ class Soa
         $soaConfig = ZConfig::get('soa');
         if (!empty($soaConfig)) {
             //服务下线
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            if (isset($soaConfig['serviceIp'])) {
+                $serverIp = $soaConfig['serviceIp'];
+            } else {
+                $serverIp = ZConfig::getField('socket', 'host');
+                if ('0.0.0.0' == $serverIp) {
+                    $serverIp = Utils::getLocalIp();
+                }
+            }
+            $rpcClient = new TcpClient(
+                ZConfig::getField('soa', 'ip', null, true),
+                ZConfig::getField('soa', 'port', null, true),
+                ZConfig::getField('soa', 'timeOut', 3000)
+            );
+            $serverName = ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name'));
             $rpcClient->setApi('main')->call('drop', [
-                'serviceName' => $soaConfig['serviceName'],
-                'serviceIp' => $soaConfig['serviceIp'],
-                'servicePort' => $soaConfig['servicePort'],
+                'serviceName' => $serverName,
+                'serviceIp' => $serverIp,
+                'servicePort' => ZConfig::getField('soa', 'servicePort', ZConfig::getField('socket', 'port')),
             ]);
         }
     }

@@ -8,6 +8,7 @@
 
 namespace sdk;
 
+use common\Utils;
 use ZPHP\Client\Rpc\Udp;
 use scheduler\Scheduler;
 use ZPHP\Core\Config as ZConfig;
@@ -32,11 +33,15 @@ class MonitorClient
         }
         try {
             $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000, [], 0);
+            $serverIp = ZConfig::getField('soa', 'serverIp', ZConfig::getField('socket', 'host'));
+            if ('0.0.0.0' == $serverIp) {
+                $serverIp = Utils::getLocalIp();
+            }
             $client->setApi('dot')->setDot(0)->call('service',
                 [
-                    'serviceName' => ZConfig::getField('soa', 'serverName'),
-                    'serviceIp' => ZConfig::getField('soa', 'serverIp'),
-                    'servicePort' => ZConfig::getField('soa', 'serverPort'),
+                    'serviceName' => ZConfig::getField('soa', 'serverName', ZConfig::get('project_name')),
+                    'serviceIp' => $serverIp,
+                    'servicePort' => ZConfig::getField('soa', 'serverPort', ZConfig::getField('socket', 'port')),
                     'api' => $api,
                     'time' => $time
                 ]
@@ -60,11 +65,15 @@ class MonitorClient
         }
         try {
             $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000, [], 0);
+            $serverIp = ZConfig::getField('soa', 'serverIp', ZConfig::getField('socket', 'host'));
+            if ('0.0.0.0' == $serverIp) {
+                $serverIp = Utils::getLocalIp();
+            }
             $client->setApi('dot')->setDot(0)->call('client',
                 [
-                    'serviceName' => ZConfig::getField('soa', 'serverName'),
-                    'serviceIp' => ZConfig::getField('soa', 'serverIp'),
-                    'servicePort' => ZConfig::getField('soa', 'serverPort'),
+                    'serviceName' => ZConfig::getField('soa', 'serverName', ZConfig::get('project_name')),
+                    'serviceIp' => $serverIp,
+                    'servicePort' => ZConfig::getField('soa', 'serverPort', ZConfig::getField('socket', 'port')),
                     'api' => $api,
                     'time' => $time
                 ]
@@ -88,11 +97,15 @@ class MonitorClient
         }
         try {
             $client = UdpClient::getService(Consts::MONITOR_SERVER_NAME, 3000, [], 0);
+            $serverIp = ZConfig::getField('soa', 'serverIp', ZConfig::getField('socket', 'host'));
+            if ('0.0.0.0' == $serverIp) {
+                $serverIp = Utils::getLocalIp();
+            }
             $client->setApi('dot')->setDot(0)->call('task',
                 [
-                    'serviceName' => ZConfig::getField('soa', 'serverName'),
-                    'serviceIp' => ZConfig::getField('soa', 'serverIp'),
-                    'servicePort' => ZConfig::getField('soa', 'serverPort'),
+                    'serviceName' => ZConfig::getField('soa', 'serverName', ZConfig::get('project_name')),
+                    'serviceIp' => $serverIp,
+                    'servicePort' => ZConfig::getField('soa', 'serverPort', ZConfig::getField('socket', 'port')),
                     'api' => $api,
                     'time' => $time
                 ]

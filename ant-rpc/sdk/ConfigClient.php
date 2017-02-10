@@ -26,7 +26,7 @@ class ConfigClient
      */
     public static function get($key, $default, $throw = false)
     {
-        $serviceName = ZConfig::getField('soa', 'serviceName');
+        $serviceName = ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name'));
         $value = ZConfig::getField(Utils::getServiceConfigNamespace($serviceName), $key, $default, $throw);
         if (!is_null($value)) {
             return $value;
