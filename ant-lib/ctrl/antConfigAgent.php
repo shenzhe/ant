@@ -18,7 +18,11 @@ class antConfigAgent extends Base
      */
     public function sync()
     {
-
+        $key = $this->getJson('key', []);
+        if (empty($key)) {
+            return null;
+        }
+        LoadClass::getService('AntConfigAgent')->sync(ZConfig::getField('soa', 'serviceName'), $key);
     }
 
     /**
