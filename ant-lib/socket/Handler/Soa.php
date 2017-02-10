@@ -38,7 +38,7 @@ class Soa
                     ZConfig::get('project_name'),
                     $ip,
                     ZConfig::getField('soa', 'port', ZConfig::getField('socket', 'port')),
-                    ZConfig::getField('soa', 'serverType', ZConfig::get('project_name'))
+                    ZConfig::getField('soa', 'serverType', ZConfig::getField('socket', 'server_type'))
                 );
                 return;
             } catch (\Exception $e) {
