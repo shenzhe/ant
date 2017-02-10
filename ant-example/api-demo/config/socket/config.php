@@ -1,4 +1,5 @@
 <?php
+use ZPHP\ZPHP;
 use ZPHP\Socket\Adapter\Swoole;
 
 return array(
@@ -6,6 +7,10 @@ return array(
     'project_name' => 'api-demo',
     'project' => [
         'debug_mode' => 0,                                  //打开调试模式
+    ],
+    'lib_path' => [
+        'ant-lib' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib',
+        'ant-rpc' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-rpc',
     ],
     'socket' => array(
         'host' => '0.0.0.0',                          //socket 监听ip

@@ -8,6 +8,10 @@ return array(
     'project' => [
         'debug_mode' => 0,                              //是否打开调试模式
     ],
+    'lib_path' => [
+        'ant-lib' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib',
+        'ant-rpc' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-rpc',
+    ],
     'socket' => array(
         'host' => '0.0.0.0',                            //socket 监听ip
         'port' => 7001,                                 //socket 监听端口
