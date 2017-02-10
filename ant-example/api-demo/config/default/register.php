@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: shenzhe
- * Date: 2016/11/29
- * Time: 11:21
- */
-use common\Consts;
 
 return array(
     'soa' => array(

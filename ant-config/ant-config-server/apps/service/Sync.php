@@ -13,6 +13,7 @@ use common\LoadClass;
 use sdk\UdpClient;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
+use ZPHP\Socket\Adapter\Swoole;
 
 class Sync
 {
@@ -79,9 +80,9 @@ class Sync
         if (!empty($data['serviceList'])) {
             $serverList = $data['serviceList'];
             foreach ($serverList as $sub) {
-                if ($sub['type'] == Consts::SERVER_TYPE_TCP) {
+                if ($sub['type'] == Swoole::TYPE_TCP) {
                     $service = new TcpClient($sub['ip'], $sub['port']);
-                } elseif ($sub['type'] == Consts::SERVER_TYPE_UDP) {
+                } elseif ($sub['type'] == Swoole::TYPE_UDP) {
                     $service = new UdpClient($sub['ip'], $sub['port']);
                 } else {
                     continue;
