@@ -44,7 +44,6 @@ class ServiceList extends Base
         ]);
         $key = ZConfig::getField('soa', 'ip', $serviceIp) . ":" . ZConfig::getField('soa', 'port', $servicePort);
         if (empty($serviceInfo)) {
-
             $serviceInfo = new entity\ServiceList();
             $serviceInfo->name = $serviceName;
             $serviceInfo->ip = $serviceIp;
@@ -67,7 +66,7 @@ class ServiceList extends Base
                 $serviceInfo->status = 1;
             }
         }
-        LoadClass::getService('Subscriber')->syncRegister($serviceInfo);
+        LoadClass::getService('Subscriber')->sync($serviceInfo);
         return $serviceInfo;
     }
 
@@ -88,7 +87,7 @@ class ServiceList extends Base
             if ($this->dao->update(['status' => 0, 'dropTime' => time()], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 0;
             }
-            LoadClass::getService('Subscriber')->syncRegister($serviceInfo);
+            LoadClass::getService('Subscriber')->sync($serviceInfo);
         }
         return $serviceInfo;
     }
