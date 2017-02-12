@@ -68,24 +68,24 @@ class Scheduler
 
     public static function getList($serviceName, $soaConfig, $isDot = 1)
     {
+        if (ZConfig::get('project_name') === Consts::REGISTER_SERVER_NAME) {
+            $serverList = LoadClass::getService('ServiceList')->getServiceList($serviceName);
+            if (!empty($serverList)) {
+                $serverList = json_decode(json_encode($serverList), true);
+            }
+            return $serverList;
+        }
         $serverList = ZConfig::get($serviceName);
         if (empty($serverList)) {
-            if (ZConfig::get('project_name') === Consts::REGISTER_SERVER_NAME) {
-                $serverList = LoadClass::getService('ServiceList')->getServiceList($serviceName);
-                if (!empty($serverList)) {
-                    $serverList = json_decode(json_encode($serverList), true);
-                }
-            } else {
-                $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-                $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
-                    'serviceName' => $serviceName,
-                    'subscriber' => ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name')),
-                ]);
-                $data = $data->getData();
-                if (!empty($data['serviceList'])) {
-                    $serverList = $data['serviceList'];
-                    self::reload($serviceName, $serverList);
-                }
+            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
+            $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
+                'serviceName' => $serviceName,
+                'subscriber' => ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name')),
+            ]);
+            $data = $data->getData();
+            if (!empty($data['serviceList'])) {
+                $serverList = $data['serviceList'];
+                self::reload($serviceName, $serverList);
             }
         }
 
