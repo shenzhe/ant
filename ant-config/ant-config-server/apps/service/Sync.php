@@ -57,7 +57,7 @@ class Sync
      */
     public function removeKey($serviceName, $key)
     {
-        $this->syncToClient($serviceName, 'remove', ['key' => $key]);
+        $this->syncToClient($serviceName, 'remove', $key);
     }
 
     /**
@@ -87,7 +87,9 @@ class Sync
                 } else {
                     continue;
                 }
-                $service->setApi('antConfigAgent')->call($method, $record);
+                $service->setApi('antConfigAgent')->call($method, [
+                    'key'=>$record
+                ]);
             }
         }
         return;

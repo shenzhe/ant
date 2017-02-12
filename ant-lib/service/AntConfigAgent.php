@@ -11,6 +11,7 @@ namespace service;
 
 use common\Consts;
 use common\Utils;
+use scheduler\Scheduler;
 use sdk\LoadService;
 use ZPHP\Core\Config as ZConfig;
 
@@ -32,6 +33,42 @@ class AntConfigAgent
         $configData = ZConfig::get($serviceName, []);
         $configData[$record['item']] = $record['value'];
         return $this->_sync($serviceName, $configData);
+    }
+
+    /**
+     * @param $serviceName
+     * @param $key
+     * @return bool
+     * @desc 删除某个配置
+     */
+    public function remove($serviceName, $key)
+    {
+        if (empty($serviceName)) {
+            return false;
+        }
+        $serviceName = Utils::getServiceConfigNamespace($serviceName);
+        $configData = ZConfig::get($serviceName, []);
+        if (isset($configData[$key])) {
+            unset($configData[$key]);
+            return $this->_sync($serviceName, $configData);
+        }
+    }
+
+    /**
+     * @param $serviceName
+     * @return bool
+     * @desc 清空所有的配置
+     */
+    public function removeAll($serviceName)
+    {
+        if (empty($serviceName)) {
+            return false;
+        }
+        $serviceName = Utils::getServiceConfigNamespace($serviceName);
+        $configData = ZConfig::get($serviceName, []);
+        if (!empty($configData)) {
+            return $this->_sync($serviceName, []);
+        }
     }
 
     /**
@@ -83,5 +120,19 @@ class AntConfigAgent
                         '$serviceName'=>" . var_export($data, true) . "
                     );");
         return ZConfig::mergeFile($filename);
+    }
+
+
+    /**
+     * @param $serviceInfo
+     * @desc 同步注册服务器信息
+     */
+    public function syncRegister($serviceInfo)
+    {
+        $serviceName = $serviceInfo['name'];
+        $serverList = ZConfig::get($serviceName, []);
+        $key = $serviceInfo['ip'] . '_' . $serviceInfo['port'] . '_' . $serviceInfo['serverType'];
+        $serverList[$key] = $serviceInfo;
+        Scheduler::reload($serviceName, $serverList, 0);
     }
 }

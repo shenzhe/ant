@@ -67,6 +67,7 @@ class ServiceList extends Base
                 $serviceInfo->status = 1;
             }
         }
+        LoadClass::getService('Subscriber')->syncRegister($serviceInfo);
         return $serviceInfo;
     }
 
@@ -87,6 +88,7 @@ class ServiceList extends Base
             if ($this->dao->update(['status' => 0, 'dropTime' => time()], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 0;
             }
+            LoadClass::getService('Subscriber')->syncRegister($serviceInfo);
         }
         return $serviceInfo;
     }

@@ -53,7 +53,10 @@ class Scheduler
     {
         $goodList = [];
         foreach ($serverList as $server) {
-            if (isset($server['vote']) && $server['vote'] < 0) {
+            if (!$server['status']) {  //服务停止状态
+                continue;
+            }
+            if (isset($server['vote']) && $server['vote'] < 0) { //投票数小于1
                 continue;
             }
             $goodList[] = $server;
@@ -63,7 +66,6 @@ class Scheduler
         }
         shuffle($goodList);
         return current($goodList);
-
     }
 
     public static function getList($serviceName, $soaConfig, $isDot = 1)
@@ -95,11 +97,17 @@ class Scheduler
         return $serverList;
     }
 
-    public static function reload($serviceName, $serverList)
+    public static function reload($serviceName, $serverList, $rebuild = 1)
     {
         $path = ZConfig::getField('lib_path', 'ant-lib');
         if (empty($path)) {
             return;
+        }
+        if ($rebuild) {
+            foreach ($serverList as $index => $server) {
+                $serverList[$server['ip'] . '_' . $server['port'] . '_' . $server['serverType']] = $server;
+                unset($serverList[$index]);
+            }
         }
         $filename = $path . DS . 'config' . DS . $serviceName . '.php';
         file_put_contents($filename, "<?php\rreturn array(
