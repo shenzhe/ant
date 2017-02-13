@@ -22,14 +22,14 @@ class Proxy
     }
 
     /**
-     * @param $serv //swoole_server对像
+     * @param $serv \swoole_server 对像
      * @param $fd //文件描述符
      * @param $from_id //来自哪个reactor线程, 此参数基本用不上
      * @param $data //接收到的tcp数据
      * @return mixed
      * @desc 收到tcp数据的业务处理
      */
-    public static function onReceive($serv, $fd, $from_id, $data)
+    public static function onReceive(\swoole_server $serv, $fd, $from_id, $data)
     {
         $startTime = microtime(true);
         common\Log::info([$data, substr($data, 4), $fd], 'proxy_tcp');
@@ -37,9 +37,12 @@ class Proxy
         if ('ant-ping' === $realData) {  //ping包，强制硬编码，不允许自定义
             return $serv->send($fd, pack('N', 8) . 'ant-pong');  //回pong包
         }
-        Request::setRequestTime($startTime);
         Request::addParams('_recv', 1);
         Request::parse($realData);
+        if (Request::checkRequestTimeOut()) {
+            //该请求已超时
+            return false;
+        }
         $params = Request::getParams();
         $params['_fd'] = $fd;
         Request::setParams($params);

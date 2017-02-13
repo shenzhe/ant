@@ -69,6 +69,11 @@ class TcpClient extends Tcp
      */
     public function call($method, $params = [])
     {
+        Request::addHeaders([
+            'X-Request-ServerName' => ZConfig::getField('soa', 'service_name', ZConfig::get('project_name')),
+            'X-Request-Key' => $this->key,
+            'X-Request-TimeOut' => $this->timeOut,
+        ], false, true);
         $result = parent::call($method, $params);
         Log::info([$method, $params, $result], 'call');
         return $result;
