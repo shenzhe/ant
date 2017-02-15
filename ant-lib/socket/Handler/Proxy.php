@@ -173,7 +173,7 @@ class Proxy
      */
     public static function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
     {
-        
+
     }
 
     /**

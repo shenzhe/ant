@@ -42,7 +42,11 @@ class ServiceList extends Base
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
-        $key = ZConfig::getField('soa', 'ip', $serviceIp) . ":" . ZConfig::getField('soa', 'port', $servicePort);
+        $host = ZConfig::getField('socket', 'host');
+        if ('0.0.0.0' == $host) {
+            $host = Utils::getLocalIp();
+        }
+        $key = $host . ":" . ZConfig::getField('socket', 'port');
         if (empty($serviceInfo)) {
             $serviceInfo = new entity\ServiceList();
             $serviceInfo->name = $serviceName;
