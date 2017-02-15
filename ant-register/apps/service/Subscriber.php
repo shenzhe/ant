@@ -68,7 +68,7 @@ class Subscriber extends Base
                 } else {
                     continue;
                 }
-                $service->setApi('antConfigAgent')->call('syncRegister', $serviceInfo);
+                $service->setApi('antConfigAgent')->call('syncRegister', (array)$serviceInfo);
             }
         }
     }
