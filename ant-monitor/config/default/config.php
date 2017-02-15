@@ -7,7 +7,7 @@ use ZPHP\ZPHP;
 
 return array(
     'server_mode' => 'Ant',
-    'project_name' => 'ant-monitor_center',
+    'project_name' => 'ant-monitor-center',
     'project' => array(
         'debug_mode' => 1,                                  //打开调试模式
     ),
