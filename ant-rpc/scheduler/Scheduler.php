@@ -84,10 +84,12 @@ class Scheduler
                 'serviceName' => $serviceName,
                 'subscriber' => ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name')),
             ]);
-            $data = $data->getData();
-            if (!empty($data['serviceList'])) {
-                $serverList = $data['serviceList'];
-                self::reload($serviceName, $serverList);
+            if($data) {
+                $data = $data->getData();
+                if (!empty($data['serviceList'])) {
+                    $serverList = $data['serviceList'];
+                    self::reload($serviceName, $serverList);
+                }
             }
         }
 

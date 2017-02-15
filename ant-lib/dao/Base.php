@@ -41,14 +41,15 @@ abstract class Base
      */
     public function init()
     {
+        if(!$this->_dbTag) {
+            return null;
+        }
         if (empty(self::$_dbs[$this->_dbTag])) {
             $config = ZConfig::getField('pdo', $this->_dbTag);
             self::$_dbs[$this->_dbTag] = new ZPdo($config, $this->entity, $config['dbname']);
         }
         $this->_db = self::$_dbs[$this->_dbTag];
         $this->_db->setClassName($this->entity);
-        $entityRef = new \ReflectionClass($this->entity);
-        $this->_db->setTableName($entityRef->getConstant('TABLE_NAME'));
         $this->_db->checkPing();
         return $this->_db;
     }

@@ -75,6 +75,9 @@ class Sync
         $data = $rpcClient->setApi('main')->setDot(0)->call('getList', [
             'serviceName' => $serviceName,
         ]);
+        if(!$data) {
+            return;
+        }
         $data = $data->getData();
         if (!empty($data['serviceList'])) {
             $serverList = $data['serviceList'];
