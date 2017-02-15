@@ -37,6 +37,9 @@ class Proxy
         if ('ant-ping' === $realData) {  //ping包，强制硬编码，不允许自定义
             return $serv->send($fd, pack('N', 8) . 'ant-pong');  //回pong包
         }
+        if ('ant-reload' == $realData) { //重启包
+            return $serv->reload();
+        }
         Request::addParams('_recv', 1);
         Request::parse($realData);
         if (Request::checkRequestTimeOut()) {
@@ -81,6 +84,7 @@ class Proxy
             }
         }
         $executeTime = Response::getResponseTime() - $startTime;  //获取程序执行时间
+        common\Log::info(['tcp', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
@@ -158,6 +162,76 @@ class Proxy
         }
 
         $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        common\Log::info(['http', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
+        MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
+    }
+
+    /**
+     * @param \swoole_websocket_server $server
+     * @param \swoole_http_request $request
+     * @desc websocket握手成功后的回调
+     */
+    public static function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
+    {
+        
+    }
+
+    /**
+     * @param \swoole_websocket_server $serv
+     * @param \swoole_websocket_frame $frame
+     * @return bool
+     * @desc 收到一个websocket数据包回调
+     */
+    public static function onMessage(\swoole_websocket_server $serv, \swoole_websocket_frame $frame)
+    {
+        $startTime = microtime(true);
+        common\Log::info([$frame->data, $frame->fd], 'proxy_ws');
+        $fd = $frame->fd;
+        $data = $frame->data;
+        Request::addParams('_recv', 1);
+        Request::parse($frame->data);
+        if (Request::checkRequestTimeOut()) {
+            //该请求已超时
+            return false;
+        }
+        $params = Request::getParams();
+        $params['_fd'] = $frame->fd;
+        Request::setParams($params);
+        if (!empty($params['_task'])) {
+            //task任务, 回复task的任务id
+            $taskId = self::getRequestId($serv);
+            $params['taskId'] = $taskId;
+            $params['requestId'] = Request::getRequestId();
+            $serv->task($params);
+            $result = Response::display([
+                'code' => 0,
+                'msg' => '',
+                'data' => [
+                    'taskId' => $taskId
+                ]
+            ]);
+            $serv->push($fd, $result);
+        } else {
+
+            if (empty($params['_recv'])) {
+                //不用等处理结果，立即回复一个空包，表示数据已收到
+                $result = Response::display([
+                    'code' => 0,
+                    'msg' => '',
+                    'data' => null
+                ]);
+                $serv->push($fd, $result);
+            }
+
+            $result = ZRoute::route();
+            common\Log::info([$data, $fd, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
+            if (!empty($params['_recv'])) {
+                //发送处理结果
+                $serv->push($fd, $result);
+            }
+        }
+        $executeTime = Response::getResponseTime() - $startTime;  //获取程序执行时间
+        common\Log::info(['ws', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
@@ -182,6 +256,7 @@ class Proxy
             }
         }
         $executeTime = microtime(true) - $startTime;
+        common\Log::info(['task', $taskId, $fromId, Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
         MClient::taskDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
@@ -197,9 +272,10 @@ class Proxy
     }
 
     /**
-     * @param $serv
+     * @param \swoole_server $serv
      * @param $data
      * @param $clientInfo
+     * @return bool|void
      * @desc 收到udp数据的处理
      */
     public static function onPacket(\swoole_server $serv, $data, $clientInfo)
@@ -209,6 +285,10 @@ class Proxy
         if ('ant-ping' == $data) {
             $serv->sendto($clientInfo['ip'], $clientInfo['port'], 'ant-pong');
             return;
+        }
+
+        if ('ant-reload' == $data) {
+            return $serv->reload();
         }
         $params = Request::parse($data);
         $params['_fd'] = $fd = unpack('L', pack('N', ip2long($clientInfo['address'])))[1];
@@ -233,6 +313,7 @@ class Proxy
         }
 
         $executeTime = microtime(true) - $startTime;  //获取程序执行时间
+        common\Log::info(['udp', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
