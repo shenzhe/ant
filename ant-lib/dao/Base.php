@@ -30,9 +30,6 @@ abstract class Base
         $this->entity = $entity;
         $this->_dbTag = $useDb;
         if ($entity && $useDb) {
-            $this->className = $this->entity;
-            $entityRef = new \ReflectionClass($this->className);
-            $this->tableName = $entityRef->getConstant('TABLE_NAME');
             $this->init();
         }
     }
@@ -49,6 +46,9 @@ abstract class Base
             self::$_dbs[$this->_dbTag] = new ZPdo($config, $this->entity, $config['dbname']);
         }
         $this->_db = self::$_dbs[$this->_dbTag];
+        $this->_db->setClassName($this->entity);
+        $entityRef = new \ReflectionClass($this->entity);
+        $this->_db->setTableName($entityRef->getConstant('TABLE_NAME'));
         $this->_db->checkPing();
         return $this->_db;
     }
