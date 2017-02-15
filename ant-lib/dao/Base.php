@@ -40,8 +40,6 @@ abstract class Base
         if (empty(self::$_dbs[$tag])) {
             $config = ZConfig::getField('pdo', $tag);
             self::$_dbs[$tag] = new ZPdo($config, $this->entity, $config['dbname']);
-        } else {
-            self::$_dbs[$tag]->checkPing();
         }
         $this->_db = self::$_dbs[$tag];
         $this->_db->setClassName($this->entity);
