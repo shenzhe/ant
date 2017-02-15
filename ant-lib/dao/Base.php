@@ -2,6 +2,7 @@
 
 namespace dao;
 
+use common\MyException;
 use ZPHP\Core\Config as ZConfig,
     ZPHP\Db\Pdo as ZPdo;
 
@@ -24,26 +25,30 @@ abstract class Base
     public function __construct($entity, $useDb = 'common')
     {
         $this->entity = $entity;
-        if ($useDb) {
-            $this->useDb($useDb);
-        }
+        $this->_dbTag = $useDb;
+    }
+
+    public function init()
+    {
+        $this->useDb();
     }
 
     /**
-     * @param $tag
      * @return null|ZPdo
      * @throws \Exception
      * @desc 使用db
      */
-    public function useDb($tag)
+    public function useDb()
     {
-        if (empty(self::$_dbs[$tag])) {
-            $config = ZConfig::getField('pdo', $tag);
-            self::$_dbs[$tag] = new ZPdo($config, $this->entity, $config['dbname']);
+        if (!$this->_dbTag) {
+            return null;
         }
-        $this->_db = self::$_dbs[$tag];
+        if (empty(self::$_dbs[$this->_dbTag])) {
+            $config = ZConfig::getField('pdo', $this->_dbTag);
+            self::$_dbs[$this->_dbTag] = new ZPdo($config, $this->entity, $config['dbname']);
+        }
+        $this->_db = self::$_dbs[$this->_dbTag];
         $this->_db->setClassName($this->entity);
-        $this->_dbTag = $tag;
         $this->_db->checkPing();
         return $this->_db;
     }
@@ -211,7 +216,7 @@ abstract class Base
     public function remove($where)
     {
         if (empty($where)) {
-            throw new \common\MyException('remove where empty', \common\ERROR::REMOVE_WHERE_EMPTY);
+            throw new MyException('remove where empty', \common\ERROR::REMOVE_WHERE_EMPTY);
         }
         return $this->_db->remove($this->parseWhere($where));
     }

@@ -65,7 +65,11 @@ class MyException extends \Exception
     {
         $config = ZConfig::get('project');
         $model = ZFormater::exception($exception, true, false);
+        if ($model['className'] == 'PDOException') {
+
+        }
         Log::info([\var_export($model, true)], 'exception');
+
         $info = array();
         if (!empty($exception->realCode)) {
             $codeArr = explode('_', $exception->realCode);

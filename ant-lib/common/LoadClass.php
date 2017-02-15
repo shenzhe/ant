@@ -22,6 +22,10 @@ class LoadClass
      */
     public static function getDao($dao)
     {
-        return Factory::getInstance("dao\\{$dao}");
+        $dao = Factory::getInstance("dao\\{$dao}");
+        if (method_exists($dao, 'init')) {
+            $dao->init();
+        }
+        return $dao;
     }
 }
