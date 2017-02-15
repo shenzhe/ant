@@ -16,16 +16,6 @@ use ZPHP\Core\Config as ZConfig;
 class ServiceList extends Base
 {
     /**
-     * @var \dao\Base
-     */
-    protected $dao;
-
-    public function __construct()
-    {
-        $this->dao = LoadClass::getDao('ServiceList');
-    }
-
-    /**
      * @param $serviceName
      * @param $serviceIp
      * @param $servicePort
@@ -38,7 +28,7 @@ class ServiceList extends Base
         /**
          * @var $serviceInfo \entity\ServiceList
          */
-        $serviceInfo = $this->dao->fetchOne([
+        $serviceInfo = LoadClass::getDao('ServiceList')->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
@@ -58,13 +48,13 @@ class ServiceList extends Base
             $serviceInfo->dropTime = 0;
             $serviceInfo->registerKey = $key;
             $serviceInfo->serverType = $serverType;
-            $id = $this->dao->add($serviceInfo);
+            $id = LoadClass::getDao('ServiceList')->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
             if ($serviceInfo->registerKey == $key) {
-                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
+                $ret = LoadClass::getDao('ServiceList')->update(['status' => 1, 'startTime' => time(), 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
             } else {
-                $ret = $this->dao->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key, 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
+                $ret = LoadClass::getDao('ServiceList')->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key, 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
             }
             if ($ret) {
                 $serviceInfo->status = 1;
@@ -82,13 +72,13 @@ class ServiceList extends Base
      */
     public function drop($serviceIp, $servicePort)
     {
-        $serviceInfo = $this->dao->fetchOne([
+        $serviceInfo = LoadClass::getDao('ServiceList')->fetchOne([
             'ip = ' => "'{$serviceIp}'",
             'port = ' => $servicePort
         ]);
 
         if (!empty($serviceInfo->status)) {
-            if ($this->dao->update(['status' => 0, 'dropTime' => time()], ['id=' => $serviceInfo->id])) {
+            if (LoadClass::getDao('ServiceList')->update(['status' => 0, 'dropTime' => time()], ['id=' => $serviceInfo->id])) {
                 $serviceInfo->status = 0;
             }
             LoadClass::getService('Subscriber')->sync($serviceInfo);
@@ -103,7 +93,7 @@ class ServiceList extends Base
      */
     public function dropAll($serviceName)
     {
-        return $this->dao->update(['status' => 0, 'dropTime' => time()], ['name=' => $serviceName]);
+        return LoadClass::getDao('ServiceList')->update(['status' => 0, 'dropTime' => time()], ['name=' => $serviceName]);
     }
 
     /**

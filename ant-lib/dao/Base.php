@@ -22,15 +22,11 @@ abstract class Base
      * @param $entity
      * @param string $useDb //使用的库名,不使用数据库,可设置为空
      */
-    public function __construct($entity, $useDb = 'common')
+    public function __construct($entity = null, $useDb = 'common')
     {
         $this->entity = $entity;
         $this->_dbTag = $useDb;
-    }
-
-    public function init()
-    {
-        $this->useDb();
+        $this->init();
     }
 
     /**
@@ -38,7 +34,7 @@ abstract class Base
      * @throws \Exception
      * @desc 使用db
      */
-    public function useDb()
+    public function init()
     {
         if (!$this->_dbTag) {
             return null;

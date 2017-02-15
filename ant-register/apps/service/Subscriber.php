@@ -15,27 +15,18 @@ use ZPHP\Socket\Adapter\Swoole;
 
 class Subscriber extends Base
 {
-    /**
-     * @var \dao\Base
-     */
-    protected $dao;
-
-    public function __construct()
-    {
-        $this->dao = LoadClass::getDao('Subscriber');
-    }
 
     public function subscriber($serviceName, $subscriber)
     {
         if ($serviceName == $subscriber) {
             return;
         }
-        $record = $this->dao->fetchOne([
+        $record = LoadClass::getDao('Subscriber')->fetchOne([
             'serviceName=' => "'{$serviceName}'",
             'subscriber=' => "'{$subscriber}'"
         ]);
         if (empty($record)) {
-            return $this->dao->add([
+            return LoadClass::getDao('Subscriber')->add([
                 'serviceName' => $serviceName,
                 'subscriber' => $subscriber,
             ]);
@@ -49,7 +40,7 @@ class Subscriber extends Base
      */
     public function sync($serviceInfo)
     {
-        $subscriberList = $this->dao->fetchAll([
+        $subscriberList = LoadClass::getDao('Subscriber')->fetchAll([
             'serviceName=' => "'{$serviceInfo->name}'",
         ]);
         if (empty($subscriberList)) {
