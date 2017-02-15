@@ -2,6 +2,7 @@
 namespace ctrl;
 use common\LoadClass;
 use ctrl\Base as CBase;
+use sdk\ConfigClient;
 
 class main extends CBase
 {
@@ -9,7 +10,8 @@ class main extends CBase
     public function main()
     {
         return $this->getView([
-            'name'=>'demo2'
+            'config'=>ConfigClient::get('test'),
+            'name'=>'demo2',
         ]);
     }
 

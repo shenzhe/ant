@@ -9,6 +9,7 @@
 namespace sdk;
 
 use common\Consts;
+use common\Log;
 use common\MyException;
 use common\Utils;
 use ZPHP\Core\Config as ZConfig;
@@ -31,19 +32,19 @@ class ConfigClient
         if (!is_null($value)) {
             return $value;
         }
-
-        $server = LoadService::getService(Consts::CONFIG_SERVER_NAME);
-        $result = $server->call('get', [
-            'key' => $key,
-            'serviceName' => $serviceName
-        ]);
         try {
+            $server = LoadService::getService(Consts::CONFIG_SERVER_NAME);
+            $result = $server->call('get', [
+                'key' => $key,
+                'serviceName' => $serviceName
+            ]);
             $body = $result->getBody();
             return $body['data'];
         } catch (\Exception $e) {
             if ($throw) {
                 throw $e;
             }
+            MyException::exceptionHandler($e);
             return false;
         }
     }
