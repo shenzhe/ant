@@ -64,8 +64,8 @@ class MyException extends \Exception
     public static function exceptionHandler(\Exception $exception)
     {
         $config = ZConfig::get('project');
-        $model = ZFormater::exception($exception);
-        Log::info([\var_export($model, true)], 'exception');
+        $model = ZFormater::exception($exception, true, false);
+        Log::info([\print_r($model, true)], 'exception');
         $info = array();
         if (!empty($exception->realCode)) {
             $codeArr = explode('_', $exception->realCode);
