@@ -16,6 +16,9 @@ abstract class Base
      */
     private $_db = null;
     private $_dbTag = null;
+    protected $dbName;
+    protected $tableName;
+    protected $className;
 
     /**
      * Base constructor.
@@ -26,7 +29,12 @@ abstract class Base
     {
         $this->entity = $entity;
         $this->_dbTag = $useDb;
-        $this->init();
+        if ($entity && $useDb) {
+            $this->className = $this->entity;
+            $entityRef = new \ReflectionClass($this->className);
+            $this->tableName = $entityRef->getConstant('TABLE_NAME');
+            $this->init();
+        }
     }
 
     /**
@@ -36,15 +44,11 @@ abstract class Base
      */
     public function init()
     {
-        if (!$this->_dbTag) {
-            return null;
-        }
         if (empty(self::$_dbs[$this->_dbTag])) {
             $config = ZConfig::getField('pdo', $this->_dbTag);
             self::$_dbs[$this->_dbTag] = new ZPdo($config, $this->entity, $config['dbname']);
         }
         $this->_db = self::$_dbs[$this->_dbTag];
-        $this->_db->setClassName($this->entity);
         $this->_db->checkPing();
         return $this->_db;
     }
