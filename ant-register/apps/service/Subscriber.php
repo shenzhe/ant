@@ -27,6 +27,9 @@ class Subscriber extends Base
 
     public function subscriber($serviceName, $subscriber)
     {
+        if ($serviceName == $subscriber) {
+            return;
+        }
         $record = $this->dao->fetchOne([
             'serviceName=' => "'{$serviceName}'",
             'subscriber=' => "'{$subscriber}'"
