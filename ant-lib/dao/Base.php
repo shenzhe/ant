@@ -2,6 +2,8 @@
 
 namespace dao;
 
+use common\ERROR;
+use common\Log;
 use common\MyException;
 use ZPHP\Core\Config as ZConfig,
     ZPHP\Db\Pdo as ZPdo;
@@ -90,7 +92,7 @@ abstract class Base
      */
     public function fetchById($id)
     {
-        return $this->_db->fetchEntity("id={$id}");
+        return $this->doResult($this->_db->fetchEntity("id={$id}"));
     }
 
     /**
@@ -102,7 +104,7 @@ abstract class Base
      */
     public function fetchEntity($where, $params = null, $fields = '*', $orderBy = null)
     {
-        return $this->_db->fetchEntity($this->parseWhere($where), $params, $fields, $orderBy);
+        return $this->doResult($this->_db->fetchEntity($this->parseWhere($where), $params, $fields, $orderBy));
     }
 
     /**
@@ -116,7 +118,7 @@ abstract class Base
      */
     public function fetchAll(array $items = [], $params = null, $fields = '*', $orderBy = null, $limit = null)
     {
-        return $this->_db->fetchAll($this->parseWhere($items), $params, $fields, $orderBy, $limit);
+        return $this->doResult($this->_db->fetchAll($this->parseWhere($items), $params, $fields, $orderBy, $limit));
     }
 
     /**
@@ -157,7 +159,7 @@ abstract class Base
      */
     public function fetchWhere($where = '')
     {
-        return $this->_db->fetchAll($this->parseWhere($where));
+        return $this->doResult($this->_db->fetchAll($this->parseWhere($where)));
     }
 
     /**
@@ -191,7 +193,7 @@ abstract class Base
             $pkid = $attr::PK_ID;
             $where = "`{$pkid}`=" . $attr->$pkid;
         }
-        return $this->_db->update($fields, $params, $where, $change);
+        return $this->doResult($this->_db->update($fields, $params, $where, $change));
     }
 
     /**
@@ -206,7 +208,7 @@ abstract class Base
         } elseif (is_object($attr)) {
             $entity = $attr;
         }
-        return $this->_db->add($entity, $entity->getFields());
+        return $this->doResult($this->_db->add($entity, $entity->getFields()));
     }
 
     /**
@@ -217,9 +219,9 @@ abstract class Base
     public function remove($where)
     {
         if (empty($where)) {
-            throw new MyException('remove where empty', \common\ERROR::REMOVE_WHERE_EMPTY);
+            throw new MyException('remove where empty', ERROR::REMOVE_WHERE_EMPTY);
         }
-        return $this->_db->remove($this->parseWhere($where));
+        return $this->doResult($this->_db->remove($this->parseWhere($where)));
     }
 
     /**
@@ -233,9 +235,9 @@ abstract class Base
     public function fetchArray(array $items = [], $fields = "*", $orderBy = null, $start = null, $limit = null)
     {
         if (empty($items)) {
-            return $this->_db->fetchArray(1, $fields, $orderBy, $start, $limit);
+            return $this->doResult($this->_db->fetchArray(1, $fields, $orderBy, $start, $limit));
         }
-        return $this->_db->fetchArray($this->parseWhere($items), $fields, $orderBy, $start, $limit);
+        return $this->doResult($this->_db->fetchArray($this->parseWhere($items), $fields, $orderBy, $start, $limit));
     }
 
     /**
@@ -244,7 +246,7 @@ abstract class Base
      */
     public function fetchCount($items = [])
     {
-        return $this->_db->fetchCount($this->parseWhere($items));
+        return $this->doResult($this->_db->fetchCount($this->parseWhere($items)));
     }
 
     /**
@@ -254,7 +256,7 @@ abstract class Base
      */
     public function fetchOne($items = [], $fields = "*")
     {
-        return $this->_db->fetchEntity($this->parseWhere($items), null, $fields);
+        return $this->doResult($this->_db->fetchEntity($this->parseWhere($items), null, $fields));
     }
 
     /**
@@ -287,7 +289,7 @@ abstract class Base
         }
 
         $sql = "select {$fields} from {$tables} where {$wheres}{$order}";
-        return $this->fetchBySql($sql);
+        return $this->doResult($this->fetchBySql($sql));
     }
 
     /**
@@ -298,7 +300,13 @@ abstract class Base
 
     public function fetchBySql($sql)
     {
-        return $this->_db->fetchBySql($sql);
+        return $this->doResult($this->_db->fetchBySql($sql));
+    }
+
+    private function doResult($result)
+    {
+        Log::info([$this->_db->getLastSql()], 'sql');
+        return $result;
     }
 
 

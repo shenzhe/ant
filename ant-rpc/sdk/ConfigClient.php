@@ -40,6 +40,9 @@ class ConfigClient
             ]);
             $body = $result->getBody();
             $record = $body['data']['record'];
+            if (empty($record)) {
+                throw new MyException("record empty", -1);
+            }
             if ($record['item'] !== $key) {
                 throw new MyException("key error {$key} != {$record['item']}", -1);
             }
