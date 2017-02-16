@@ -30,6 +30,7 @@ class ConfigList extends Base
         if ($id) {
             LoadClass::getService('Sync')->syncId($id);
         }
+        return $id;
     }
 
     public function update($id, $item, $value)
@@ -41,6 +42,7 @@ class ConfigList extends Base
         if ($ret) {
             LoadClass::getService('Sync')->syncId($id);
         }
+        return $ret;
     }
 
     public function remove($id)

@@ -116,7 +116,7 @@ class AntConfigAgent
             return false;
         }
         $filename = $path . DS . 'config' . DS . $serviceName . '.php';
-        file_put_contents($filename, "<?php\rreturn array(
+        file_put_contents($filename, "<?php\r\nreturn array(
                         '$serviceName'=>" . var_export($data, true) . "
                     );");
         return ZConfig::mergeFile($filename);
