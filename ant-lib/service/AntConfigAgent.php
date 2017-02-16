@@ -91,10 +91,10 @@ class AntConfigAgent
                 return false;
             }
             $data = $result->getData();
-            if ($data) {
+            if ($data && !empty($data['list'])) {
                 $configData = [];
-                foreach ($data as $_config) {
-                    $configData[$_config['item']] = $_config['value'];
+                foreach ($data['list'] as $_config) {
+                    $configData[$_config['item']] = is_array($_config['value']) ? $_config['value'] : json_decode($_config['value'], true);
                 }
                 return $this->_sync(Utils::getServiceConfigNamespace($serviceName), $configData);
             }
