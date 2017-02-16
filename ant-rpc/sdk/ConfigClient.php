@@ -39,7 +39,14 @@ class ConfigClient
                 'serviceName' => $serviceName
             ]);
             $body = $result->getBody();
-            return $body['data'];
+            $record = $body['data']['record'];
+            if ($record['item'] !== $key) {
+                throw new MyException("key error {$key} != {$record['item']}", -1);
+            }
+            if (is_array($record['value'])) {
+                return $record['value'];
+            }
+            return json_encode($record['value'], true);
         } catch (\Exception $e) {
             if ($throw) {
                 throw $e;

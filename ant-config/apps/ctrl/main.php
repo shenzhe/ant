@@ -27,7 +27,7 @@ class main extends CBase
         $service = LoadClass::getService('ConfigList');
         $record = $service->fetchOne([
             'serviceName=' => "'{$serviceName}'",
-            'key=' => "'{$key}'"
+            'item=' => "'{$key}'"
         ]);
         return $this->getView([
             'record' => $record
