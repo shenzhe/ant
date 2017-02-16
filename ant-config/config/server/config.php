@@ -14,7 +14,7 @@ return array(
         'host' => '0.0.0.0',                          //socket 监听ip
         'port' => 8500,                             //socket 监听端口
         'server_type' => Swoole::TYPE_TCP,              //socket 业务模型 tcp/udp/http/websocket
-        'daemonize' => 0,                             //是否开启守护进程
+        'daemonize' => 1,                             //是否开启守护进程
         'work_mode' => 3,                             //工作模式：1：单进程单线程 2：多线程 3： 多进程
         'worker_num' => 32,                                 //工作进程数
         'task_worker_num' => 32,                                 //工作进程数
