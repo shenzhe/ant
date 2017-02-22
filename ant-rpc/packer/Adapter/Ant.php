@@ -8,7 +8,6 @@
 
 namespace packer\Adapter;
 
-use ZPHP\Common\MessagePacker;
 use packer\Result;
 use packer\IPacker;
 
@@ -24,17 +23,12 @@ class Ant implements IPacker
         if (empty($data)) {
             return null;
         }
-        $message = new MessagePacker($data);
-        $header = $message->readString();
-        $body = $message->readString();
-        return new Result(json_decode($header, true), json_decode($body, true));
+        $result = json_decode($data, true);
+        return new Result($result[0], $result[1]);
     }
 
     public function pack($header, $body)
     {
-        $message = new MessagePacker();
-        $message->writeString(json_encode($header));
-        $message->writeString(json_encode($body));
-        return $message->getData();
+        return json_encode([$header, $body]);
     }
 }
