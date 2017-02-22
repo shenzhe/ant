@@ -10,10 +10,12 @@ namespace service;
 
 
 use common\Consts;
+use common\Log;
 use common\Utils;
 use scheduler\Scheduler;
 use sdk\LoadService;
 use ZPHP\Core\Config as ZConfig;
+use ZPHP\ZPHP;
 
 class AntConfigAgent
 {
@@ -111,11 +113,14 @@ class AntConfigAgent
      */
     private function _sync($serviceName, $data)
     {
-        $path = ZConfig::getField('lib_path', 'ant-lib');
-        if (empty($path)) {
-            return false;
+        $path = ZPHP::getConfigPath() . DS . '..' . DS . 'public';
+        if (!is_dir($path)) {
+            if (!mkdir($path)) {
+                Log::info([$path], 'mkdir_error');
+                return false;
+            }
         }
-        $filename = $path . DS . 'config' . DS . $serviceName . '.php';
+        $filename = $path . DS . $serviceName . '.php';
         file_put_contents($filename, "<?php\r\nreturn array(
                         '$serviceName'=>" . var_export($data, true) . "
                     );");
