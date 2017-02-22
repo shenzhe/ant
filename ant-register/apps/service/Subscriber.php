@@ -9,6 +9,7 @@
 namespace service;
 
 use common\LoadClass;
+use common\Log;
 use sdk\TcpClient;
 use sdk\UdpClient;
 use ZPHP\Socket\Adapter\Swoole;
@@ -61,14 +62,22 @@ class Subscriber extends Base
                 /**
                  * @var $sub \entity\ServiceList
                  */
-                if ($sub->serverType == Swoole::TYPE_TCP) {
-                    $service = new TcpClient($sub->ip, $sub->port);
-                } elseif ($sub->serverType == Swoole::TYPE_UDP) {
-                    $service = new UdpClient($sub->ip, $sub->port);
-                } else {
-                    continue;
+                if (!$sub->status) {
+                    continue;  //没有运行
                 }
-                $service->setApi('antConfigAgent')->call('syncRegister', (array)$serviceInfo);
+                try {
+                    if ($sub->serverType == Swoole::TYPE_TCP) {
+                        $service = new TcpClient($sub->ip, $sub->port);
+                    } elseif ($sub->serverType == Swoole::TYPE_UDP) {
+                        $service = new UdpClient($sub->ip, $sub->port);
+                    } else {
+                        continue;
+                    }
+                    $service->setApi('antConfigAgent')->call('syncRegister', (array)$serviceInfo);
+                } catch (\Exception $e) {
+                    //发送错误
+                    Log::info([$e->getMessage(), $e->getCode()], 'syncRegister_error');
+                }
             }
         }
     }
