@@ -63,7 +63,7 @@ class Subscriber extends Base
                  */
                 if ($sub->serverType == Swoole::TYPE_TCP) {
                     $service = new TcpClient($sub->ip, $sub->port);
-                } elseif ($sub['type'] == Swoole::TYPE_UDP) {
+                } elseif ($sub->serverType == Swoole::TYPE_UDP) {
                     $service = new UdpClient($sub->ip, $sub->port);
                 } else {
                     continue;
