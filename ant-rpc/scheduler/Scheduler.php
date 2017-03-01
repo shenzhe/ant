@@ -49,7 +49,7 @@ class Scheduler
 
         $serverList = self::getList($serviceName, $soaConfig);
         if (!self::$selector) {
-            self::$selector = Factory::getInstance(ZConfig::getField('project', 'selector'));
+            self::$selector = Factory::getInstance(ZConfig::getField('project', 'selector', 'Vote'));
         }
         $current = self::getOne($serviceName, $serverList);
         return [
