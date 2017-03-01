@@ -1,4 +1,5 @@
 <?php
+
 namespace socket\Handler;
 
 use ZPHP\Protocol\Response;
@@ -352,7 +353,6 @@ class Proxy
 
         $reloadPath = ZConfig::getField('project', 'reload_path', []);
         $reloadPath += [
-            ZConfig::getField('lib_path', 'ant-lib') . DS . 'config',
             ZPHP::getConfigPath() . DS . '..' . DS . 'public'
         ];
         if (is_array($reloadPath)) {

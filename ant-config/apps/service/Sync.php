@@ -72,7 +72,7 @@ class Sync
             return;
         }
         $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], $soaConfig['timeOut']);
-        $data = $rpcClient->setApi('main')->setDot(0)->call('getList', [
+        $data = $rpcClient->setApi('main')->call('getList', [
             'serviceName' => $serviceName,
         ]);
         if(!$data) {

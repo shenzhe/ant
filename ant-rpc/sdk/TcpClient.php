@@ -22,15 +22,14 @@ class TcpClient extends Tcp
      * @param $serviceName
      * @param int $timeOut
      * @param array $config
-     * @param int $isDot
      * @param int $retry
      * @return TcpClient
      * @throws \Exception
      */
-    public static function getService($serviceName, $timeOut = 500, $config = array(), $isDot = 1, $retry = 3)
+    public static function getService($serviceName, $timeOut = 500, $config = array(), $retry = 3)
     {
         try {
-            list($ip, $port) = Scheduler::getService($serviceName, $isDot);
+            list($ip, $port) = Scheduler::getService($serviceName);
             $service = new TcpClient($ip, $port, $timeOut, $config);
             Scheduler::voteGood($serviceName, $ip, $port);
             return $service;
@@ -40,7 +39,7 @@ class TcpClient extends Tcp
             }
             Scheduler::voteBad($serviceName, $ip, $port);
             $retry--;
-            return self::getService($serviceName, $timeOut, $config, $isDot, $retry);
+            return self::getService($serviceName, $timeOut, $config, $retry);
         }
     }
 

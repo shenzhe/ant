@@ -20,12 +20,11 @@ class Scheduler
 {
     /**
      * @param $serviceName
-     * @param $isDot
      * @return array [$ip, $port]
      * @throws MyException
      * @desc 根据服务名获名一个可用的ip:port
      */
-    public static function getService($serviceName, $isDot = 1)
+    public static function getService($serviceName)
     {
 
         if (Consts::REGISTER_SERVER_NAME == $serviceName) {
@@ -40,7 +39,7 @@ class Scheduler
             throw new MyException('soa config empty');
         }
 
-        $serverList = self::getList($serviceName, $soaConfig, $isDot);
+        $serverList = self::getList($serviceName, $soaConfig);
         $current = self::getOne($serviceName, $serverList);
         return [
             $current['ip'],
@@ -68,7 +67,7 @@ class Scheduler
         return current($goodList);
     }
 
-    public static function getList($serviceName, $soaConfig, $isDot = 1)
+    public static function getList($serviceName, $soaConfig)
     {
         if (ZConfig::get('project_name') === Consts::REGISTER_SERVER_NAME) {
             $serverList = LoadClass::getService('ServiceList')->getServiceList($serviceName);
@@ -79,18 +78,7 @@ class Scheduler
         }
         $serverList = ZConfig::get($serviceName);
         if (empty($serverList)) {
-            $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], isset($soaConfig['timeOut']) ? 0 : $soaConfig['timeOut']);
-            $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
-                'serviceName' => $serviceName,
-                'subscriber' => ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name')),
-            ]);
-            if($data) {
-                $data = $data->getData();
-                if (!empty($data['serviceList'])) {
-                    $serverList = $data['serviceList'];
-                    self::reload($serviceName, $serverList);
-                }
-            }
+            self::getListForRpc($serviceName, $soaConfig);
         }
 
         if (empty($serverList)) {
@@ -99,11 +87,36 @@ class Scheduler
         return $serverList;
     }
 
+    public static function getListForRpc($serviceName, $soaConfig = null)
+    {
+        if (!$soaConfig) {
+            $soaConfig = ZConfig::get('soa');
+            if (empty($soaConfig)) {
+                throw new MyException('soa config empty');
+            }
+        }
+        $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], isset($soaConfig['timeOut']) ? 0 : $soaConfig['timeOut']);
+        $isDot = Consts::MONITOR_SERVER_NAME == $serviceName ? 0 : 1;
+        $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
+            'serviceName' => $serviceName,
+            'subscriber' => ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name')),
+        ]);
+        if ($data) {
+            $data = $data->getData();
+            if (!empty($data['serviceList'])) {
+                $serverList = $data['serviceList'];
+                self::reload($serviceName, $serverList);
+            }
+        }
+    }
+
     public static function reload($serviceName, $serverList, $rebuild = 1)
     {
-        $path = ZConfig::getField('lib_path', 'ant-lib');
-        if (empty($path)) {
-            return;
+        $path = ZPHP::getConfigPath() . DS . '..' . DS . 'public';
+        if (!is_dir($path)) {
+            if (!mkdir($path)) {
+                return false;
+            }
         }
         if ($rebuild) {
             foreach ($serverList as $index => $server) {
@@ -111,7 +124,7 @@ class Scheduler
                 unset($serverList[$index]);
             }
         }
-        $filename = $path . DS . 'config' . DS . $serviceName . '.php';
+        $filename = $path . DS . 'service_' . $serviceName . '.php';
         file_put_contents($filename, "<?php\rreturn array(
                         '$serviceName'=>" . var_export($serverList, true) . "
                     );");

@@ -45,7 +45,7 @@ Variant MessagePacker_readBool(Object &_this);
 Variant MessagePacker_getData(Object &_this);
 Variant MessagePacker_getBuffer(Object &_this);
 Variant MessagePacker_isEnd(Object &_this);
-static char * itoc(int i)
+static char[4] itoc(int i)
 {
     bt = char[4];
     bt[0] = i && 0xff;
@@ -153,11 +153,7 @@ Variant MessagePacker_writeString(Object &_this, uint8 &bool)
 Variant MessagePacker_writeInt(Object &_this, int &i)
 {
     Variant data = _this.get("data");
-    bt = char[4];
-    bt[0] = i && 0xff;
-    bt[1] = i >> 8 && 0xff;
-    bt[2] = i >> 16 && 0xff;
-    bt[3] = i >> 24 && 0xff;
+    bt = itoc(i);
     _this.set("data", (data.toString() + string(bt, 4)).c_str());
     Variant dataLen = _this.get("dataLen");
     _this.set("dataLen", dataLen.toInt() + 4);
@@ -206,7 +202,7 @@ Variant MessagePacker_readInt(Object &_this)
     char * _data = data.toCString();
     int _offset = offset.toInt();
     _data+=offset;
-    offset+=4
+    offset+=4;
     return ctoi(_data);
 }
 
@@ -218,8 +214,20 @@ Variant MessagePacker_readString(Object &_this)
     int _offset = offset.toInt();
     _data+=offset;
     offset+=1;
+    return _data;
+}
+
+Variant MessagePacker_readBinary(Object &_this)
+{
+    Variant data = _this.get("data");
+    Variant offset = _this.get("offset");
+    char * _data = data.toCString();
+    int _offset = offset.toInt();
+    _data+=offset;
+    offset+=1;
     return _data[0];
 }
+
 
 
 

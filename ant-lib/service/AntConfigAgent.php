@@ -14,6 +14,7 @@ use common\Log;
 use common\Utils;
 use scheduler\Scheduler;
 use sdk\LoadService;
+use ZPHP\Common\Dir;
 use ZPHP\Core\Config as ZConfig;
 use ZPHP\ZPHP;
 
@@ -76,7 +77,7 @@ class AntConfigAgent
     /**
      * @param $serviceName
      * @return bool
-     * @desc 全量同步
+     * @desc 服务启动时，进行全量同步
      */
     public function syncAll($serviceName)
     {
@@ -84,6 +85,7 @@ class AntConfigAgent
             return false;
         }
         try {
+            //同步服务配置
             $configService = LoadService::getService(Consts::CONFIG_SERVER_NAME);
             $result = $configService->call('all', [
                 'serviceName' => $serviceName
@@ -98,8 +100,26 @@ class AntConfigAgent
                 foreach ($data['list'] as $_config) {
                     $configData[$_config['item']] = is_array($_config['value']) ? $_config['value'] : json_decode($_config['value'], true);
                 }
-                return $this->_sync(Utils::getServiceConfigNamespace($serviceName), $configData);
+                $this->_sync(Utils::getServiceConfigNamespace($serviceName), $configData);
             }
+
+            //同步服务列表
+            $dir = ZPHP::getConfigPath() . DS . '..' . DS . 'public';
+            $fileList = Dir::tree($dir);
+            if ($fileList) {
+                foreach ($fileList as $file) {
+                    $filename = str_replace($dir . DS, '', $file);
+                    if (substr($filename, 0, 0) != 'service_') {  //配置
+                        continue;
+                    }
+
+                    $serviceName = explode('.', $filename)[0];
+                    if ($serviceName) {
+                        Scheduler::getListForRpc(str_replace('service_', '', $serviceName));
+                    }
+                }
+            }
+            return true;
         } catch (\Exception $e) {
             return false;
         }
