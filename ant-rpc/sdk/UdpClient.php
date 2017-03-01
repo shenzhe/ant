@@ -8,6 +8,7 @@
 
 namespace sdk;
 
+use common\Log;
 use common\MyException;
 use packer;
 use ZPHP\Client\Rpc\Udp;
