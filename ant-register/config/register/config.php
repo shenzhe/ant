@@ -3,7 +3,7 @@ use ZPHP\Socket\Adapter\Swoole;
 
 return array(
     'server_mode' => 'Ant',
-    'project_name' => 'ant-register_center',
+    'project_name' => 'ant-register-center',
     'project' => [
         'is_register_project' => 1,                             //是否为注册服务器
         'debug_mode' => 1,                                      //是否打开调试模式
