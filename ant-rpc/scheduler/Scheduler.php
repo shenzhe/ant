@@ -62,7 +62,7 @@ class Scheduler
 
     public static function getOne($serviceName, $serverList)
     {
-        self::$selector->getOne($serviceName, $serverList);
+        return self::$selector->getOne($serviceName, $serverList);
     }
 
     public static function getList($serviceName, $soaConfig)
@@ -76,7 +76,7 @@ class Scheduler
         }
         $serverList = ZConfig::get($serviceName);
         if (empty($serverList)) {
-            self::getListForRpc($serviceName, $soaConfig);
+            $serverList = self::getListForRpc($serviceName, $soaConfig);
         }
 
         if (empty($serverList)) {

@@ -11,6 +11,7 @@ namespace sdk;
 use common\Log;
 use common\MyException;
 use common\Utils;
+use ZPHP\Common\Formater;
 use ZPHP\Core\Config as ZConfig;
 
 use common\Consts;
@@ -47,7 +48,8 @@ class MonitorClient
                 ]
             );
         } catch (\Exception $e) {
-
+            $model = Formater::exception($e);
+            Log::info([\var_export($model, true)], 'exception');
         }
     }
 
@@ -82,7 +84,8 @@ class MonitorClient
                 $params
             );
         } catch (\Exception $e) {
-            MyException::exceptionHandler($e);
+            $model = Formater::exception($e);
+            Log::info([\var_export($model, true)], 'exception');
         }
     }
 
@@ -114,7 +117,8 @@ class MonitorClient
                 ]
             );
         } catch (\Exception $e) {
-
+            $model = Formater::exception($e);
+            Log::info([\var_export($model, true)], 'exception');
         }
     }
 }
