@@ -104,6 +104,7 @@ class Scheduler
             if (!empty($data['serviceList'])) {
                 $serverList = $data['serviceList'];
                 self::reload($serviceName, $serverList);
+                return $serverList;
             }
         }
     }
