@@ -29,15 +29,15 @@ class TcpClient extends Tcp
     public static function getService($serviceName, $timeOut = 500, $config = array(), $retry = 3)
     {
         try {
-            list($ip, $port) = Scheduler::getService($serviceName);
+            list($ip, $port, $type) = Scheduler::getService($serviceName);
             $service = new TcpClient($ip, $port, $timeOut, $config);
-            Scheduler::voteGood($serviceName, $ip, $port);
+            Scheduler::success($serviceName, $ip, $port, $type);
             return $service;
         } catch (\Exception $e) {
             if (!isset($ip, $port) || $retry < 1) {
                 throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
-            Scheduler::voteBad($serviceName, $ip, $port);
+            Scheduler::fail($serviceName, $ip, $port, $type);
             $retry--;
             return self::getService($serviceName, $timeOut, $config, $retry);
         }

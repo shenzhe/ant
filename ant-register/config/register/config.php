@@ -1,8 +1,5 @@
 <?php
-use ZPHP\ZPHP;
 use ZPHP\Socket\Adapter\Swoole;
-use common\Consts;
-use ZPHP\Core\Config;
 
 return array(
     'server_mode' => 'Ant',

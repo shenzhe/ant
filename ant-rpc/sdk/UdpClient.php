@@ -28,15 +28,15 @@ class UdpClient extends Udp
     public static function getService($serviceName, $timeOut = 500, $config = array(), $retry = 3)
     {
         try {
-            list($ip, $port) = Scheduler::getService($serviceName);
+            list($ip, $port, $type) = Scheduler::getService($serviceName);
             $service = new UdpClient($ip, $port, $timeOut, $config);
-            Scheduler::voteGood($serviceName, $ip, $port);
+            Scheduler::success($serviceName, $ip, $port, $type);
             return $service;
         } catch (\Exception $e) {
             if (!isset($ip, $port) || $retry < 1) {
                 throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
-            Scheduler::voteBad($serviceName, $ip, $port);
+            Scheduler::fail($serviceName, $ip, $port, $type);
             $retry--;
             return self::getService($serviceName, $timeOut, $config, $retry);
         }
@@ -53,7 +53,7 @@ class UdpClient extends Udp
      */
     public function unpack($result)
     {
-        if($this->isDot) {
+        if ($this->isDot) {
             $executeTime = microtime(true) - $this->startTime;
             MonitorClient::clientDot($this->api . DS . $this->method, $executeTime);
         }

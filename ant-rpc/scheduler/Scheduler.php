@@ -18,12 +18,19 @@ use ZPHP\ZPHP;
  */
 class Scheduler
 {
+
+    /**
+     * @var ISelector
+     */
+    private static $selector = null;
+
     /**
      * @param $serviceName
      * @return array [$ip, $port]
      * @throws MyException
      * @desc 根据服务名获名一个可用的ip:port
      */
+
     public static function getService($serviceName)
     {
 
@@ -31,6 +38,7 @@ class Scheduler
             return [
                 ZConfig::getField('socket', 'host'),
                 ZConfig::getField('socket', 'port'),
+                ZConfig::getField('socket', 'server_type'),
             ];
         }
 
@@ -40,31 +48,21 @@ class Scheduler
         }
 
         $serverList = self::getList($serviceName, $soaConfig);
+        if (!self::$selector) {
+            self::$selector = Factory::getInstance(ZConfig::getField('project', 'selector'));
+        }
         $current = self::getOne($serviceName, $serverList);
         return [
             $current['ip'],
-            $current['port']
+            $current['port'],
+            $current['serverType'],
         ];
 
     }
 
     public static function getOne($serviceName, $serverList)
     {
-        $goodList = [];
-        foreach ($serverList as $server) {
-            if (!$server['status']) {  //服务停止状态
-                continue;
-            }
-            if (isset($server['vote']) && $server['vote'] < 0) { //投票数小于1
-                continue;
-            }
-            $goodList[] = $server;
-        }
-        if (empty($goodList)) {
-            throw new MyException($serviceName . "serverlist empty", -1);
-        }
-        shuffle($goodList);
-        return current($goodList);
+        self::$selector->getOne($serviceName, $serverList);
     }
 
     public static function getList($serviceName, $soaConfig)
@@ -135,50 +133,35 @@ class Scheduler
      * @param $serviceName
      * @param $ip
      * @param $port
-     * @desc rpc调用成功，成功投票+1
+     * @param $type
+     * @desc 服务选择成功，回调处理
      */
-    public static function voteGood($serviceName, $ip, $port)
+    public static function success($serviceName, $ip, $port, $type)
     {
         $soaConfig = ZConfig::get('soa');
         $serverList = self::getList($serviceName, $soaConfig);
-        if (!empty($serverList)) {
-            foreach ($serverList as $server) {
-                if ($server['ip'] == $ip && $server['port'] == $port) {
-                    if (empty($server['vote'])) {
-                        $server['vote'] = 1;
-                    } else {
-                        $server['vote']++;
-                    }
-                    self::reload($serviceName, $serverList);
-                    return;
-                }
-            }
+        $key = "{$ip}_{$port}_{$type}";
+        if (!empty($serverList[$key])) {
+            $serverList[$key] = self::$selector->success($serverList[$key]);
+            self::reload($serviceName, $serverList);
         }
-        return;
     }
 
     /**
      * @param $serviceName
      * @param $ip
      * @param $port
-     * @desc rpc调用失败，失败投票 -1
+     * @param $type
+     * @desc 服务选择失败，回调处理
      */
-    public static function voteBad($serviceName, $ip, $port)
+    public static function fail($serviceName, $ip, $port, $type)
     {
         $soaConfig = ZConfig::get('soa');
         $serverList = self::getList($serviceName, $soaConfig);
-        if (!empty($serverList)) {
-            foreach ($serverList as $server) {
-                if ($server['ip'] == $ip && $server['port'] == $port) {
-                    if (empty($server['vote'])) {
-                        $server['vote'] = -1;
-                    } else {
-                        $server['vote']--;
-                    }
-                    self::reload($serviceName, $serverList);
-                    return;
-                }
-            }
+        $key = "{$ip}_{$port}_{$type}";
+        if (!empty($serverList[$key])) {
+            $serverList[$key] = self::$selector->fail($serverList[$key]);
+            self::reload($serviceName, $serverList);
         }
 
         return;
