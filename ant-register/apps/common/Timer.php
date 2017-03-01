@@ -37,12 +37,11 @@ class Timer
                     if ($item->ip . ':' . $item->port == $key) {
                         continue;
                     }
-                    if ($item->serverType == Swoole::TYPE_UDP) {
+                    if ($item->serverType == Swoole::TYPE_TCP) {
                         $rpc = new TcpClient($item->ip, $item->port);
                     } elseif ($item->serverType == Swoole::TYPE_UDP) {
                         //TODO UdpClient暂无
                         $rpc = new UdpClient($item->ip, $item->port);
-                        continue;
                     } else {
                         continue;
                     }
