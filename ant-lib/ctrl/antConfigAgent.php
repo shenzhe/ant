@@ -45,6 +45,8 @@ class antConfigAgent extends Base
     public function syncRegister()
     {
         $serviceInfo = $this->getJson('serviceInfo', []);
-
+        if (!empty($serviceInfo)) {
+            LoadClass::getService('AntConfigAgent')->syncRegister($serviceInfo);
+        }
     }
 }

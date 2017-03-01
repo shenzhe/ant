@@ -98,6 +98,10 @@ class Proxy
     {
         $startTime = microtime(true);
         common\Log::info([$request->get], 'proxy_http');
+        if ($request->server['path'] == '/ant-ping') {
+            $response->end('ant-pong');
+            return;
+        }
         $param = [];
         $_GET = $_POST = $_REQUEST = $_COOKIE = $_FILES = null;
         if (!empty($request->get)) {

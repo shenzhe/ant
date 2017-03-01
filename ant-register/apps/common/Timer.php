@@ -9,6 +9,7 @@
 namespace common;
 
 use sdk\TcpClient;
+use sdk\UdpClient;
 use ZPHP\Socket\Adapter\Swoole;
 use ZPHP\Core\Config as ZConfig;
 
@@ -40,6 +41,7 @@ class Timer
                         $rpc = new TcpClient($item->ip, $item->port);
                     } elseif ($item->serverType == Swoole::TYPE_UDP) {
                         //TODO UdpClient暂无
+                        $rpc = new UdpClient($item->ip, $item->port);
                         continue;
                     } else {
                         continue;

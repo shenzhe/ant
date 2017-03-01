@@ -73,7 +73,9 @@ class Subscriber extends Base
                     } else {
                         continue;
                     }
-                    $service->setApi('antConfigAgent')->call('syncRegister', (array)$serviceInfo);
+                    $service->setApi('antConfigAgent')->call('syncRegister', [
+                        'serviceInfo' => $serviceInfo
+                    ]);
                 } catch (\Exception $e) {
                     //发送错误
                     Log::info([$e->getMessage(), $e->getCode()], 'syncRegister_error');
