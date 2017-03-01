@@ -23,7 +23,11 @@ class Timer
 
         $service = LoadClass::getDao('ServiceList');
         //@TODO 需要优化，如果机器比较多，检测会比较慢
-        $key = ZConfig::getField('soa', 'ip') . ':' . ZConfig::getField('soa', 'port');
+        $host = ZConfig::getField('socket', 'host');
+        if ($host == '0.0.0.0') {
+            $host = Utils::getLocalIp();
+        }
+        $key = $host . ':' . ZConfig::getField('socket', 'port');
         Log::info(['start', $key], 'ping');
         $allService = $service->fetchAll(['registerKey=' => "'$key'"]);
         if (!empty($allService)) {
@@ -52,7 +56,7 @@ class Timer
                     }
                 } catch (\Exception $e) {
                     //心跳回复失败,设置离线状态
-                    Log::info(['fail', $e->getMessage(), $e->getCode(), isset($rpc) ? $rpc->isConnected(): '', $item->name, $item->ip, $item->port, $item->status], 'ping');
+                    Log::info(['fail', $e->getMessage(), $e->getCode(), isset($rpc) ? $rpc->isConnected() : '', $item->name, $item->ip, $item->port, $item->status], 'ping');
                     if (1 == $item->status) {
                         //@TODO 可以不单条更新，改为批量更新
                         //@TODO 服务下线，通知相关的服务调用方
