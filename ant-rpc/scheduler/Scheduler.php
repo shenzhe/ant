@@ -144,7 +144,7 @@ class Scheduler
         $key = "{$ip}_{$port}_{$type}";
         if (!empty($serverList[$key])) {
             $serverList[$key] = self::$selector->success($serverList[$key]);
-            self::reload($serviceName, $serverList);
+            self::reload($serviceName, $serverList, 0);
         }
     }
 
@@ -162,7 +162,7 @@ class Scheduler
         $key = "{$ip}_{$port}_{$type}";
         if (!empty($serverList[$key])) {
             $serverList[$key] = self::$selector->fail($serverList[$key]);
-            self::reload($serviceName, $serverList);
+            self::reload($serviceName, $serverList, 0);
         }
 
         return;
