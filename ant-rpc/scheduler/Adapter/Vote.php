@@ -21,7 +21,7 @@ class Vote implements ISelector
             if (!$server['status']) {  //服务停止状态
                 continue;
             }
-            if (isset($server['vote']) && $server['vote'] < 0) { //投票数小于1
+            if (isset($server['vote']) && $server['vote'] < 1) { //投票数小于1
                 continue;
             }
             $goodList[] = $server;
@@ -45,11 +45,7 @@ class Vote implements ISelector
 
     public function fail($serviceInfo)
     {
-        if (empty($serviceInfo['vote'])) {
-            $serviceInfo['vote'] = 1;
-        } else {
-            $serviceInfo['vote']--;
-        }
+        $serviceInfo['vote'] = 0;
         return $serviceInfo;
     }
 }

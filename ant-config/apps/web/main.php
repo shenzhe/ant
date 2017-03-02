@@ -51,5 +51,19 @@ class main extends CBase
         ]);
     }
 
+    /**
+     * @return array
+     * @desc 获取某服务所有的配置
+     */
+    public function all()
+    {
+        $serviceName = $this->getString('serviceName');
+        return $this->getView([
+            'list' => LoadClass::getService('ConfigList')->fetchAll([
+                'serviceName=' => "'{$serviceName}'"
+            ])
+        ]);
+    }
+
 
 }

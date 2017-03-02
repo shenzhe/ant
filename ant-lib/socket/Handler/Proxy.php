@@ -288,7 +288,9 @@ class Proxy
         $startTime = microtime(true);
         common\Log::info([$data, $clientInfo], 'proxy_udp');
         if ('ant-ping' == $data) {
-            $serv->sendto($clientInfo['ip'], $clientInfo['port'], 'ant-pong');
+            if(!empty($clientInfo['ip'])) {
+                $serv->sendto($clientInfo['ip'], $clientInfo['port'], 'ant-pong');
+            }
             return;
         }
 

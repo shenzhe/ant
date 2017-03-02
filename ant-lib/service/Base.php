@@ -3,17 +3,15 @@
 namespace service;
 
 
+use common\LoadClass;
+
 abstract class Base
 {
-    /**
-     * @var \dao\Base
-     */
-    protected $dao;
-
     public function __call($name, $arguments)
     {
-        if(method_exists($this->dao, $name)) {
-            return call_user_func_array([$this->dao, $name], $arguments);
+        $dao = LoadClass::getDao($name);
+        if (method_exists($dao, $name)) {
+            return call_user_func_array([$dao, $name], $arguments);
         }
     }
 }
