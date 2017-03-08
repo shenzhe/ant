@@ -9,6 +9,7 @@ use ZPHP\Core\Route as ZRoute;
 use ZPHP\Core\Config as ZConfig;
 use common;
 use sdk\MonitorClient as MClient;
+use ZPHP\Socket\Adapter\Swoole;
 use ZPHP\ZPHP;
 
 class Proxy
@@ -214,7 +215,7 @@ class Proxy
             $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $val;
         }
 
-        $params['_fd'] = $request->fd;
+        $param['_fd'] = $request->fd;
         $_REQUEST = $param;
         Request::setRequest($request);
         Request::addHeaders($request->header, true);
@@ -342,7 +343,8 @@ class Proxy
             return $serv->reload();
         }
         $params = Request::parse($data);
-        $params['_fd'] = $fd = unpack('L', pack('N', ip2long($clientInfo['address'])))[1];
+        $params['_fd'] = $clientInfo;
+        Request::setFd($clientInfo);
         if (!empty($params['_task'])) {
             //task任务, 回复task的任务id
             $params['udp'] = 1;
@@ -382,7 +384,26 @@ class Proxy
             $result = \call_user_func(ZConfig::getField('project', 'fatal_handler', 'ZPHP\ZPHP::fatalHandler'));
             if (!empty($params['_recv'])) { //发送回执
                 common\Log::info([$params, $result], 'shutdown');
-                $serv->send(Request::getFd(), pack('N', strlen($result)) . $result);
+                if (Request::isHttp()) {
+                    Response::getResponse()->end($result);
+                } else {
+                    $serverType = ZConfig::get('socket', 'server_type');
+                    switch ($serverType) {
+                        case Swoole::TYPE_WEBSOCKET:
+                        case Swoole::TYPE_WEBSOCKETS:
+                            $serv->push(Request::getFd(), $result);
+                            break;
+                        case Swoole::TYPE_UDP:
+                            $clientInfo = Request::getFd();
+                            if (!empty($clientInfo['address'])) {
+                                $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+                            }
+                            break;
+                        default:
+                            $serv->send(Request::getFd(), pack('N', strlen($result)) . $result);
+                    }
+
+                }
                 //@TODO 异常上报
             }
         });
