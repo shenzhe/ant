@@ -23,9 +23,9 @@ class qrcode extends CBase
 
     public function wx()
     {
+        Request::setViewMode('Php');
         return $this->getView([
             'code' => $this->getString('code'),
-            '_view_mode' => 'Php',
         ]);
     }
 
