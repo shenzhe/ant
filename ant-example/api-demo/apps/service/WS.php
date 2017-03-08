@@ -13,7 +13,7 @@ use ZPHP\Cache\Factory as ZCache;
 
 class WS
 {
-    public function bind($code, $fd)
+    public function open($code, $fd)
     {
         $cache = ZCache::getInstance('Task');
         $cache->set($code, $fd, 0);
