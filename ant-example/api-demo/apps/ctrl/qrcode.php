@@ -4,6 +4,7 @@ namespace ctrl;
 
 use common\Utils;
 use ctrl\Base as CBase;
+use ZPHP\Protocol\Request;
 use ZPHP\Protocol\Response;
 use ZPHP\Cache\Factory as ZCache;
 use ZPHP\Core\Config as ZConfig;
@@ -13,10 +14,10 @@ class qrcode extends CBase
 
     public function login()
     {
+        Request::setViewMode('Php');
         return $this->getView([
             'code' => uniqid('qrcode_'),
             'ws_url' => 'ws://' . Utils::getLocalIp() . ':' . ZConfig::getField('socket', 'port') . '/',
-            '_view_mode' => 'Php'
         ]);
     }
 

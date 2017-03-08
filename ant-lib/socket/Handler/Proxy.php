@@ -137,6 +137,9 @@ class Proxy
         Request::addParams('_recv', 1);
         Request::parse($param);
         $params = Request::getParams();
+        if (!isset($params['_recv'])) {
+            $params['_recv'] = 1;
+        }
         $params['_fd'] = $request->fd;
         Request::setParams($params);
 
