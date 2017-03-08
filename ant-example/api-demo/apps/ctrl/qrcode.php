@@ -2,6 +2,7 @@
 
 namespace ctrl;
 
+use common\Log;
 use common\Utils;
 use ctrl\Base as CBase;
 use ZPHP\Protocol\Request;
@@ -39,9 +40,10 @@ class qrcode extends CBase
         ]);
 
         $fd = ZCache::getInstance('Task')->get($code);
+        Log::info([$code, $fd], 'task_cache');
         if ($fd) {
             $socket = Request::getSocket();
-            $socket->send($fd, Response::display($ret));
+            $socket->push($fd, Response::display($ret));
         }
         return $ret;
     }
