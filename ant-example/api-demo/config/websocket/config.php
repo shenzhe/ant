@@ -27,5 +27,6 @@ return array(
             'port' => 7115
         ),
         'ws_open_callback' => ['ws', 'open'],
+        'on_close_callback' => ['ws', 'close'],
     ),
 );

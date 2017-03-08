@@ -444,5 +444,44 @@ class Proxy
     {
     }
 
+    /**
+     * @param $serv
+     * @param $fd
+     * @param $from_id
+     * @desc 建立连接回调
+     */
+    public static function onConnect($serv, $fd, $from_id)
+    {
+        common\Log::info([$fd], 'on_connect');
+        $callback = ZConfig::getField('socket', 'on_connect_callback');
+        if (!$callback || !is_array($callback)) {
+            return;
+        }
+
+        Request::init($callback[0], $callback[1], [
+            '_fd' => $fd
+        ]);
+        ZRoute::route();
+    }
+
+    /**
+     * @param $serv
+     * @param $fd
+     * @param $from_id
+     * @desc 连接关闭回调
+     */
+    public static function onClose($serv, $fd, $from_id)
+    {
+        common\Log::info([$fd], 'on_close');
+        $callback = ZConfig::getField('socket', 'on_close_callback');
+        if (!$callback || !is_array($callback)) {
+            return;
+        }
+        Request::init($callback[0], $callback[1], [
+            '_fd' => $fd
+        ]);
+        ZRoute::route();
+    }
+
 }
 

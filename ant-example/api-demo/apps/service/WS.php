@@ -17,6 +17,15 @@ class WS
     {
         $cache = ZCache::getInstance('Task');
         $cache->set($code, $fd, 0);
+        $cache->set($fd, $code, 0);
         return true;
+    }
+
+    public function close($fd)
+    {
+        $cache = ZCache::getInstance('Task');
+        $code = $cache->get($fd);
+        $cache->delete($fd);
+        $cache->delete($code);
     }
 }
