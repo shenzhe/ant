@@ -7,6 +7,7 @@ return array(
     'project_name' => 'api-demo-ws',
     'project' => [
         'debug_mode' => 0,                                  //打开调试模式
+        'app_host' => ''
     ],
     'lib_path' => [
         'ant-lib' => ZPHP::getRootPath() . DS . '..' . DS . '..' . DS . 'ant-lib',

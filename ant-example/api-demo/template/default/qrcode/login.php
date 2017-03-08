@@ -9,10 +9,12 @@ use ZPHP\Common\Route;
     <title>扫码登录</title>
 </head>
 <body>
-<p id="msg"></p>
-<p><img src="http://qr.liantu.com/api.php?text=<?= Route::makeUrl('qrcode', 'wx', ['code' => $code]); ?>"></p>
+<p id="msg">未登录</p>
+<p>
+    <img src="http://qr.liantu.com/api.php?text=<?= urlencode(Route::makeUrl('qrcode', 'wx', ['code' => $data['code']])); ?>">
+</p>
 <script type="text/javascript">
-    var ws = new WebSocket("<?=$ws_url?>?code=<?=$code?>");
+    var ws = new WebSocket("<?=$data['ws_url']?>?code=<?=$data['code']?>");
     ws.onopen = function (evt) {
         console.log('onopen');
         console.log(evt);
