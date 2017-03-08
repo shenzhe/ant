@@ -1,4 +1,5 @@
 <?php
+
 namespace ctrl;
 
 use ZPHP\Controller\IController;

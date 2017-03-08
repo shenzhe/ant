@@ -98,11 +98,17 @@ class Proxy
     public static function onRequest($request, $response)
     {
         $startTime = microtime(true);
-        common\Log::info([$request], 'proxy_http');
-        if ($request->header['path'] == '/ant-ping') {
+        if ($request->server['path_info'] == '/ant-ping') {
+            common\Log::info([$request], 'http_ping');
             $response->end('ant-pong');
             return;
         }
+        if ($request->server['path_info'] == '/favicon.ico') {
+            common\Log::info([$request], 'favicon');
+            $response->end('');
+            return;
+        }
+        common\Log::info([$request], 'proxy_http');
         $param = [];
         $_GET = $_POST = $_REQUEST = $_COOKIE = $_FILES = null;
         if (!empty($request->get)) {
