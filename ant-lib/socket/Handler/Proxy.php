@@ -98,8 +98,8 @@ class Proxy
     public static function onRequest($request, $response)
     {
         $startTime = microtime(true);
-        common\Log::info([$request->get], 'proxy_http');
-        if ($request->server['path'] == '/ant-ping') {
+        common\Log::info([$request], 'proxy_http');
+        if ($request->header['path'] == '/ant-ping') {
             $response->end('ant-pong');
             return;
         }
@@ -160,10 +160,7 @@ class Proxy
                 $response->end($result);
             } else {
                 $result = ZRoute::route();
-                if (!empty($params['_recv'])) {
-                    //发送处理结果
-                    $response->end($result);
-                }
+                $response->end($result);
             }
         }
 
