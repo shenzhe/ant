@@ -49,7 +49,7 @@ class ConfigClient
             if (is_array($record['value'])) {
                 return $record['value'];
             }
-            return json_encode($record['value'], true);
+            return json_decode($record['value'], true);
         } catch (\Exception $e) {
             if ($throw) {
                 throw $e;

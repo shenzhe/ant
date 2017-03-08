@@ -2,6 +2,7 @@
 
 namespace socket\Handler;
 
+use ZPHP\Manager\Task;
 use ZPHP\Protocol\Response;
 use ZPHP\Protocol\Request;
 use ZPHP\Core\Route as ZRoute;
@@ -179,6 +180,41 @@ class Proxy
     public static function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
     {
 
+        common\Log::info([$request], 'ws_open');
+        $callback = ZConfig::getField('socket', 'ws_open_callback');
+        if (!$callback || !is_array($callback)) {
+            return;
+        }
+        $param = [];
+        $_GET = $_POST = $_REQUEST = $_COOKIE = $_FILES = null;
+        if (!empty($request->get)) {
+            $_GET = $request->get;
+            $param = $request->get;
+        }
+        if (!empty($request->post)) {
+            $_POST = $request->post;
+            $param += $request->post;
+        }
+
+        if (!empty($request->cookie)) {
+            $_COOKIE = $request->cookie;
+        }
+
+        if (!empty($request->files)) {
+            $_FILES = $request->files;
+        }
+
+        foreach ($request->header as $key => $val) {
+            $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $val;
+        }
+
+        $params['_fd'] = $request->fd;
+        $_REQUEST = $param;
+        Request::setRequest($request);
+        Request::addHeaders($request->header, true);
+        Request::init($callback[0], $callback[1], $param);
+        ZRoute::route();
+        Request::setRequest(null);
     }
 
     /**
@@ -249,6 +285,10 @@ class Proxy
      */
     public static function onTask($serv, $taskId, $fromId, $data)
     {
+        $ret = Task::check($data);
+        if ($ret) { //task特殊处理逻辑
+            return Task::handle($ret);
+        }
         $startTime = microtime(true);
         Request::setRequestId($data['requestId']);
         Request::parse($data);
@@ -288,9 +328,7 @@ class Proxy
         $startTime = microtime(true);
         common\Log::info([$data, $clientInfo], 'proxy_udp');
         if ('ant-ping' == $data) {
-            if(!empty($clientInfo['ip'])) {
-                $serv->sendto($clientInfo['ip'], $clientInfo['port'], 'ant-pong');
-            }
+            $serv->sendto($clientInfo['address'], $clientInfo['port'], 'ant-pong');
             return;
         }
 
@@ -312,20 +350,20 @@ class Proxy
                 'msg' => '',
                 'data' => ['taskId' => $taskId]
             ]);
-            $serv->sendto($clientInfo['ip'], $clientInfo['port'], $result);
+            $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
         } else {
             $result = ZRoute::route();
-            $serv->sendto($clientInfo['ip'], $clientInfo['port'], $result);
-            common\Log::info([$data, $clientInfo, Request::getCtrl(), Request::getMethod(), $result], 'proxy_tcp');
+            $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+            common\Log::info([$data, $clientInfo, $result], 'proxy_tcp');
         }
 
         $executeTime = microtime(true) - $startTime;  //获取程序执行时间
-        common\Log::info(['udp', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
+        common\Log::info(['udp', $executeTime], 'monitor');
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
     /**
-     * @param $serv
+     * @param $serv \swoole_server
      * @param $workerId
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
