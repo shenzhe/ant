@@ -22,7 +22,12 @@ use ZPHP\Common\Route;
 
     ws.onmessage = function (evt) {
         console.log(evt);
-        document.getElementById('msg').innerHTML = "欢迎您! " + evt.data.data.name;
+        var data = JSON.parse(evt.data);
+        if (data.code) {
+            alert(data.msg);
+        } else {
+            document.getElementById('msg').innerHTML = "欢迎您! " + data.data.name;
+        }
     }
 
     ws.onclose = function (evt) {
