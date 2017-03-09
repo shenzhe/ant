@@ -5,6 +5,7 @@ namespace ctrl;
 use common\Log;
 use common\Utils;
 use ctrl\Base as CBase;
+use sdk\LoadService;
 use ZPHP\Protocol\Request;
 use ZPHP\Protocol\Response;
 use ZPHP\Cache\Factory as ZCache;
@@ -34,9 +35,16 @@ class qrcode extends CBase
     {
         $code = $this->getString('code');
         $name = $this->getString('name');
+        $password = $this->getString('password');
 
+        $service = LoadService::getService('api-demo2');
+        $result = $service->setApi('login')->call('check', [
+            'name' => $name,
+            'password' => $password
+        ]);
+        $body = $result->getBody();
         $ret = $this->getView([
-            'name' => $name
+            'name' => $body['data']['userInfo']['name']
         ]);
 
         $fd = ZCache::getInstance('Task')->get($code);
