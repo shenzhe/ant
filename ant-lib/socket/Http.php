@@ -1,5 +1,7 @@
 <?php
+
 namespace socket;
+
 use ZPHP\Socket\Callback\SwooleHttp;
 
 class Http extends SwooleHttp
@@ -16,10 +18,10 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv             //swoole_server对像
-     * @param $taskId           //task任务id
-     * @param $fromId           //来自哪个worker
-     * @param $data             //需要处理的数据
+     * @param $serv //swoole_server对像
+     * @param $taskId //task任务id
+     * @param $fromId //来自哪个worker
+     * @param $data //需要处理的数据
      * @desc task任务，适合处理一些耗时的业务
      */
     public function onTask($serv, $taskId, $fromId, $data)
@@ -31,9 +33,9 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv                         //swoole_server对像
-     * @param $taskId                       //task任务id
-     * @param $data                         //task处理之后的结果数据
+     * @param $serv //swoole_server对像
+     * @param $taskId //task任务id
+     * @param $data //task处理之后的结果数据
      * @desc task处理完成之后，数据回调
      */
     public function onFinish($serv, $taskId, $data)
@@ -42,9 +44,9 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv                             //swoole_server对像     
-     * @param $data                             //收到的udp数据
-     * @param $clientInfo                       //udp客户端数组
+     * @param $serv //swoole_server对像
+     * @param $data //收到的udp数据
+     * @param $clientInfo //udp客户端数组
      * @desc 收到udp数据的处理
      */
     public function onPacket($serv, $data, $clientInfo)
@@ -53,8 +55,8 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv                                     //swoole_server对像
-     * @param $workerId                                   //worker或task id ps: id>worker_num是表示是task进程
+     * @param $serv //swoole_server对像
+     * @param $workerId //worker或task id ps: id>worker_num是表示是task进程
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
     public function onWorkerStart($serv, $workerId)
@@ -65,10 +67,10 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv                                     //swoole_server对像
-     * @param $workerId                                 //worker/task id
-     * @param $workerPid                                //worker/task系统进程id
-     * @param $exitCode                                 //退出错误码
+     * @param $serv //swoole_server对像
+     * @param $workerId //worker/task id
+     * @param $workerPid //worker/task系统进程id
+     * @param $exitCode //退出错误码
      * @desc  工作进程异常退出之后回调
      */
     public function onWorkerError($serv, $workerId, $workerPid, $exitCode)
