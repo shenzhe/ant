@@ -11,6 +11,8 @@ use common;
 use sdk\MonitorClient as MClient;
 use ZPHP\Socket\Adapter\Swoole;
 use ZPHP\ZPHP;
+use ZPHP\Conn\Factory as ZConn;
+use ZPHP\Cache\Factory as ZCache;
 
 class Proxy
 {
@@ -435,6 +437,11 @@ class Proxy
                 ZConfig::mergePath($path);
             }
         }
+        $workNum = ZConfig::getField('socket', 'worker_num');
+        if ($workerId == $workNum) {
+            ZCache::getInstance('Task')->load();
+            ZConn::getInstance('Task')->load();
+        }
     }
 
     /**
@@ -485,6 +492,15 @@ class Proxy
             '_fd' => $fd
         ]);
         ZRoute::route();
+    }
+
+    public static function onWorkerStop($serv, $workerId)
+    {
+        $workNum = ZConfig::getField('socket', 'worker_num');
+        if ($workerId == $workNum) {
+            ZCache::getInstance('Task')->flush();
+            ZConn::getInstance('Task')->flush();
+        }
     }
 
 }

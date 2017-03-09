@@ -77,6 +77,11 @@ class Tcp extends ZSwoole
         Handler\Proxy::onWorkerError($serv, $workerId, $workerPid, $exitCode);
     }
 
+    public function onWorkerStop($server, $workerId)
+    {
+        Handler\Proxy::onWorkerStop($server, $workerId);
+    }
+
     public function onClose()
     {
         list($serv, $fd, $from_id) = func_get_args();
