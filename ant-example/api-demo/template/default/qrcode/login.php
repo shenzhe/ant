@@ -21,7 +21,8 @@ use ZPHP\Common\Route;
     }
 
     ws.onmessage = function (evt) {
-        alert(evt.data);
+        console.log(evt);
+        document.getElementById('msg').innerHTML = "欢迎您! " + evt.data.name;
     }
 
     ws.onclose = function (evt) {

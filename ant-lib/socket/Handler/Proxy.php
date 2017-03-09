@@ -133,6 +133,10 @@ class Proxy
             $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $val;
         }
 
+        foreach ($request->server as $key => $val) {
+            $_SERVER[strtoupper($key)] = $val;
+        }
+
         $_REQUEST = $param;
 
         Request::addParams('_recv', 1);
