@@ -10,8 +10,10 @@ namespace service;
 
 use common\LoadClass;
 use common\Log;
+use sdk\HttpClient;
 use sdk\TcpClient;
 use sdk\UdpClient;
+use socket\Udp;
 use ZPHP\Socket\Adapter\Swoole;
 
 class Subscriber extends Base
@@ -70,8 +72,23 @@ class Subscriber extends Base
                         $service = new TcpClient($sub->ip, $sub->port);
                     } elseif ($sub->serverType == Swoole::TYPE_UDP) {
                         $service = new UdpClient($sub->ip, $sub->port);
-                    } else {
+                    } elseif ($sub->serverType == Swoole::TYPE_HTTP) {
                         continue;
+                    }
+
+                    switch ($sub->serverType) {
+                        case Swoole::TYPE_TCP:
+                            $service = new TcpClient($sub->ip, $sub->port);
+                            break;
+                        case Swoole::TYPE_UDP:
+                            $service = new UdpClient($sub->ip, $sub->port);
+                            break;
+                        case Swoole::TYPE_HTTP:
+                        case Swoole::TYPE_HTTPS:
+                        case Swoole::TYPE_WEBSOCKET:
+                        case Swoole::TYPE_WEBSOCKETS:
+                            $service = new HttpClient($sub->ip, $sub->port);
+                            break;
                     }
                     $service->setApi('antConfigAgent')->call('syncRegister', [
                         'serviceInfo' => $serviceInfo

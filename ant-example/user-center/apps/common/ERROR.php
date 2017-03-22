@@ -14,4 +14,6 @@ class ERROR
 
 
     const USER_EMPTY = '100_用户名或密码错误';
+    const USER_EXISTS = '101_用户已存在';
+    const USER_REGISTER_ERROR = '102_用户注册失败';
 }

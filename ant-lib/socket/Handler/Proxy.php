@@ -333,7 +333,7 @@ class Proxy
      * @param \swoole_server $serv
      * @param $data
      * @param $clientInfo
-     * @return bool|void
+     * @return bool|mixed
      * @desc 收到udp数据的处理
      */
     public static function onPacket(\swoole_server $serv, $data, $clientInfo)
@@ -346,7 +346,8 @@ class Proxy
         }
 
         if ('ant-reload' == $data) {
-            return $serv->reload();
+            $serv->reload();
+            return;
         }
         $params = Request::parse($data);
         $params['_fd'] = $clientInfo;
@@ -359,15 +360,19 @@ class Proxy
             $params['taskId'] = $taskId;
             $params['requestId'] = Request::getRequestId();
             $serv->task($params);
-            $result = Response::display([
-                'code' => 0,
-                'msg' => '',
-                'data' => ['taskId' => $taskId]
-            ]);
-            $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+            if (!empty($params['_recv'])) {
+                $result = Response::display([
+                    'code' => 0,
+                    'msg' => '',
+                    'data' => ['taskId' => $taskId]
+                ]);
+                $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+            }
         } else {
             $result = ZRoute::route();
-            $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+            if (!empty($params['_recv']) && $result) {
+                $serv->sendto($clientInfo['address'], $clientInfo['port'], $result);
+            }
             common\Log::info([$data, $clientInfo, $result], 'proxy_tcp');
         }
 
@@ -502,6 +507,5 @@ class Proxy
             ZConn::getInstance('Task')->flush();
         }
     }
-
 }
 

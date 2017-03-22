@@ -18,4 +18,13 @@ class login extends CBase
             'userInfo' => LoadClass::getService('User')->check($name, $password)
         ]);
     }
+
+    public function register()
+    {
+        $name = $this->getString('name');
+        $password = $this->getString('password');
+        return $this->getView([
+            'userInfo' => LoadClass::getService('User')->register($name, $password)
+        ]);
+    }
 }

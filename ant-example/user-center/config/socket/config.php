@@ -4,7 +4,7 @@ use ZPHP\Socket\Adapter\Swoole;
 
 return array(
     'server_mode' => 'Ant',
-    'project_name' => 'api-demo2',                      //服务名称
+    'project_name' => 'user-center',                      //服务名称
     'project' => [
         'debug_mode' => 0,                              //是否打开调试模式
     ],
