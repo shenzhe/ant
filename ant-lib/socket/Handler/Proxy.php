@@ -108,9 +108,10 @@ class Proxy
         }
         if ($request->server['path_info'] == '/favicon.ico') {
             common\Log::info([$request], 'favicon');
-            $response->end('');
+            $response->end();
             return;
         }
+
         common\Log::info([$request], 'proxy_http');
         $param = [];
         $_GET = $_POST = $_REQUEST = $_COOKIE = $_FILES = null;
@@ -149,6 +150,13 @@ class Proxy
         }
         $params['_fd'] = $request->fd;
         Request::setParams($params);
+
+        if (Request::checkRequestTimeOut()) {
+            //该请求已超时
+            $response->status('499');
+            $response->end();
+            return;
+        }
 
         if (!empty($params['_task'])) {
             //task任务, 回复task的任务id
