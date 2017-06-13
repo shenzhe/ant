@@ -17,6 +17,7 @@ use common\Log;
 class BaseException extends \Exception
 {
     private $realCode = '';
+    protected $_child = 0;
     /**
      * 执行过程中产生的所有异常
      */
