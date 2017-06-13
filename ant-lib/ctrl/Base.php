@@ -7,6 +7,7 @@ use ZPHP\Core\Config as ZConfig;
 use common;
 use ZPHP\Session\Factory as ZSession;
 use ZPHP\Protocol\Request;
+use exceptionHandler\ParamException;
 
 abstract class Base implements IController
 {
@@ -65,7 +66,7 @@ abstract class Base implements IController
      * @param bool|false $abs 是否取绝对值
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
-     * @throws common\MyException
+     * @throws ParamException
      * @desc 获取int型参数
      */
     protected function getInteger($key, $default = null, array $params = null, $abs = false, $notEmpty = false)
@@ -80,14 +81,14 @@ abstract class Base implements IController
             if ($default !== null) {
                 return $default;
             }
-            throw new common\MyException("no params {$key}", common\ERROR::PARAM_ERROR);
+            throw new ParamException("no params {$key}", common\ERROR::PARAM_ERROR);
         }
         $integer = isset($params[$key]) ? \intval($params[$key]) : 0;
         if ($abs) {
             $integer = \abs($integer);
         }
         if ($notEmpty && empty($integer)) {
-            throw new common\MyException('params no empty', common\ERROR::PARAM_ERROR);
+            throw new ParamException('params no empty', common\ERROR::PARAM_ERROR);
         }
         return $integer;
     }
@@ -99,7 +100,7 @@ abstract class Base implements IController
      * @param bool|false $abs 是否取绝对值
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
-     * @throws common\MyException
+     * @throws ParamException
      * @desc 获取浮点型参数
      */
     protected function getFloat($key, $default = null, array $params = null, $abs = true, $notEmpty = false)
@@ -114,14 +115,14 @@ abstract class Base implements IController
             if ($default !== null) {
                 return $default;
             }
-            throw new common\MyException("no params {$key}", common\ERROR::PARAM_ERROR);
+            throw new ParamException("no params {$key}", common\ERROR::PARAM_ERROR);
         }
         $integer = isset($params[$key]) ? \floatval($params[$key]) : 0;
         if ($abs) {
             $integer = \abs($integer);
         }
         if ($notEmpty && empty($integer)) {
-            throw new common\MyException('params no empty', common\ERROR::PARAM_ERROR);
+            throw new ParamException('params no empty', common\ERROR::PARAM_ERROR);
         }
         return $integer;
     }
@@ -132,7 +133,7 @@ abstract class Base implements IController
      * @param array|null $params 数据源（默认 Request::getParams()）
      * @param bool|false $notEmpty 是否能为空
      * @return int|null|number
-     * @throws common\MyException
+     * @throws ParamException
      * @desc 获取字符串参数
      */
     protected function getString($key, $default = null, array $params = null, $notEmpty = true)
@@ -144,11 +145,11 @@ abstract class Base implements IController
             if (null !== $default) {
                 return $default;
             }
-            throw new common\MyException("no params {$key}", common\ERROR::PARAM_ERROR);
+            throw new ParamException("no params {$key}", common\ERROR::PARAM_ERROR);
         }
         $string = $params[$key];
         if (!empty($notEmpty) && empty($string)) {
-            throw new common\MyException('params no empty', common\ERROR::PARAM_ERROR);
+            throw new ParamException('params no empty', common\ERROR::PARAM_ERROR);
         }
         return $string;
     }
@@ -159,7 +160,7 @@ abstract class Base implements IController
      * @param array|null $params
      * @param bool|true $notEmpty
      * @return array|null
-     * @throws common\MyException
+     * @throws ParamException
      * @desc 获取数组类型的参数
      */
     protected function getArray($key, $default = null, array $params = null, $notEmpty = true)
@@ -174,11 +175,11 @@ abstract class Base implements IController
             if (null !== $default) {
                 return $default;
             }
-            throw new common\MyException("no params {$key}", common\ERROR::PARAM_ERROR);
+            throw new ParamException("no params {$key}", common\ERROR::PARAM_ERROR);
         }
         $data = $params[$key];
         if (!empty($notEmpty) && empty($data)) {
-            throw new common\MyException('params no empty', common\ERROR::PARAM_ERROR);
+            throw new ParamException('params no empty', common\ERROR::PARAM_ERROR);
         }
         return $data;
     }
@@ -189,7 +190,7 @@ abstract class Base implements IController
      * @param array|null $params
      * @param bool|true $notEmpty
      * @return mixed|null|string
-     * @throws common\MyException
+     * @throws ParamException
      * @desc 获取json类型参数，转换为数组
      */
     protected function getJson($key, $default = null, array $params = null, $notEmpty = true)
@@ -204,11 +205,11 @@ abstract class Base implements IController
             if (null !== $default) {
                 return $default;
             }
-            throw new common\MyException("no params {$key}", common\ERROR::PARAM_ERROR);
+            throw new ParamException("no params {$key}", common\ERROR::PARAM_ERROR);
         }
         $data = \json_decode($params[$key], true);
         if (!empty($notEmpty) && empty($data)) {
-            throw new common\MyException('params no empty', common\ERROR::PARAM_ERROR);
+            throw new ParamException('params no empty', common\ERROR::PARAM_ERROR);
         }
         return $data;
     }

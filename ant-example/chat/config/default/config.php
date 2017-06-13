@@ -18,8 +18,8 @@ return array(
         'debug_mode' => 0,                                  //打开调试模式
         'protocol' => 'Ant',
         'view_mode' => 'Ant',
-        'exception_handler' => 'common\MyException::exceptionHandler',
-        'fatal_handler' => 'common\MyException::fatalHandler',
-        'error_handler' => 'common\MyException::errorHandler',
+        'exception_handler' => 'exceptionHandler\BaseException::exceptionHandler',
+        'fatal_handler' => 'exceptionHandler\BaseException::fatalHandler',
+        'error_handler' => 'exceptionHandler\BaseException::errorHandler',
     ],
 );

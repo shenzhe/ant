@@ -1,10 +1,12 @@
 <?php
-namespace common;
+
+namespace exceptionHandler;
 
 use ZPHP\Core\Config as ZConfig;
 use ZPHP\Protocol\Request;
 use ZPHP\Protocol\Response;
 use ZPHP\Common\Formater as ZFormater;
+use common\Log;
 
 /**
  * 异常处理
@@ -12,13 +14,11 @@ use ZPHP\Common\Formater as ZFormater;
  * @package service
  *
  */
-class MyException extends \Exception
+class BaseException extends \Exception
 {
     private $realCode = '';
     /**
      * 执行过程中产生的所有异常
-     *
-     * @var Array
      */
     private static $exceptions = array();
 
@@ -39,7 +39,7 @@ class MyException extends \Exception
     }
 
     /**
-     * @return MyException|null
+     * @return BaseException|null
      * @desc 获取执行过程中的发生的最后一次异常
      */
     public static function getLastException()
@@ -61,26 +61,34 @@ class MyException extends \Exception
      * @return mixed
      * @desc 异常处理
      */
-    public static function exceptionHandler(\Exception $exception)
+    public static function exceptionHandler($exception)
     {
-        $config = ZConfig::get('project');
-        $model = ZFormater::exception($exception);
-        Log::info([\var_export($model, true)], 'exception');
+        $class = get_class($exception);
+        if (__CLASS__ == $class &&
+            empty($exception->_child) &&
+            method_exists($exception, 'exceptionHandler')) {
+            $exception->_child = 1;
+            return call_user_func([$exception, 'exceptionHandler'], $exception);
+        } else {
+            $config = ZConfig::get('project');
+            $model = ZFormater::exception($exception);
+            Log::info([\var_export($model, true)], $class);
 
-        $info = array();
-        if (!empty($exception->realCode)) {
-            $codeArr = explode('_', $exception->realCode);
-            if (count($codeArr) > 1) {
-                $model['code'] = intval($codeArr[0]);
-                $model['message'] = $codeArr[1];
+            $info = array();
+            if (!empty($exception->realCode)) {
+                $codeArr = explode('_', $exception->realCode);
+                if (count($codeArr) > 1) {
+                    $model['code'] = intval($codeArr[0]);
+                    $model['message'] = $codeArr[1];
+                }
             }
+            if ($config['debug_mode']) {
+                $info['debug'] = $model;
+            }
+            $info['msg'] = $model['message'];
+            $info['code'] = $model['code'];
+            return self::display($info, $config['debug_mode']);
         }
-        if ($config['debug_mode']) {
-            $info['debug'] = $model;
-        }
-        $info['msg'] = $model['message'];
-        $info['code'] = $model['code'];
-        return self::display($info, $config['debug_mode']);
     }
 
     /**
@@ -92,10 +100,10 @@ class MyException extends \Exception
     {
         $error = \error_get_last();
         if (empty($error)) {
-            return;
+            return true;
         }
         if (!in_array($error['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR))) {
-            return;
+            return true;
         }
         $config = ZConfig::get('project');
         $model = ZFormater::fatal($error);
@@ -122,7 +130,7 @@ class MyException extends \Exception
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
         if (!in_array($errno, [E_RECOVERABLE_ERROR, E_USER_ERROR])) {
-            return;
+            return true;
         }
         $error = [
             'type' => $errno,
@@ -133,6 +141,7 @@ class MyException extends \Exception
         $config = ZConfig::get('project');
         $model = ZFormater::fatal($error, true, 'error');
         if ($config['debug_mode']) {
+            $model['errcontext'] = $errcontext;
             $info['debug'] = $model;
         }
         Log::info([\var_export($model, true)], 'php_error');

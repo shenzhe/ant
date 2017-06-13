@@ -4,7 +4,7 @@ namespace dao;
 
 use common\ERROR;
 use common\Log;
-use common\MyException;
+use exceptionHandler\DaoException;
 use ZPHP\Core\Config as ZConfig,
     ZPHP\Db\Pdo as ZPdo;
 
@@ -214,12 +214,12 @@ abstract class Base
     /**
      * @param $where
      * @return mixed
-     * @throws \common\MyException
+     * @throws DaoException
      */
     public function remove($where)
     {
         if (empty($where)) {
-            throw new MyException('remove where empty', ERROR::REMOVE_WHERE_EMPTY);
+            throw new DaoException('remove where empty', ERROR::REMOVE_WHERE_EMPTY);
         }
         return $this->doResult($this->_db->remove($this->parseWhere($where)));
     }

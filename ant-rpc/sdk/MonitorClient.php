@@ -9,7 +9,6 @@
 namespace sdk;
 
 use common\Log;
-use common\MyException;
 use common\Utils;
 use ZPHP\Common\Formater;
 use ZPHP\Core\Config as ZConfig;

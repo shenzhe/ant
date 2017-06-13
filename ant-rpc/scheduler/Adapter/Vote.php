@@ -8,7 +8,7 @@
 
 namespace scheduler\Adapter;
 
-use common\MyException;
+use exceptionHandler\SchedulerException;
 use scheduler\ISelector;
 
 
@@ -27,7 +27,7 @@ class Vote implements ISelector
             $goodList[] = $server;
         }
         if (empty($goodList)) {
-            throw new MyException($serviceName . "serverlist empty", -1);
+            throw new SchedulerException($serviceName . "serverlist empty", -1);
         }
         shuffle($goodList);
         return current($goodList);

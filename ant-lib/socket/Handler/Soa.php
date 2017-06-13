@@ -11,7 +11,7 @@ namespace socket\Handler;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
 use common\Utils;
-use common\MyException;
+use exceptionHandler\SoaException;
 use common\LoadClass;
 use common\Consts;
 
@@ -20,7 +20,7 @@ class Soa
 {
     /**
      * @param $server
-     * @throws MyException
+     * @throws SoaException
      * @throws \Exception
      * @desc 服务自注册回调
      */
@@ -73,7 +73,7 @@ class Soa
 
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
-                throw new MyException($serverName . " register error", -1);
+                throw new SoaException($serverName . " register error", -1);
             } else {
                 try {
                     $data->getBody();

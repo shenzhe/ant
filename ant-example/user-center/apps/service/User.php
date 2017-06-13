@@ -11,7 +11,7 @@ namespace service;
 
 use common\ERROR;
 use common\LoadClass;
-use common\MyException;
+use exceptionHandler\UserException;
 
 class User extends Base
 {
@@ -24,7 +24,7 @@ class User extends Base
         ]);
 
         if (empty($userInfo)) {
-            throw new MyException("user empty", ERROR::USER_EMPTY);
+            throw new UserException("user empty", ERROR::USER_EMPTY);
         }
         return $userInfo;
     }
@@ -36,7 +36,7 @@ class User extends Base
             'name=' => "'{$name}'"
         ]);
         if (!empty($userInfo)) {
-            throw new MyException("user exists", ERROR::USER_EXISTS);
+            throw new UserException("user exists", ERROR::USER_EXISTS);
         }
 
         $userInfo = new \entity\User();
@@ -44,7 +44,7 @@ class User extends Base
         $userInfo->password = $password;
         $id = $dao->add($userInfo);
         if (!$id) {
-            throw new MyException("user register error", ERROR::USER_REGISTER_ERROR);
+            throw new UserException("user register error", ERROR::USER_REGISTER_ERROR);
         }
         $userInfo->id = $id;
         return $userInfo;

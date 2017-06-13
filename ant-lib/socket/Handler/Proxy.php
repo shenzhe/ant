@@ -184,12 +184,16 @@ class Proxy
                 $response->end($result);
             } else {
                 $result = ZRoute::route();
-                $response->end($result);
+                if (is_null($result)) {
+                    $result->end('');
+                } else {
+                    $response->end($result);
+                }
             }
         }
 
         $executeTime = microtime(true) - $startTime;  //获取程序执行时间
-        common\Log::info(['http', Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
+        common\Log::info(['http', $result, Request::getCtrl() . DS . Request::getMethod(), $executeTime], 'monitor');
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 

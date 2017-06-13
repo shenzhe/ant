@@ -4,7 +4,7 @@ namespace scheduler;
 
 use common\Consts;
 use common\LoadClass;
-use common\MyException;
+use exceptionHandler\SchedulerException;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
 use ZPHP\ZPHP;
@@ -27,7 +27,7 @@ class Scheduler
     /**
      * @param $serviceName
      * @return array [$ip, $port]
-     * @throws MyException
+     * @throws SchedulerException
      * @desc 根据服务名获名一个可用的ip:port
      */
 
@@ -44,7 +44,7 @@ class Scheduler
 
         $soaConfig = ZConfig::get('soa');
         if (empty($soaConfig)) {
-            throw new MyException('soa config empty');
+            throw new SchedulerException('soa config empty');
         }
 
         $serverList = self::getList($serviceName, $soaConfig);
@@ -80,7 +80,7 @@ class Scheduler
         }
 
         if (empty($serverList)) {
-            throw new MyException($serviceName . " serverlist empty", -1);
+            throw new SchedulerException($serviceName . " serverlist empty", -1);
         }
         return $serverList;
     }
@@ -90,7 +90,7 @@ class Scheduler
         if (!$soaConfig) {
             $soaConfig = ZConfig::get('soa');
             if (empty($soaConfig)) {
-                throw new MyException('soa config empty');
+                throw new SchedulerException('soa config empty');
             }
         }
         $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], isset($soaConfig['timeOut']) ? 0 : $soaConfig['timeOut']);

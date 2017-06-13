@@ -5,7 +5,10 @@
  * User: shenzhe
  * Desc: 字段验证
  */
+
 namespace common;
+
+use exceptionHandler\InputVaildException;
 
 class VaildInput
 {
@@ -23,7 +26,7 @@ class VaildInput
     public static function vaild($str, $type, $errmsg = '')
     {
         if (empty($type)) {
-            throw new ZException('type empty');
+            throw new InputVaildException('type empty');
         }
         switch (substr($type, 0, 1)) {
             case 'e':  //电子邮件
@@ -91,7 +94,7 @@ class VaildInput
         $ret = filter_var($email, FILTER_VALIDATE_EMAIL);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的email格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;
@@ -102,7 +105,7 @@ class VaildInput
         $ret = filter_var($url, FILTER_VALIDATE_URL);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的url格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;
@@ -113,7 +116,7 @@ class VaildInput
         $ret = filter_var($ip, FILTER_VALIDATE_IP);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的ip格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;
@@ -133,7 +136,7 @@ class VaildInput
         ]);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的数字格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;
@@ -153,7 +156,7 @@ class VaildInput
         ]);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的数字格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;
@@ -168,7 +171,7 @@ class VaildInput
         ]);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误的格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
         return $ret;
     }
@@ -178,7 +181,7 @@ class VaildInput
         $ret = filter_var($str, FILTER_VALIDATE_MAC);
         if (false === $ret) {
             $errmsg = $errmsg ? $errmsg : '错误mac地址的格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
         return $ret;
     }
@@ -201,15 +204,15 @@ class VaildInput
         $ret = filter_var($str, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_AMP);
         if ($ret == false) {
             $errmsg = $errmsg ? $errmsg : '错误输入格式';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         if ($min && strlen($ret) < $min) {
-            throw new MyException('至少' . $min . '个字符');
+            throw new InputVaildException('至少' . $min . '个字符');
         }
 
         if ($max && strlen($ret) > $max) {
-            throw new MyException('至多' . $max . '个字符');
+            throw new InputVaildException('至多' . $max . '个字符');
         }
 
         return $ret;
@@ -221,12 +224,12 @@ class VaildInput
         $ret = self::regexp($str, '/^[\x{4e00}-\x{9fa5}]+$/u', $errmsg);
         if ($min && mb_strlen($ret) < $min) {
             $errmsg = '至少' . $min . '个汉字';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         if ($max && mb_strlen($ret) > $max) {
             $errmsg = '至多' . $max . '个汉字';
-            throw new MyException($errmsg);
+            throw new InputVaildException($errmsg);
         }
 
         return $ret;

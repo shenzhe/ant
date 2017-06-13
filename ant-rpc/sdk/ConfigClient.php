@@ -9,8 +9,7 @@
 namespace sdk;
 
 use common\Consts;
-use common\Log;
-use common\MyException;
+use exceptionHandler\ConfigException;
 use common\Utils;
 use ZPHP\Core\Config as ZConfig;
 
@@ -41,10 +40,10 @@ class ConfigClient
             $body = $result->getBody();
             $record = $body['data']['record'];
             if (empty($record)) {
-                throw new MyException("record empty", -1);
+                throw new ConfigException("record empty", -1);
             }
             if ($record['item'] !== $key) {
-                throw new MyException("key error {$key} != {$record['item']}", -1);
+                throw new ConfigException("key error {$key} != {$record['item']}", -1);
             }
             if (is_array($record['value'])) {
                 return $record['value'];
@@ -54,7 +53,7 @@ class ConfigClient
             if ($throw) {
                 throw $e;
             }
-            MyException::exceptionHandler($e);
+            ConfigException::exceptionHandler($e);
             return false;
         }
     }

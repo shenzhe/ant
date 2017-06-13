@@ -9,7 +9,7 @@
 namespace sdk;
 
 use common\Log;
-use common\MyException;
+use exceptionHandler\SchedulerException;
 use packer;
 use ZPHP\Client\Rpc\Udp;
 use ZPHP\Protocol\Request;
@@ -35,7 +35,7 @@ class UdpClient extends Udp
             return $service;
         } catch (\Exception $e) {
             if (!isset($ip, $port) || $retry < 1) {
-                throw new MyException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
+                throw new SchedulerException($serviceName . ' get error. [' . $e->getMessage() . ']', $e->getCode());
             }
             Scheduler::fail($serviceName, $ip, $port, $type);
             $retry--;
