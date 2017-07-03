@@ -28,21 +28,22 @@ class Soa
         //是否自注册
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
+            $ip = ZConfig::getField('soa', 'ip', ZConfig::getField('socket', 'host'));
+            if ('0.0.0.0' == $ip) {
+                $ip = Utils::getLocalIp();
+            }
+            $port = ZConfig::getField('soa', 'port', ZConfig::getField('socket', 'port'));
             try {
-                $ip = ZConfig::getField('soa', 'ip', ZConfig::getField('socket', 'host'));
-                if ('0.0.0.0' == $ip) {
-                    $ip = Utils::getLocalIp();
-                }
                 LoadClass::getService('ServiceList')->register(
                     ZConfig::get('project_name'),
                     $ip,
-                    ZConfig::getField('soa', 'port', ZConfig::getField('socket', 'port')),
+                    $port,
                     ZConfig::getField('soa', 'serverType', ZConfig::getField('socket', 'server_type'))
                 );
             } catch (\Exception $e) {
                 $server->shutdown();
                 $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
-                Log::info([ZConfig::get('project_name'), $ip, $result], 'register_error');
+                Log::info([ZConfig::get('project_name'), $ip, $port, $result], 'register_error');
                 return $result;
             }
         }
@@ -64,17 +65,18 @@ class Soa
                 ZConfig::getField('soa', 'timeOut', 3000)
             );
             $serverName = ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name'));
+            $serverPort = ZConfig::getField('soa', 'servicePort', ZConfig::getField('socket', 'port'));
             $data = $rpcClient->setApi('main')->call('register', [
                 'serviceName' => $serverName,
                 'serviceIp' => $serverIp,
-                'servicePort' => ZConfig::getField('soa', 'servicePort', ZConfig::getField('socket', 'port')),
+                'servicePort' => $serverPort,
                 'serverType' => ZConfig::getField('soa', 'serverType', ZConfig::getField('socket', 'server_type')),
             ]);
 
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
-                Log::info([$serverName, $serverIp], 'register_error');
-                return $serverName . ':' . $serverIp . 'register_error';
+                Log::info([$serverName, $serverIp, $serverPort], 'register_error');
+                return $serverName . ':' . $serverIp . ':' . $serverPort . 'register_error';
             } else {
                 try {
                     $data->getBody();
@@ -83,7 +85,7 @@ class Soa
                 } catch (\Exception $e) {
                     $server->shutdown();
                     $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
-                    Log::info([$serverName, $serverIp, $result], 'register_error');
+                    Log::info([$serverName, $serverIp, $serverPort, $result], 'register_error');
                     return $result;
                 }
             }
@@ -100,19 +102,21 @@ class Soa
         //是否自下线
         $isRegisterProject = ZConfig::getField('project', 'is_register_project', 0);
         if ($isRegisterProject) {
+            $host = ZConfig::getField('socket', 'host');
+            if ('0.0.0.0' == $host) {
+                $host = Utils::getLocalIp();
+            }
+            $port = ZConfig::getField('socket', 'port');
+            $serverName = ZConfig::getField('soa', 'serviceName', ZConfig::get('project_name'));
             try {
-                $host = ZConfig::getField('socket', 'host');
-                if ('0.0.0.0' == $host) {
-                    $host = Utils::getLocalIp();
-                }
                 LoadClass::getService('ServiceList')->drop(
                     $host,
-                    ZConfig::getField('socket', 'port')
+                    $port
                 );
                 return;
             } catch (\Exception $e) {
                 $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
-                Log::info([$server, $result], 'drop_error');
+                Log::info([$serverName, $host, $port, $result], 'drop_error');
                 return $result;
             }
         }
