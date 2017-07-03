@@ -8,9 +8,11 @@
 
 namespace service;
 
+use common\ERROR;
 use common\LoadClass;
 use common\Utils;
 use entity;
+use exceptionHandler\RegisterException;
 use ZPHP\Core\Config as ZConfig;
 
 class ServiceList extends Base
@@ -51,10 +53,22 @@ class ServiceList extends Base
             $id = LoadClass::getDao('ServiceList')->add($serviceInfo);
             $serviceInfo->id = $id;
         } else if (empty($serviceInfo->status)) {
+            if ($serviceInfo->name !== $serviceName) {
+                throw new RegisterException(ERROR::SERVICE_NAME_ERROR);
+            }
             if ($serviceInfo->registerKey == $key) {
-                $ret = LoadClass::getDao('ServiceList')->update(['status' => 1, 'startTime' => time(), 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
+                $ret = LoadClass::getDao('ServiceList')->update([
+                    'status' => 1,
+                    'startTime' => time(),
+                    'serverType' => $serverType
+                ], ['id=' => $serviceInfo->id]);
             } else {
-                $ret = LoadClass::getDao('ServiceList')->update(['status' => 1, 'startTime' => time(), 'registerKey' => $key, 'serverType' => $serverType], ['id=' => $serviceInfo->id]);
+                $ret = LoadClass::getDao('ServiceList')->update([
+                    'status' => 1,
+                    'startTime' => time(),
+                    'registerKey' => $key,
+                    'serverType' => $serverType
+                ], ['id=' => $serviceInfo->id]);
             }
             if ($ret) {
                 $serviceInfo->status = 1;
