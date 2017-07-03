@@ -16,6 +16,7 @@ use ZPHP\Core\Config as ZConfig;
 
 class Timer
 {
+
     public static function checkPing()
     {
         /**
@@ -57,12 +58,20 @@ class Timer
                         continue;
                     }
                     $result = $rpc->ping(); //发送ping包
+                    if (false === $result) { //超时
+                        Log::info(['false', $rpc->isConnected(), $item->name, $item->ip, $item->port, $item->status], 'ping');
+                        if (1 == $item->status) { //在线状态设置为离线状态
+                            $service->update(['status' => 0], ['id=' => $item->id]);
+                            LoadClass::getService('Subscriber')->sync($item);
+                        }
+                        continue;
+                    }
                     Log::info(['success', $rpc->isConnected(), $item->name, $item->ip, $item->port, $item->status, $result], 'ping');
                     if ('ant-pong' == $result) {
                         if (0 == $item->status) { //离线状态设置为在线状态
                             //@TODO 可以不单条更新，改为批量更新
-                            //@TODO 服务上线，通知相关的服务调用方
                             $service->update(['status' => 1], ['id=' => $item->id]);
+                            LoadClass::getService('Subscriber')->sync($item);
                         }
                         continue;
                     }
@@ -71,8 +80,8 @@ class Timer
                     Log::info(['fail', $e->getMessage(), $e->getCode(), isset($rpc) ? $rpc->isConnected() : '', $item->name, $item->ip, $item->port, $item->status], 'ping');
                     if (1 == $item->status) {
                         //@TODO 可以不单条更新，改为批量更新
-                        //@TODO 服务下线，通知相关的服务调用方
                         $service->update(['status' => 0], ['id=' => $item->id]);
+                        LoadClass::getService('Subscriber')->sync($item);
                     }
                 }
             }

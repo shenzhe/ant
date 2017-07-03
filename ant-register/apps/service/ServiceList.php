@@ -22,7 +22,8 @@ class ServiceList extends Base
      * @param $serviceIp
      * @param $servicePort
      * @param $serverType
-     * @return entity\ServiceList|mixed
+     * @return entity\ServiceList
+     * @throws RegisterException
      * @desc 服务注册
      */
     public function register($serviceName, $serviceIp, $servicePort, $serverType)
