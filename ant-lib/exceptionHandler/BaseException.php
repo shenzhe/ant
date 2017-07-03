@@ -158,7 +158,7 @@ class BaseException extends \Exception
      * @return mixed
      * @desc display输出
      */
-    private static function display($info, $debug = false)
+    protected static function display($info, $debug = false)
     {
         Response::status('200');
         if ('Php' == Request::getViewMode()) {
