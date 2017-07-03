@@ -8,20 +8,19 @@
 
 namespace socket\Handler;
 
+use common\Log;
 use ZPHP\Core\Config as ZConfig;
 use sdk\TcpClient;
 use common\Utils;
 use exceptionHandler\SoaException;
 use common\LoadClass;
-use common\Consts;
 
 
 class Soa
 {
     /**
      * @param $server
-     * @throws SoaException
-     * @throws \Exception
+     * @return mixed|void
      * @desc 服务自注册回调
      */
     public static function register($server)
@@ -40,10 +39,11 @@ class Soa
                     ZConfig::getField('soa', 'port', ZConfig::getField('socket', 'port')),
                     ZConfig::getField('soa', 'serverType', ZConfig::getField('socket', 'server_type'))
                 );
-                return;
             } catch (\Exception $e) {
                 $server->shutdown();
-                throw $e;
+                $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
+                Log::info([ZConfig::get('project_name'), $ip, $result], 'register_error');
+                return $result;
             }
         }
 
@@ -73,7 +73,8 @@ class Soa
 
             if (empty($data)) {  //注册失败，服务停止
                 $server->shutdown();
-                throw new SoaException($serverName . " register error", -1);
+                Log::info([$serverName, $serverIp], 'register_error');
+                return $serverName . ':' . $serverIp . 'register_error';
             } else {
                 try {
                     $data->getBody();
@@ -81,17 +82,17 @@ class Soa
                     LoadClass::getService('AntConfigAgent')->syncAll($serverName);
                 } catch (\Exception $e) {
                     $server->shutdown();
-                    throw $e;
+                    $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
+                    Log::info([$serverName, $serverIp, $result], 'register_error');
+                    return $result;
                 }
             }
-
-
         }
     }
 
     /**
      * @param $server
-     * @throws \Exception
+     * @return mixed|void
      * @desc  服务下线回调
      */
     public static function drop($server)
@@ -110,8 +111,9 @@ class Soa
                 );
                 return;
             } catch (\Exception $e) {
-                $server->shutdown();
-                throw $e;
+                $result = \call_user_func(ZConfig::getField('project', 'exception_handler', 'ZPHP\ZPHP::exceptionHandler'), $e);
+                Log::info([$server, $result], 'drop_error');
+                return $result;
             }
         }
 
