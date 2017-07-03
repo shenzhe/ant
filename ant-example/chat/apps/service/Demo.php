@@ -14,8 +14,8 @@ class Demo
 {
     public function demo($method, $params = [])
     {
-        //获取服务名为 api-demo2 的一个远程服务,
-        $service = LoadService::getService('api-demo2');
+        //获取服务名为 user-center 的一个远程服务,
+        $service = LoadService::getService('user-center');
         //执行服务的方法
         $result = $service->call($method, $params);
         //也可以这么执行
@@ -35,7 +35,7 @@ class Demo
         $senders = [];
 
         //执行api1远程调用，返回一个唯一的请求Id
-        $service2 = LoadService::getService('api-demo2');
+        $service2 = LoadService::getService('user-center');
         $requestId = $service2->multiCall('api1');
         $senders[$requestId] = null;
 

@@ -37,7 +37,7 @@ class qrcode extends CBase
         $name = $this->getString('name');
         $password = $this->getString('password');
 
-        $service = LoadService::getService('api-demo2');
+        $service = LoadService::getService('user-center');
         $result = $service->setApi('login')->call('check', [
             'name' => $name,
             'password' => $password

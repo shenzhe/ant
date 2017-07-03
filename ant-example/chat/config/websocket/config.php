@@ -4,7 +4,7 @@ use ZPHP\Socket\Adapter\Swoole;
 
 return array(
     'server_mode' => 'Ant',
-    'project_name' => 'api-demo-ws',
+    'project_name' => 'chat-ws',
     'project' => [
         'debug_mode' => 0,                                  //打开调试模式
         'app_host' => ''
@@ -26,7 +26,7 @@ return array(
             'ip' => '0.0.0.0',
             'port' => 7115
         ),
-        'ws_open_callback' => ['ws', 'open'],
+        'on_open_callback' => ['ws', 'open'],
         'on_close_callback' => ['ws', 'close'],
     ),
 );

@@ -206,7 +206,7 @@ class Proxy
     {
 
         common\Log::info([$request], 'ws_open');
-        $callback = ZConfig::getField('socket', 'ws_open_callback');
+        $callback = ZConfig::getField('socket', 'on_open_callback');
         if (!$callback || !is_array($callback)) {
             return;
         }
