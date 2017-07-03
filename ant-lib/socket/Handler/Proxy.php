@@ -455,7 +455,7 @@ class Proxy
             }
         }
         $workNum = ZConfig::getField('socket', 'worker_num');
-        if ($workerId == $workNum) {
+        if ($workerId == ($workNum - 1)) {
             ZCache::getInstance('Task')->load();
             ZConn::getInstance('Task')->load();
         }
@@ -514,7 +514,7 @@ class Proxy
     public static function onWorkerStop($serv, $workerId)
     {
         $workNum = ZConfig::getField('socket', 'worker_num');
-        if ($workerId == $workNum) {
+        if ($workerId == ($workNum - 1)) {
             ZCache::getInstance('Task')->flush();
             ZConn::getInstance('Task')->flush();
         }
