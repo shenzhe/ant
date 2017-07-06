@@ -50,4 +50,14 @@ class User extends Base
         return $userInfo;
 
     }
+
+    public function show($id)
+    {
+        $dao = LoadClass::getDao('User');
+        $userInfo = $dao->fetchById($id);
+        if (empty($userInfo)) {
+            throw new UserException('user empty', ERROR::USER_NO_EXISTS);
+        }
+        return $userInfo->getInfo();
+    }
 }

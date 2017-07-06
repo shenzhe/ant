@@ -62,4 +62,19 @@ class qrcode extends CBase
             'cache' => ZCache::getInstance('Task')->all()
         ]);
     }
+
+
+    public function show()
+    {
+        $id = $this->getInteger('id');
+        $service = LoadService::getService('user-center');
+        $result = $service->setApi('main')->call('show', [
+            'id' => $id,
+        ]);
+        $body = $result->getBody();
+
+        return $this->getView([
+            'userInfo' => $body['data']['userInfo']
+        ]);
+    }
 }

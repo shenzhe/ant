@@ -18,4 +18,13 @@ class User extends Base
     public $name;
     public $password;
     public $avatar;
+
+    public function getInfo()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'avatar' => $this->avatar,
+        ];
+    }
 }

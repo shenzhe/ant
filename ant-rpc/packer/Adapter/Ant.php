@@ -23,12 +23,19 @@ class Ant implements IPacker
         if (empty($data)) {
             return null;
         }
-        $result = json_decode($data, true);
+        if (class_exists('swoole_serialize')) {
+            $result = swoole_serialize::unpack($data);
+        } else {
+            $result = json_decode($data, true);
+        }
         return new Result($result[0], $result[1]);
     }
 
     public function pack($header, $body)
     {
+        if (class_exists('swoole_serialize')) {
+            return swoole_serialize::pack([$header, $body]);
+        }
         return json_encode([$header, $body]);
     }
 }
