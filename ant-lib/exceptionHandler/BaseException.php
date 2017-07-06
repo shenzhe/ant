@@ -130,9 +130,9 @@ class BaseException extends \Exception
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        if (!in_array($errno, [E_RECOVERABLE_ERROR, E_USER_ERROR])) {
-            return true;
-        }
+//        if (!in_array($errno, [E_RECOVERABLE_ERROR, E_USER_ERROR])) {
+//            return true;
+//        }
         $error = [
             'type' => $errno,
             'message' => $errstr,
