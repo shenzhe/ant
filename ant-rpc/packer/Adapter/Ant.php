@@ -24,7 +24,7 @@ class Ant implements IPacker
             return null;
         }
         if (class_exists('swoole_serialize')) {
-            $result = swoole_serialize::unpack($data);
+            $result = \swoole_serialize::unpack($data);
         } else {
             $result = json_decode($data, true);
         }
@@ -34,7 +34,7 @@ class Ant implements IPacker
     public function pack($header, $body)
     {
         if (class_exists('swoole_serialize')) {
-            return swoole_serialize::pack([$header, $body]);
+            return \swoole_serialize::pack([$header, $body]);
         }
         return json_encode([$header, $body]);
     }
