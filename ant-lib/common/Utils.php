@@ -11,7 +11,7 @@ namespace common;
 
 class Utils
 {
-    public static function getLocalIp($interface = ['eth0', 'en0'])
+    public static function getLocalIp($interface = ['eth0', 'eth1', 'en0'])
     {
         $localIps = \swoole_get_local_ip();
         foreach ($interface as $key) {
@@ -19,7 +19,10 @@ class Utils
                 return $localIps[$key];
             }
         }
-        return null;
+        if (count($localIps) > 0) {
+            return current($localIps);
+        }
+        return null; 
     }
 
     public static function getServiceConfigNamespace($serviceName)
