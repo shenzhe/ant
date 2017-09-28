@@ -93,7 +93,7 @@ class Scheduler
                 throw new SchedulerException('soa config empty');
             }
         }
-        $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], isset($soaConfig['timeOut']) ? 0 : $soaConfig['timeOut']);
+        $rpcClient = new TcpClient($soaConfig['ip'], $soaConfig['port'], empty($soaConfig['timeOut']) ? 0 : $soaConfig['timeOut']);
         $isDot = Consts::MONITOR_SERVER_NAME == $serviceName ? 0 : 1;
         $data = $rpcClient->setApi('main')->setDot($isDot)->call('getList', [
             'serviceName' => $serviceName,
