@@ -92,7 +92,12 @@ abstract class Base
      */
     public function fetchById($id)
     {
-        return $this->doResult($this->_db->fetchEntity("id={$id}"));
+        try {
+            return $this->doResult($this->_db->fetchEntity("id={$id}"));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -104,7 +109,12 @@ abstract class Base
      */
     public function fetchEntity($where, $params = null, $fields = '*', $orderBy = null)
     {
-        return $this->doResult($this->_db->fetchEntity($this->parseWhere($where), $params, $fields, $orderBy));
+        try {
+            return $this->doResult($this->_db->fetchEntity($this->parseWhere($where), $params, $fields, $orderBy));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -118,7 +128,12 @@ abstract class Base
      */
     public function fetchAll(array $items = [], $params = null, $fields = '*', $orderBy = null, $limit = null)
     {
-        return $this->doResult($this->_db->fetchAll($this->parseWhere($items), $params, $fields, $orderBy, $limit));
+        try {
+            return $this->doResult($this->_db->fetchAll($this->parseWhere($items), $params, $fields, $orderBy, $limit));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -159,7 +174,12 @@ abstract class Base
      */
     public function fetchWhere($where = '')
     {
-        return $this->doResult($this->_db->fetchAll($this->parseWhere($where)));
+        try {
+            return $this->doResult($this->_db->fetchAll($this->parseWhere($where)));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -193,7 +213,13 @@ abstract class Base
             $pkid = $attr::PK_ID;
             $where = "`{$pkid}`=" . $attr->$pkid;
         }
-        return $this->doResult($this->_db->update($fields, $params, $where, $change));
+
+        try {
+            return $this->doResult($this->_db->update($fields, $params, $where, $change));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -208,7 +234,12 @@ abstract class Base
         } elseif (is_object($attr)) {
             $entity = $attr;
         }
-        return $this->doResult($this->_db->add($entity, $entity->getFields()));
+        try {
+            return $this->doResult($this->_db->add($entity, $entity->getFields()));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -221,7 +252,13 @@ abstract class Base
         if (empty($where)) {
             throw new DaoException('remove where empty', ERROR::REMOVE_WHERE_EMPTY);
         }
-        return $this->doResult($this->_db->remove($this->parseWhere($where)));
+
+        try {
+            return $this->doResult($this->_db->remove($this->parseWhere($where)));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -234,10 +271,15 @@ abstract class Base
      */
     public function fetchArray(array $items = [], $fields = "*", $orderBy = null, $start = null, $limit = null)
     {
-        if (empty($items)) {
-            return $this->doResult($this->_db->fetchArray(1, $fields, $orderBy, $start, $limit));
-        }
-        return $this->doResult($this->_db->fetchArray($this->parseWhere($items), $fields, $orderBy, $start, $limit));
+        try {
+            if (empty($items)) {
+                return $this->doResult($this->_db->fetchArray(1, $fields, $orderBy, $start, $limit));
+            }
+            return $this->doResult($this->_db->fetchArray($this->parseWhere($items), $fields, $orderBy, $start, $limit));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }  
     }
 
     /**
@@ -246,7 +288,12 @@ abstract class Base
      */
     public function fetchCount($items = [])
     {
-        return $this->doResult($this->_db->fetchCount($this->parseWhere($items)));
+        try {
+            return $this->doResult($this->_db->fetchCount($this->parseWhere($items)));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -256,7 +303,12 @@ abstract class Base
      */
     public function fetchOne($items = [], $fields = "*")
     {
-        return $this->doResult($this->_db->fetchEntity($this->parseWhere($items), null, $fields));
+        try {
+            return $this->doResult($this->_db->fetchEntity($this->parseWhere($items), null, $fields));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -289,7 +341,13 @@ abstract class Base
         }
 
         $sql = "select {$fields} from {$tables} where {$wheres}{$order}";
-        return $this->doResult($this->fetchBySql($sql));
+
+        try {
+            return $this->doResult($this->fetchBySql($sql));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     /**
@@ -300,7 +358,12 @@ abstract class Base
 
     public function fetchBySql($sql)
     {
-        return $this->doResult($this->_db->fetchBySql($sql));
+        try {
+            return $this->doResult($this->_db->fetchBySql($sql));
+        } catch (\Exception $e) {
+            Log::info([$this->_db->getLastSql()], 'sql_error');
+            throw $e;
+        }
     }
 
     private function doResult($result)
