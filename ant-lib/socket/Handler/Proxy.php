@@ -43,12 +43,14 @@ class Proxy
             return $serv->send($fd, pack('N', 8) . 'ant-pong');  //回pong包
         }
         if ('ant-reload' == $realData) { //重启包
+            common\Log::info([], 'reload');
             return $serv->reload();
         }
         Request::addParams('_recv', 1);
         Request::parse($realData);
         if (Request::checkRequestTimeOut()) {
             //该请求已超时
+            common\Log::info([Request::getParams()], 'request_timeout');
             return false;
         }
         $params = Request::getParams();
@@ -70,7 +72,6 @@ class Proxy
             ]);
             $serv->send($fd, pack('N', strlen($result)) . $result);
         } else {
-
             if (empty($params['_recv'])) {
                 //不用等处理结果，立即回复一个空包，表示数据已收到
                 $result = Response::display([
@@ -153,6 +154,7 @@ class Proxy
 
         if (Request::checkRequestTimeOut()) {
             //该请求已超时
+            common\Log::info([Request::getParams()], 'request_timeout');
             $response->status('499');
             $response->end();
             return;
@@ -182,10 +184,11 @@ class Proxy
                     'data' => null
                 ]);
                 $response->end($result);
+                ZRoute::route();
             } else {
                 $result = ZRoute::route();
                 if (is_null($result)) {
-                    $result->end('');
+                    $response->end('');
                 } else {
                     $response->end($result);
                 }
@@ -258,6 +261,7 @@ class Proxy
         Request::parse($frame->data);
         if (Request::checkRequestTimeOut()) {
             //该请求已超时
+            common\Log::info([Request::getParams()], 'request_timeout');
             return false;
         }
         $params = Request::getParams();
@@ -278,7 +282,6 @@ class Proxy
             ]);
             $serv->push($fd, $result);
         } else {
-
             if (empty($params['_recv'])) {
                 //不用等处理结果，立即回复一个空包，表示数据已收到
                 $result = Response::display([
@@ -338,7 +341,6 @@ class Proxy
      */
     public static function onFinish($serv, $taskId, $data)
     {
-
     }
 
     /**
@@ -358,6 +360,7 @@ class Proxy
         }
 
         if ('ant-reload' == $data) {
+            common\Log::info([], 'reload');
             $serv->reload();
             return;
         }
@@ -425,7 +428,6 @@ class Proxy
                         default:
                             $serv->send(Request::getFd(), pack('N', strlen($result)) . $result);
                     }
-
                 }
                 //@TODO 异常上报
             }
@@ -520,4 +522,3 @@ class Proxy
         }
     }
 }
-
