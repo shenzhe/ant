@@ -14,6 +14,12 @@ use scheduler\ISelector;
 
 class Vote implements ISelector
 {
+    /**
+     * @param $serviceName
+     * @param $serverList
+     * @return array
+     * @throws SchedulerException
+     */
     public function getOne($serviceName, $serverList)
     {
         $goodList = [];
@@ -33,6 +39,10 @@ class Vote implements ISelector
         return current($goodList);
     }
 
+    /**
+     * @param $serviceInfo
+     * @return mixed
+     */
     public function success($serviceInfo)
     {
         if (empty($serviceInfo['vote'])) {
@@ -43,6 +53,10 @@ class Vote implements ISelector
         return $serviceInfo;
     }
 
+    /**
+     * @param $serviceInfo
+     * @return mixed
+     */
     public function fail($serviceInfo)
     {
         $serviceInfo['vote'] = 0;

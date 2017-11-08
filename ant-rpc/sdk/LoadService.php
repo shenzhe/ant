@@ -13,12 +13,13 @@ use ZPHP\Socket\Adapter\Swoole;
 class LoadService
 {
     /**
-     * @param $serviceName  服务名
-     * @param string $type 服务类型
-     * @param int $timeOut 超时时间
-     * @param array $config 配置
-     * @param int $retry 重试次数
+     * @param $serviceName
+     * @param string $type
+     * @param int $timeOut
+     * @param array $config
+     * @param int $retry
      * @return TcpClient|\ZPHP\Client\Rpc\Http|\ZPHP\Client\Rpc\Udp
+     * @throws \Exception
      */
     public static function getService($serviceName, $type = Swoole::TYPE_TCP, $timeOut = 500, $config = array(), $retry = 3)
     {

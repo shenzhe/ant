@@ -4,9 +4,9 @@ use ZPHP\Socket\Callback\SwooleUdp as ZSwoole;
 
 class Udp extends ZSwoole
 {
+
     /**
-     * @return mixed
-     * @desc 收到tcp数据的业务处理
+     * @throws \Exception
      */
     public function onReceive()
     {
@@ -14,11 +14,14 @@ class Udp extends ZSwoole
         Handler\Proxy::onReceive($serv, $fd, $from_id, $data);
     }
 
+
     /**
-     * @param $serv             //swoole_server对像
-     * @param $taskId           //task任务id
-     * @param $fromId           //来自哪个worker
-     * @param $data             //需要处理的数据
+     * @param $serv
+     * @param $taskId
+     * @param $fromId
+     * @param $data
+     * @return mixed|void
+     * @throws \Exception
      * @desc task任务，适合处理一些耗时的业务
      */
     public function onTask($serv, $taskId, $fromId, $data)
@@ -41,9 +44,10 @@ class Udp extends ZSwoole
     }
 
     /**
-     * @param $serv                             //swoole_server对像     
-     * @param $data                             //收到的udp数据
-     * @param $clientInfo                       //udp客户端数组
+     * @param $serv
+     * @param $data
+     * @param $clientInfo
+     * @throws \Exception
      * @desc 收到udp数据的处理
      */
     public function onPacket($serv, $data, $clientInfo)
@@ -51,20 +55,24 @@ class Udp extends ZSwoole
         Handler\Proxy::onPacket($serv, $data, $clientInfo);
     }
 
+
     /**
-     * @param $serv                             //swoole_server对像
-     * @param $data                             //收到的udp数据
-     * @param $clientInfo                       //udp客户端数组
-     * @desc 收到udp数据的处理
+     * @param $serv
+     * @param $data
+     * @param $clientInfo
+     * @throws \Exception
+     *  @desc 收到udp数据的处理
      */
     public function doPacket($serv, $data, $clientInfo)
     {
         Handler\Proxy::onPacket($serv, $data, $clientInfo);
     }
 
+
     /**
-     * @param $serv                                     //swoole_server对像
-     * @param $workerId                                   //worker或task id ps: id>worker_num是表示是task进程
+     * @param $serv
+     * @param $workerId
+     * @throws \Exception
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
     public function onWorkerStart($serv, $workerId)

@@ -26,12 +26,12 @@ abstract class Base
      */
     protected $_vaild = [];
 
+
     /**
-     * 自动填充表单
-     *
-     * @param array $data 数组
-     *
+     * @param array $data
      * @return bool
+     * @throws \exceptionHandler\InputVaildException
+     * @desc 自动填充表单
      */
     public function create($data = array())
     {

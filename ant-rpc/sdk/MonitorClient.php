@@ -22,6 +22,7 @@ class MonitorClient
     /**
      * @param $api
      * @param $time
+     * @throws \Exception
      * @desc 服务方耗时上报
      */
     public static function serviceDot($api, $time)
@@ -55,6 +56,7 @@ class MonitorClient
     /**
      * @param $api
      * @param $time
+     * @throws \Exception
      * @desc 调用方耗时上线
      */
     public static function clientDot($api, $time)
@@ -91,6 +93,7 @@ class MonitorClient
     /**
      * @param $api
      * @param $time
+     * @throws \Exception
      * @desc task任务耗时
      */
     public static function taskDot($api, $time)

@@ -26,12 +26,14 @@ class Proxy
         return sha1(uniqid($serv->worker_pid . '_', true));
     }
 
+
     /**
      * @param $serv \swoole_server 对像
      * @param $fd //文件描述符
      * @param $from_id //来自哪个reactor线程, 此参数基本用不上
      * @param $data //接收到的tcp数据
-     * @return mixed
+     * @return bool
+     * @throws \Exception
      * @desc 收到tcp数据的业务处理
      */
     public static function onReceive(\swoole_server $serv, $fd, $from_id, $data)
@@ -94,9 +96,11 @@ class Proxy
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
-    /**f
+
+    /**
      * @param $request \swoole_http_request
      * @param $response \swoole_http_response
+     * @throws \Exception
      * @desc http请求回调
      */
     public static function onRequest($request, $response)
@@ -200,9 +204,11 @@ class Proxy
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
+
     /**
      * @param \swoole_websocket_server $server
      * @param \swoole_http_request $request
+     * @throws \Exception
      * @desc websocket握手成功后的回调
      */
     public static function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
@@ -249,6 +255,7 @@ class Proxy
      * @param \swoole_websocket_server $serv
      * @param \swoole_websocket_frame $frame
      * @return bool
+     * @throws \Exception
      * @desc 收到一个websocket数据包回调
      */
     public static function onMessage(\swoole_websocket_server $serv, \swoole_websocket_frame $frame)
@@ -305,10 +312,12 @@ class Proxy
     }
 
     /**
-     * @param $serv  \swoole_server
-     * @param $taskId //任务id
-     * @param $fromId //来自哪个worker进程
-     * @param $data //数据
+     * @param $serv
+     * @param $taskId
+     * @param $fromId
+     * @param $data
+     * @return mixed
+     * @throws \Exception
      * @desc task任务，适合处理一些耗时的业务
      */
     public static function onTask($serv, $taskId, $fromId, $data)
@@ -343,11 +352,12 @@ class Proxy
     {
     }
 
+
     /**
      * @param \swoole_server $serv
      * @param $data
      * @param $clientInfo
-     * @return bool|mixed
+     * @throws \Exception
      * @desc 收到udp数据的处理
      */
     public static function onPacket(\swoole_server $serv, $data, $clientInfo)
@@ -396,9 +406,11 @@ class Proxy
         MClient::serviceDot(Request::getCtrl() . DS . Request::getMethod(), $executeTime);
     }
 
+
     /**
      * @param $serv \swoole_server
      * @param $workerId
+     * @throws \Exception
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
     public static function onWorkerStart($serv, $workerId)
@@ -468,16 +480,18 @@ class Proxy
      * @param $workerId
      * @param $workerPid
      * @param $exitCode
-     * @desc  工作进程退出之后
+     * @desc  工作进程异常之后
      */
     public static function onWorkerError($serv, $workerId, $workerPid, $exitCode)
     {
     }
 
+
     /**
-     * @param $serv
+     * @param $serv \swoole_server
      * @param $fd
      * @param $from_id
+     * @throws \Exception
      * @desc 建立连接回调
      */
     public static function onConnect($serv, $fd, $from_id)
@@ -498,6 +512,7 @@ class Proxy
      * @param $serv
      * @param $fd
      * @param $from_id
+     * @throws \Exception
      * @desc 连接关闭回调
      */
     public static function onClose($serv, $fd, $from_id)
@@ -513,6 +528,12 @@ class Proxy
         ZRoute::route();
     }
 
+    /**
+     * @param $serv
+     * @param $workerId
+     * @throws \Exception
+     * @desc worker进程退出时回调
+     */
     public static function onWorkerStop($serv, $workerId)
     {
         $workNum = ZConfig::getField('socket', 'worker_num');

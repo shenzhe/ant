@@ -22,10 +22,12 @@ abstract class Base
     protected $tableName;
     protected $className;
 
+
     /**
      * Base constructor.
-     * @param $entity
+     * @param null $entity
      * @param string $useDb //使用的库名,不使用数据库,可设置为空
+     * @throws \Exception
      */
     public function __construct($entity = null, $useDb = 'common')
     {
@@ -88,6 +90,7 @@ abstract class Base
     /**
      * @param $id
      * @return mixed
+     * @throws \Exception
      * @desc 跟据 id 获取记录
      */
     public function fetchById($id)
@@ -106,6 +109,7 @@ abstract class Base
      * @param string $fields
      * @param null $orderBy
      * @return mixed
+     * @throws \Exception
      */
     public function fetchEntity($where, $params = null, $fields = '*', $orderBy = null)
     {
@@ -117,6 +121,7 @@ abstract class Base
         }
     }
 
+
     /**
      * @param array $items
      * @param null $params
@@ -124,6 +129,7 @@ abstract class Base
      * @param null $orderBy
      * @param null $limit
      * @return mixed
+     * @throws \Exception
      * @desc 多行记录获取
      */
     public function fetchAll(array $items = [], $params = null, $fields = '*', $orderBy = null, $limit = null)
@@ -171,6 +177,7 @@ abstract class Base
     /**
      * @param string $where
      * @return mixed
+     * @throws \Exception
      */
     public function fetchWhere($where = '')
     {
@@ -187,6 +194,7 @@ abstract class Base
      * @param array $items
      * @param int $change
      * @return mixed
+     * @throws \Exception
      */
     public function update($attr, $items = [], $change = 0)
     {
@@ -225,6 +233,7 @@ abstract class Base
     /**
      * @param $attr
      * @return mixed
+     * @throws \Exception
      */
     public function add($attr)
     {
@@ -246,6 +255,7 @@ abstract class Base
      * @param $where
      * @return mixed
      * @throws DaoException
+     * @throws \Exception
      */
     public function remove($where)
     {
@@ -261,6 +271,7 @@ abstract class Base
         }
     }
 
+
     /**
      * @param array $items
      * @param string $fields
@@ -268,6 +279,7 @@ abstract class Base
      * @param null $start
      * @param null $limit
      * @return mixed
+     * @throws \Exception
      */
     public function fetchArray(array $items = [], $fields = "*", $orderBy = null, $start = null, $limit = null)
     {
@@ -285,6 +297,7 @@ abstract class Base
     /**
      * @param array $items
      * @return mixed
+     * @throws \Exception
      */
     public function fetchCount($items = [])
     {
@@ -300,6 +313,7 @@ abstract class Base
      * @param array $items
      * @param string $fields
      * @return mixed
+     * @throws \Exception
      */
     public function fetchOne($items = [], $fields = "*")
     {
@@ -353,9 +367,8 @@ abstract class Base
     /**
      * @param $sql
      * @return mixed
-     * @desc 执行一个sql
+     * @throws \Exception
      */
-
     public function fetchBySql($sql)
     {
         try {
@@ -366,13 +379,19 @@ abstract class Base
         }
     }
 
+    /**
+     * @param $result
+     * @return mixed
+     */
     private function doResult($result)
     {
         Log::info([$this->_db->getLastSql()], 'sql');
         return $result;
     }
 
-
+    /**
+     * 
+     */
     public function checkPing()
     {
         if (!empty(self::$_dbs)) {

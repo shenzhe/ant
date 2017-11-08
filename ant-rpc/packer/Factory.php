@@ -13,6 +13,7 @@ class Factory
     /**
      * @param string $adapter
      * @return IPacker
+     * @throws \Exception
      */
     public static function getInstance($adapter = 'Ant')
     {

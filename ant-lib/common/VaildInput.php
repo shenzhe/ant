@@ -23,6 +23,13 @@ class VaildInput
     const IP = 'p';                 //ip地址
     const MAC = 'a';                //mac地址
 
+    /**
+     * @param $str
+     * @param $type
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function vaild($str, $type, $errmsg = '')
     {
         if (empty($type)) {
@@ -89,6 +96,12 @@ class VaildInput
         }
     }
 
+    /**
+     * @param $email
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function email($email, $errmsg = '')
     {
         $ret = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -100,6 +113,12 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $url
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function url($url, $errmsg = '')
     {
         $ret = filter_var($url, FILTER_VALIDATE_URL);
@@ -111,6 +130,12 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $ip
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function ip($ip, $errmsg = '')
     {
         $ret = filter_var($ip, FILTER_VALIDATE_IP);
@@ -122,6 +147,14 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $int
+     * @param int $min
+     * @param int $max
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function int($int, $min = 0, $max = 0, $errmsg = '')
     {
         $options = [];
@@ -142,6 +175,14 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $float
+     * @param int $min
+     * @param int $max
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function float($float, $min = 0, $max = 0, $errmsg = '')
     {
         $options = [];
@@ -162,6 +203,13 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $str
+     * @param $regexp
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function regexp($str, $regexp, $errmsg = '')
     {
         $ret = filter_var($str, FILTER_VALIDATE_REGEXP, [
@@ -176,6 +224,12 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $str
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function mac($str, $errmsg = '')
     {
         $ret = filter_var($str, FILTER_VALIDATE_MAC);
@@ -186,6 +240,12 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $mobileNum
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function mobile($mobileNum, $errmsg = '')
     {
         $errmsg = $errmsg ? $errmsg : '错误的手机号码';
@@ -199,6 +259,14 @@ class VaildInput
         return self::regexp($str, '/^[a-zA-Z][a-zA-Z0-9-_\-]{' . $min . ',' . $max . '}$/', $errmsg);
     }
 
+    /**
+     * @param $str
+     * @param int $min
+     * @param int $max
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function string($str, $min = 1, $max = 50, $errmsg = '')
     {
         $ret = filter_var($str, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_AMP);
@@ -218,6 +286,14 @@ class VaildInput
         return $ret;
     }
 
+    /**
+     * @param $str
+     * @param int $min
+     * @param int $max
+     * @param $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function chinese($str, $min = 1, $max = 50, $errmsg)
     {
         $errmsg = $errmsg ? $errmsg : '必需为中文';
@@ -235,7 +311,12 @@ class VaildInput
         return $ret;
     }
 
-    ///[^\x00-\x80]/
+    /**
+     * @param $str
+     * @param string $errmsg
+     * @return mixed
+     * @throws InputVaildException
+     */
     public static function hasChinese($str, $errmsg = '')
     {
         $errmsg = $errmsg ? $errmsg : '必需包含为中文';

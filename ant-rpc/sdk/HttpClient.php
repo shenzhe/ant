@@ -40,11 +40,19 @@ class HttpClient extends Http
         }
     }
 
+    /**
+     * @param $sendArr
+     * @return mixed
+     */
     public function pack($sendArr)
     {
         return $sendArr;
     }
 
+    /**
+     * @param $result
+     * @return Result
+     */
     public function unpack($result)
     {
 

@@ -9,6 +9,7 @@ class LoadClass
      * @param $service
      * @return \service\Base
      * @desc 获取service实例
+     * @throws \Exception
      */
     public static function getService($service)
     {
@@ -19,6 +20,7 @@ class LoadClass
      * @param $dao
      * @return \dao\Base
      * @desc 获取dao实例
+     * @throws \Exception
      */
     public static function getDao($dao)
     {

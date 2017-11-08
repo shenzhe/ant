@@ -25,6 +25,7 @@ class AntConfigAgent
      * @param $serviceName
      * @param $record
      * @return bool
+     * @throws \Exception
      * @desc 同步一条记录
      */
     public function sync($serviceName, $record)
@@ -42,6 +43,7 @@ class AntConfigAgent
      * @param $serviceName
      * @param $key
      * @return bool
+     * @throws \Exception
      * @desc 删除某个配置
      */
     public function remove($serviceName, $key)
@@ -60,6 +62,7 @@ class AntConfigAgent
     /**
      * @param $serviceName
      * @return bool
+     * @throws \Exception
      * @desc 清空所有的配置
      */
     public function removeAll($serviceName)
@@ -150,6 +153,7 @@ class AntConfigAgent
 
     /**
      * @param $serviceInfo
+     * @throws \Exception
      * @desc 同步注册服务器信息
      */
     public function syncRegister($serviceInfo)

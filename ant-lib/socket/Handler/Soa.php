@@ -20,7 +20,8 @@ class Soa
 {
     /**
      * @param $server
-     * @return mixed|void
+     * @return mixed|string
+     * @throws \Exception
      * @desc 服务自注册回调
      */
     public static function register($server)
@@ -92,9 +93,11 @@ class Soa
         }
     }
 
+
     /**
      * @param $server
      * @return mixed|void
+     * @throws \Exception
      * @desc  服务下线回调
      */
     public static function drop($server)

@@ -13,10 +13,12 @@ use ZPHP\Core\Factory as CFactory;
 
 class Factory
 {
+
     /**
      * @param string $adapter
      * @param null $config
      * @return ISelector
+     * @throws \Exception
      */
     public static function getInstance($adapter = 'Vote', $config = null)
     {

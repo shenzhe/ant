@@ -51,7 +51,7 @@ class qrcode extends CBase
         Log::info([$code, $fd], 'task_cache');
         if ($fd) {
             $socket = Request::getSocket();
-            $socket->push($fd, Response::display($ret));
+            $socket->push($fd, Response::getContent($ret));
         }
         return $ret;
     }

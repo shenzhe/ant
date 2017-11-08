@@ -6,28 +6,32 @@ use ZPHP\Socket\Callback\SwooleWebSocket;
 
 class WebSocket extends SwooleWebSocket
 {
+
     /**
      * @param $server
      * @param $request
+     * @throws \Exception
      */
-    public function onOpen($server, $request)
+    public function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
     {
         Handler\Proxy::onOpen($server, $request);
     }
 
+
     /**
-     * @param $server
-     * @param $frame @
+     * @param $server \swoole_websocket_server
+     * @param $frame \swoole_websocket_frame
+     * @throws \Exception
      */
-    public function onMessage($server, $frame)
+    public function onMessage( $server,  $frame)
     {
         Handler\Proxy::onMessage($server, $frame);
     }
 
     /**
-     * @param $request      \swoole_http_request
-     * @param $response     \swoole_http_response
-     * @return mixed
+     * @param $request \swoole_http_request
+     * @param $response \swoole_http_response
+     * @throws \Exception
      * @desc 收到http数据的业务处理
      */
     public function onRequest($request, $response)
@@ -35,11 +39,14 @@ class WebSocket extends SwooleWebSocket
         Handler\Proxy::onRequest($request, $response);
     }
 
+
     /**
-     * @param $serv //swoole_server对像
-     * @param $taskId //task任务id
-     * @param $fromId //来自哪个worker
-     * @param $data //需要处理的数据
+     * @param $serv \swoole_server
+     * @param $taskId
+     * @param $fromId
+     * @param $data
+     * @return mixed|void
+     * @throws \Exception
      * @desc task任务，适合处理一些耗时的业务
      */
     public function onTask($serv, $taskId, $fromId, $data)
@@ -62,9 +69,10 @@ class WebSocket extends SwooleWebSocket
     }
 
     /**
-     * @param $serv //swoole_server对像
-     * @param $data //收到的udp数据
-     * @param $clientInfo //udp客户端数组
+     * @param $serv
+     * @param $data
+     * @param $clientInfo
+     * @throws \Exception
      * @desc 收到udp数据的处理
      */
     public function onPacket($serv, $data, $clientInfo)
@@ -72,9 +80,11 @@ class WebSocket extends SwooleWebSocket
         Handler\Proxy::onPacket($serv, $data, $clientInfo);
     }
 
+
     /**
-     * @param $serv //swoole_server对像
-     * @param $workerId //worker或task id ps: id>worker_num是表示是task进程
+     * @param $serv
+     * @param $workerId
+     * @throws \Exception
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
     public function onWorkerStart($serv, $workerId)

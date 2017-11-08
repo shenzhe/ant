@@ -58,9 +58,10 @@ class BaseException extends \Exception
     }
 
     /**
-     * @param \Exception $exception
+     * @param $exception
      * @return mixed
-     * @desc 异常处理
+     * @throws \Exception
+     * @desc 异常处理 handler
      */
     public static function exceptionHandler($exception)
     {
@@ -125,7 +126,8 @@ class BaseException extends \Exception
      * @param $errfile
      * @param $errline
      * @param $errcontext
-     * @return mixed
+     * @return int
+     * @throws \Exception
      * @desc  一般错误处理
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
@@ -156,6 +158,7 @@ class BaseException extends \Exception
      * @param $info
      * @param bool $debug
      * @return mixed
+     * @throws \Exception
      * @desc display输出
      */
     protected static function display($info, $debug = false)

@@ -31,6 +31,11 @@ class Ant implements IPacker
         return new Result($result[0], $result[1]);
     }
 
+    /**
+     * @param $header
+     * @param $body
+     * @return mixed|string
+     */
     public function pack($header, $body)
     {
         if (class_exists('swoole_serialize')) {

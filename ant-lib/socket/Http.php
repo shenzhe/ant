@@ -7,9 +7,9 @@ use ZPHP\Socket\Callback\SwooleHttp;
 class Http extends SwooleHttp
 {
     /**
-     * @param $request      \swoole_http_request
-     * @param $response     \swoole_http_response
-     * @return mixed
+     * @param $request \swoole_http_request
+     * @param $response \swoole_http_response
+     * @throws \Exception
      * @desc 收到http数据的业务处理
      */
     public function onRequest($request, $response)
@@ -23,6 +23,15 @@ class Http extends SwooleHttp
      * @param $fromId //来自哪个worker
      * @param $data //需要处理的数据
      * @desc task任务，适合处理一些耗时的业务
+     * @throws \Exception
+     */
+    /**
+     * @param $serv
+     * @param $taskId
+     * @param $fromId
+     * @param $data
+     * @return mixed|void
+     * @throws \Exception
      */
     public function onTask($serv, $taskId, $fromId, $data)
     {
@@ -44,9 +53,10 @@ class Http extends SwooleHttp
     }
 
     /**
-     * @param $serv //swoole_server对像
-     * @param $data //收到的udp数据
-     * @param $clientInfo //udp客户端数组
+     * @param $serv
+     * @param $data
+     * @param $clientInfo
+     * @throws \Exception
      * @desc 收到udp数据的处理
      */
     public function onPacket($serv, $data, $clientInfo)
@@ -54,9 +64,11 @@ class Http extends SwooleHttp
         Handler\Proxy::onPacket($serv, $data, $clientInfo);
     }
 
+
     /**
-     * @param $serv //swoole_server对像
-     * @param $workerId //worker或task id ps: id>worker_num是表示是task进程
+     * @param $serv
+     * @param $workerId
+     * @throws \Exception
      * @desc worker/task进程启动后回调，可用于一些初始化业务和操作
      */
     public function onWorkerStart($serv, $workerId)

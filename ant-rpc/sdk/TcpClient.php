@@ -51,6 +51,7 @@ class TcpClient extends Tcp
     /**
      * @param $result
      * @return \packer\Result
+     * @throws \Exception
      */
     public function unpack($result)
     {
@@ -65,6 +66,7 @@ class TcpClient extends Tcp
      * @param $method
      * @param array $params
      * @return \packer\Result
+     * @throws \Exception
      */
     public function call($method, $params = [])
     {

@@ -26,11 +26,11 @@ class Scheduler
 
     /**
      * @param $serviceName
-     * @return array [$ip, $port]
+     * @return array [$ip, $port, type]
      * @throws SchedulerException
+     * @throws \Exception
      * @desc 根据服务名获名一个可用的ip:port
      */
-
     public static function getService($serviceName)
     {
 
@@ -60,11 +60,23 @@ class Scheduler
 
     }
 
+    /**
+     * @param $serviceName
+     * @param $serverList
+     * @return array
+     */
     public static function getOne($serviceName, $serverList)
     {
         return self::$selector->getOne($serviceName, $serverList);
     }
 
+    /**
+     * @param $serviceName
+     * @param $soaConfig
+     * @return mixed|null|array
+     * @throws SchedulerException
+     * @throws \Exception
+     */
     public static function getList($serviceName, $soaConfig)
     {
         if (ZConfig::get('project_name') === Consts::REGISTER_SERVER_NAME) {
@@ -85,6 +97,13 @@ class Scheduler
         return $serverList;
     }
 
+    /**
+     * @param $serviceName
+     * @param null $soaConfig
+     * @return array
+     * @throws SchedulerException
+     * @throws \Exception
+     */
     public static function getListForRpc($serviceName, $soaConfig = null)
     {
         if (!$soaConfig) {
@@ -109,6 +128,12 @@ class Scheduler
         }
     }
 
+    /**
+     * @param $serviceName
+     * @param $serverList
+     * @param int $rebuild
+     * @return bool
+     */
     public static function reload($serviceName, $serverList, $rebuild = 1)
     {
         $path = ZPHP::getConfigPath() . DS . '..' . DS . 'public';
@@ -135,6 +160,8 @@ class Scheduler
      * @param $ip
      * @param $port
      * @param $type
+     * @throws SchedulerException
+     * @throws \Exception
      * @desc 服务选择成功，回调处理
      */
     public static function success($serviceName, $ip, $port, $type)
@@ -153,6 +180,8 @@ class Scheduler
      * @param $ip
      * @param $port
      * @param $type
+     * @throws SchedulerException
+     * @throws \Exception
      * @desc 服务选择失败，回调处理
      */
     public static function fail($serviceName, $ip, $port, $type)
